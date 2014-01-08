@@ -1,7 +1,32 @@
-doctype 5
+doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='stylesheet', href='/vendor/bootstrap/dist/css/bootstrap.min.css')
+		script(src = '/vendor/jquery/jquery.min.js')
+		script(src = '/vendor/bootstrap/dist/js/bootstrap.min.js')
+	body
+		div.wrapper
+			nav.navbar.navbar-default.navbar-fixed-top(role = navigation)
+				div.navbar-header
+					button.navbar-toggle(data-toggle = 'collapse' data-target = '#top-nav' type = 'button')
+						span.sr-only  Toggle navigation
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					a.navbar-brand Our brand
+				div.collapse.navbar-collapse#top-nav
+					ul.nav.navbar-nav
+						li
+							a(href='#') Home
+						li
+							a(href='#') Gallery
+					ul.nav.navbar-nav.navbar-right
+						li.dropdown
+							a.dropdown-toggle(data-toggle = 'dropdown' href='#') Login
+								b.caret
+						li.dropdown
+							a.dropdown-toggle(data-toggle = 'dropdown' href='#') Register
+								b.caret
+
