@@ -1,5 +1,6 @@
-define(['module/servicesModule'], function(service){
-	service.factory('UserRegisterService', ['$resource', function($resource){
+define(['app'], function(app){
+	app.
+		factory('UserRegisterService', ['$resource', function($resource){
 		return $resource('/user/register');
 	}])
 }) 

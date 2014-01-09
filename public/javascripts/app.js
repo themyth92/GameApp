@@ -1,5 +1,5 @@
-define(['module/ctrlModule'], function(){
-	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ctrlModule']);
+define([], function(){
+	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate']);
 
 	myApp.config(['$routeProvider', function($routeProvider){
 
@@ -11,6 +11,8 @@ define(['module/ctrlModule'], function(){
 			otherwise({
 				redirectTo : '/home'
 			})
-	}]) 
+	}])
+
+	return myApp; 
 })
 

@@ -1,13 +1,12 @@
-define(['module/ctrlModule'], function(ctrlModule){
-	ctrlModule.controller('UserRegisterCtrl', ['$scope', function($scope){
+define(['app'], function(app){
+	app.controller('UserRegisterCtrl', ['$scope', function($scope){
 		
 		var api = {
-			userRegister : function(){
+			registerSubmit : function(){
 				alert('success!');
 			}
 		}
 
 		$scope.api = api;
-
 	}])
 }) 
