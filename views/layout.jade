@@ -2,13 +2,17 @@ doctype html
 html
 	head
 		title= title
-		link(rel='stylesheet', href='/stylesheets/style.css')
 		link(rel='stylesheet', href='/vendor/bootstrap/dist/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src = '/vendor/jquery/jquery.min.js')
 		script(src = '/vendor/bootstrap/dist/js/bootstrap.min.js')
-	body
-		div.wrapper
-			nav.navbar.navbar-default.navbar-fixed-top(role = navigation)
+		script(src = '/vendor/angular/angular.min.js')
+		script(src = '/vendor/angular-route/angular-route.min.js')
+		script(src = '/vendor/angular-animate/angular-animate.min.js')
+		script(src = '/vendor/requirejs/require.js' data-main = 'javascripts/main')
+	body(ng-app)
+		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation)
+			div.container
 				div.navbar-header
 					button.navbar-toggle(data-toggle = 'collapse' data-target = '#top-nav' type = 'button')
 						span.sr-only  Toggle navigation
@@ -24,9 +28,16 @@ html
 							a(href='#') Gallery
 					ul.nav.navbar-nav.navbar-right
 						li.dropdown
-							a.dropdown-toggle(data-toggle = 'dropdown' href='#') Login
+							a.dropdown-toggle(data-toggle = 'dropdown') Login
 								b.caret
-						li.dropdown
-							a.dropdown-toggle(data-toggle = 'dropdown' href='#') Register
-								b.caret
-
+							ul.dropdown-menu.row
+								div.col-lg-12
+									form(role='form')
+										div.form-group
+										div.form-group
+											input.form-control#login-user-name(type='text', placeholder='Enter user name')
+										div.form-group
+											input.form-control#login-password(type='password', placeholder='Enter password')
+										button.btn.btn-primary.btn-block(type='submit') Login		
+										div.form-group
+		main.main-content.view-animate(ng-view)
