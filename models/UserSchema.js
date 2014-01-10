@@ -6,4 +6,4 @@ var UserSchema  = new Schema({
 	password : String	
 }) ;
 
-export.UserSchema = UserSchema;
+exports.UserSchema = UserSchema;

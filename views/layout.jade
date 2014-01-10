@@ -9,12 +9,13 @@ html
 		script(src = '/vendor/angular/angular.min.js')
 		script(src = '/vendor/angular-route/angular-route.min.js')
 		script(src = '/vendor/angular-animate/angular-animate.min.js')
+		script(src = '/vendor/angular-resource/angular-resource.min.js')
 		script(src = '/vendor/requirejs/require.js' data-main = 'javascripts/main')
-	body(ng-app)
-		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation)
+	body(ng-cloak)
+		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation, ng-controller =' NavBarCtrl')
 			div.container
 				div.navbar-header
-					button.navbar-toggle(data-toggle = 'collapse' data-target = '#top-nav' type = 'button')
+					button.navbar-toggle(data-toggle = 'collapse', data-target = '#top-nav', type = 'button')
 						span.sr-only  Toggle navigation
 						span.icon-bar
 						span.icon-bar
@@ -26,8 +27,8 @@ html
 							a(href='#') Home
 						li
 							a(href='#') Gallery
-					ul.nav.navbar-nav.navbar-right
-						li.dropdown
+					ul.nav.navbar-nav.navbar-right(ng-switch on = 'user.isLogin')
+						li.dropdown(ng-switch-when = 'false')
 							a.dropdown-toggle(data-toggle = 'dropdown') Login
 								b.caret
 							ul.dropdown-menu.row
@@ -40,4 +41,6 @@ html
 											input.form-control#login-password(type='password', placeholder='Enter password')
 										button.btn.btn-primary.btn-block(type='submit') Login		
 										div.form-group
+						li
+							a(href = '#', ng-switch-default) Welcome {{user.userName}}
 		main.main-content.view-animate(ng-view)
