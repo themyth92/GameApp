@@ -6,7 +6,70 @@ a{
 	text-decoration: none !important;
 }
 
+.loading{
+	position: absolute;
+	height:100%;
+	width:100%;
+	text-align: center;
+	display:none;
+}
+
+.loading.active{
+	display: block;
+	z-index : 1;
+}
+
+.loading.active.ajax-status-loading{
+	z-index : 10000;
+}
+
+.loading>div{
+	margin-top:51px;
+	display:inline-block;
+	min-width:30px;
+
+	-webkit-box-shadow: 0 8px 6px -6px black;
+	   -moz-box-shadow: 0 8px 6px -6px black;
+	        box-shadow: 0 8px 6px -6px black;
+
+	border-color: #f0c36d;        
+	border-radius:2px;
+	padding : 5px;
+	display: inline-block;
+}
+
+.loading>div.ajax-status-success{
+	background-color: #80E8A4;
+}
+
+.loading>div.ajax-status-error{
+	background-color: #F2A06D;	
+}
+
+.loading>div.ajax-status-loading{
+	background-color:#F7F7AB;
+}
+
+.reloader{
+	background : url('../assets/gif/home-reloader.gif') no-repeat center;
+	height:32px;
+	width:32px;
+	vertical-align: middle;
+	display:none;
+}
+
+.reloader.ajax-status-loading{
+	display:inline-block;
+}
+
+.ajax-status{
+	padding-left:2px;
+	text-shadow: 1px 2px 3px rgba(0,0,0,0.3);
+	display: inline-block;
+}
+
 .home-page-wrapper{
+	z-index : 2;
 	position: absolute;
 	overflow: auto;
 	padding-top:140px;

@@ -1,50 +1,46 @@
 define(['app'], function(app){
-	var Constant = {
 
-		Url : {
-			USER_REGISTER : '/user/register'
-		},
-		Broadcast :{
-			USER_LOGIN : '101',
-			USER_LOGOUT : '201'
-		}
-	}
+	var UserRegisterService = function($http, $q){
 
-	var UserRegisterService = function($http){
-		
-		var method = {
-			register : function(data, successCallBack, errorCallBack){
-				
-				$http({
-					method : 'POST',
-					url : Constant.Url.USER_REGISTER,
-					data : data
-				}).
-				success(successCallBack).
-				error(errorCallBack);
+		var registerService = {};
+		var deffered = $q.defer();
 
-			}
+		registerService.register = function(data){
+			
+			$http({
+				method : 'POST',
+				url : Constant.URL.ACTION.USER_REGISTER.url,
+				data : data
+			}).
+			success(function(data, status, header, config){
+				deffered.resolve(data);
+			}).
+			error(function(){
+				deffered.reject();
+			});
+
+			return deffered.promise;
 		}
 
-		return method;
+		return registerService;
 	};
 
-	var	UserCredentialBroadcastService = function($rootScope){
+	var AjaxNotificationService = function(){
 		
-		var method = {
+		var api = {
 			
-			login : function(){
-				$rootScope.$broadcast(Constant.Broadcast.USER_LOGIN);
+			status : {
+				code : null
 			},
 
-			logout : function(){
-				$rootScope.$broadcast(Constant.Broadcast.USER_LOGOUT);
+			setNotification : function(code){
+				api.status.code = code;
 			}
 		}
 
-		return method;
+		return api;
 	};
 	
-	app.factory('UserRegisterService', ['$http', UserRegisterService]);
-	app.factory('UserCredentialBroadcastService', ['$rootScope', UserCredentialBroadcastService]);
+	app.factory('UserRegisterService', ['$http', '$q', UserRegisterService]);
+	app.factory('AjaxNotificationService', AjaxNotificationService);
 }) 

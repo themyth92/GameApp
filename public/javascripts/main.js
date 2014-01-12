@@ -3,8 +3,11 @@ requirejs.config({
 });
 
 require(['app',
+		 'constant',
 		 'services/UserService',
-		 'controller/UserRegisterCtrl'], 
+		 'controller/PartialCtrl',
+		 'controller/UserCredentialCtrl',
+		 'directives/Directives'], 
 	function(){
 		angular.bootstrap(document, ['myApp']);
 });

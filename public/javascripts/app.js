@@ -7,7 +7,7 @@ define([], function(){
 			$routeProvider.
 				when('/home', {
 					templateUrl : 'partials/home.html',
-					controller : 'UserRegisterCtrl'
+					controller : 'HomePartialCtrl'
 				}).
 				otherwise({
 					redirectTo : '/home'

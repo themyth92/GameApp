@@ -29,5 +29,12 @@ exports.index = function(req, res){
 };
 
 exports.registerUser = function(req, res){
-	console.log(req);
+	var sendBack = {
+		message : 'what the fuck',
+		code    : '201'
+	}
+
+	setTimeout(function(){
+		res.json(sendBack);
+	}, 10000)
 }
