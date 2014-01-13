@@ -2,35 +2,37 @@ define(['app'], function(app){
 
 	var Controller = {
 
-		UserRegisterCtrl : function($scope, $q, registerService, ajaxNotiService){
+		UserRegisterCtrl : function($rootScope, $scope, $q, registerService, ajaxNotiService){
 
 			function UserRegisterSuccessHandle(data){
-				
+
 				data.code    = data.code || Constant.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
 				data.message = data.message || '';
 
 				switch(data.code){
 					
-					case :  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
+					case  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
 							
 							ajaxNotiService.setNotification(Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+							setUserLogin(false);
 							console.log(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
-						    
+						   
 						    break;
 
-					case : Constant.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code :
+					case Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code :
 
 						   ajaxNotiService.setNotification(Constant.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code);
-
+						   setUserLogin(false);
 						   break;
 
-					case : Constant.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code :
+					case Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code :
 
-						   ajaxNotiService.setNotification(Constant.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code);
-
+						   ajaxNotiService.setNotification(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code);
+						   setUserLogin(true);
 						   break;
 					
 					default :
+							setUserLogin(false);
 							console.log('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 
 				}			
@@ -40,7 +42,15 @@ define(['app'], function(app){
 
 				ajaxNotiService.setNotification(Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
 				console.log(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER + 'from' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
-			}			
+			}
+
+			function setUserLogin(isLogin){
+				
+				if(isLogin)
+					$scope.UserRegisterCtrl.user.isLogin = true;
+				else
+					$scope.UserRegisterCtrl.user.isLogin = false;
+			}
 
 			this.user = {
 				isLogin : false,
@@ -70,30 +80,7 @@ define(['app'], function(app){
 
 			return $scope.UserRegisterCtrl = this;
 		},
-
-		UserLoginCtrl : function(){
-
-		},
-
-		NavBarCtrl : function($scope){
-
-			$scope.user = {
-				isLogin : false,
-				userName : '',
-				password : ''
-			};
-			
-			$scope.loginSubmit = function(){
-
-			};
-		},
-
-		HomeCtrl : function($scope){
-
-		}
 	}
 
-	app.controller('NavBarCtrl', ['$scope', Controller.NavBarCtrl]);
-	app.controller('UserRegisterCtrl', ['$scope','$q','UserRegisterService','AjaxNotificationService' , Controller.UserRegisterCtrl]);
-	app.controller('HomeCtrl', ['$scope', Controller.HomeCtrl]);
+	app.controller('UserRegisterCtrl', ['$rootScope', '$scope','$q','UserRegisterService' , Controller.UserRegisterCtrl]);
 }) 

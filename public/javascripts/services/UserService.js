@@ -24,23 +24,6 @@ define(['app'], function(app){
 
 		return registerService;
 	};
-
-	var AjaxNotificationService = function(){
-		
-		var api = {
-			
-			status : {
-				code : null
-			},
-
-			setNotification : function(code){
-				api.status.code = code;
-			}
-		}
-
-		return api;
-	};
 	
 	app.factory('UserRegisterService', ['$http', '$q', UserRegisterService]);
-	app.factory('AjaxNotificationService', AjaxNotificationService);
 }) 

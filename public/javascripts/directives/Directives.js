@@ -4,7 +4,7 @@ define(['app'], function(app){
 			restrict : 'C',
 			templateUrl : 'ajaxLoading.html',	
 			
-			controller : function($scope, AjaxNotifcationService){
+			controller : function($scope, AjaxNotificationService){
 
 				function changeStateToLoading(element){
 					
@@ -32,26 +32,22 @@ define(['app'], function(app){
 					element.find('.reloader').removeClass('ajax-status-loading');
 				}
 
-				function changeStatusMessage(message){
-
-				}
-
 				function changeStatusMessage(code, element){
 					
 					if(code){
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code){
 							changeStateToLoading(element);
-							this.status.message = Constant.COMMON.LOADING.message;
+							$scope.api.status.message = Constant.COMMON.LOADING.message;
 						}
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code){
 							changeStateToError(element);
-							this.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.message;
+							$scope.api.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.message;
 						}
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
 							changeStateToSuccess(element);
-							this.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.message;
+							$scope.api.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.message;
 						}
 
 						return false;
@@ -63,8 +59,7 @@ define(['app'], function(app){
 					}
 				}
 
-				this.code = AjaxNotifcationService.status.code;
-				this.message = '';
+				this.code = AjaxNotificationService.status.code;
 				
 				this.updateNotificationStatus = function(element, code){
 					
@@ -88,7 +83,7 @@ define(['app'], function(app){
 			link : function(scope, element, attrs){
 
 				scope.$watch('api.code', function(){
-					updateNotificationStatus(element, scope.api.code);
+					scope.api.updateNotificationStatus(element, scope.api.code);
 				});
 			}
 		}

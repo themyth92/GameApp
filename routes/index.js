@@ -36,5 +36,5 @@ exports.registerUser = function(req, res){
 
 	setTimeout(function(){
 		res.json(sendBack);
-	}, 10000)
+	}, 5000)
 }
