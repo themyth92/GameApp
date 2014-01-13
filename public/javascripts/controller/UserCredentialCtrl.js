@@ -4,6 +4,10 @@ define(['app'], function(app){
 
 		UserRegisterCtrl : function($rootScope, $scope, $q, registerService, ajaxNotiService){
 
+			function broadCastEvent(code){
+				$rootScope.$broadcast(code);
+			}
+
 			function UserRegisterSuccessHandle(data){
 
 				data.code    = data.code || Constant.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
@@ -13,7 +17,7 @@ define(['app'], function(app){
 					
 					case  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
 							
-							ajaxNotiService.setNotification(Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+							broadCastEvent(Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code);
 							setUserLogin(false);
 							console.log(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
 						   
@@ -21,17 +25,18 @@ define(['app'], function(app){
 
 					case Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code :
 
-						   ajaxNotiService.setNotification(Constant.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code);
+						   broadCastEvent(Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code);
 						   setUserLogin(false);
 						   break;
 
 					case Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code :
 
-						   ajaxNotiService.setNotification(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code);
+						   broadCastEvent(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code);
 						   setUserLogin(true);
 						   break;
 					
 					default :
+							broadCastEvent(Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
 							setUserLogin(false);
 							console.log('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 
@@ -40,8 +45,8 @@ define(['app'], function(app){
 
 			function UserRegisterErrorHandle(){
 
-				ajaxNotiService.setNotification(Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
-				console.log(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER + 'from' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
+				broadCastEvent(Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				console.log(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER + ' in ' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 			}
 
 			function setUserLogin(isLogin){
@@ -65,7 +70,7 @@ define(['app'], function(app){
 
 				try{
 					if(userName && password){
-						ajaxNotiService.setNotification(Constant.NOTIFICATION.ACTION.USER_REGISTER.code);
+						broadCastEvent(Constant.NOTIFICATION.ACTION.USER_REGISTER.code);
 						registerService.register().then(function(data){
 														UserRegisterSuccessHandle(data);
 												   },  function(){

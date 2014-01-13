@@ -4,7 +4,7 @@ define(['app'], function(app){
 			restrict : 'C',
 			templateUrl : 'ajaxLoading.html',	
 			
-			controller : function($scope, AjaxNotificationService){
+			controller : function($scope){
 
 				function changeStateToLoading(element){
 					
@@ -37,30 +37,37 @@ define(['app'], function(app){
 					if(code){
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code){
 							changeStateToLoading(element);
-							$scope.api.status.message = Constant.COMMON.LOADING.message;
+							$scope.api.status.message = Constant.NOTIFICATION.COMMON.LOADING.message;
+							return false;
 						}
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code){
 							changeStateToError(element);
 							$scope.api.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.message;
+							return false;
 						}
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
 							changeStateToSuccess(element);
 							$scope.api.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.message;
+							return false;
 						}
 
-						return false;
+						changeStateToError(element);
+						$scope.api.status.message = Constant.NOTIFICATION.COMMON.SERVER_ERROR.message;
+						
 					}
 					else{
 
-						this.status.message = '';
+						$scope.api.status.message = '';
 						return false;
 					}
 				}
 
-				this.code = AjaxNotificationService.status.code;
-				
+				this.status = {
+					message : ''
+				}
+
 				this.updateNotificationStatus = function(element, code){
 					
 					if(code){
@@ -82,9 +89,21 @@ define(['app'], function(app){
 
 			link : function(scope, element, attrs){
 
-				scope.$watch('api.code', function(){
-					scope.api.updateNotificationStatus(element, scope.api.code);
+				scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.code, function(){
+					scope.api.updateNotificationStatus(element, Constant.NOTIFICATION.ACTION.USER_REGISTER.code);
 				});
+
+				scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code, function(){
+					scope.api.updateNotificationStatus(element, Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code);
+				})
+
+				scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code, function(){
+					scope.api.updateNotificationStatus(element, Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code);
+				})
+
+				scope.$on(Constant.NOTIFICATION.COMMON.SERVER_ERROR.code, function(){
+					scope.api.updateNotificationStatus(element, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+				})
 			}
 		}
 	})

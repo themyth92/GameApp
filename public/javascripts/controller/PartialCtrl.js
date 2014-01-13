@@ -2,21 +2,16 @@ define(['app'], function(app){
 
 	var Controller = {
 
-		HomePartialCtrl : function($scope, AjaxNotiService){
+		HomePartialCtrl : function($scope){
 
-			$scope.isLogin 	       = false;
+			this.isLogin 	       = false;
 			
-			$scope.api = {
-				code     : AjaxNotiService.status.code
-			}
-
-			$scope.$watch('api.code', function(){
-
-				if($scope.api.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.code){
-
-					$scope.isLogin  = true;
-				}
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code, function(){
+				
+				$scope.HomePartialCtrl.isLogin  = true;
 			});
+
+			return $scope.HomePartialCtrl = this;
 		},
 
 		NavBarCtrl : function($scope, AjaxNotiService){
@@ -26,10 +21,6 @@ define(['app'], function(app){
 				userName : '',
 				password : ''
 			};
-
-			this.api = {
-				code : AjaxNotiService.status.code
-			}
 			
 			this.loginSubmit = function(){
 				
@@ -41,18 +32,15 @@ define(['app'], function(app){
 				} 
 			};
 
-			$scope.$watch('api.code', function(){
-
-				if($scope.NavBarCtrl.api.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.code){
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.code, function(){
 
 					$scope.NavBarCtrl.isLogin  = true;
-				}
 			})
 
 			return $scope.NavBarCtrl = this;
 		},
 	}
 
-	app.controller('HomePartialCtrl', ['$scope', 'AjaxNotificationService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', 'AjaxNotificationService', Controller.NavBarCtrl]);
+	app.controller('HomePartialCtrl', ['$scope', Controller.HomePartialCtrl]);
+	app.controller('NavBarCtrl', ['$scope', Controller.NavBarCtrl]);
 }) 

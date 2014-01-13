@@ -16,8 +16,3 @@ define([], function(){
 
 	return myApp; 
 })
-
-
-function NavBarCtrl(){
-	
-}
