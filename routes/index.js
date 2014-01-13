@@ -11,6 +11,7 @@ var User       = require('./User/user.js').user(UserModel);
 var Constant   = require('./Constant/constant.js').constant();
 
 function Api(){
+	
 	//declare private attributes
 	var attr = {
 		User : User, 
@@ -25,7 +26,7 @@ function Api(){
 }
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Realtime poll application' });
+  res.render('index', { title: 'Game Application' });
 };
 
 exports.registerUser = function(req, res){

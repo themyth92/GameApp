@@ -4,6 +4,7 @@ Constant = {
 	NOTIFICATION : {
 		ACTION : {
 			USER_REGISTER : {
+				name : 'USER REGISTER',
 				code : '001',
 				ERROR :{
 					USER_ALREADY_REGISTER : {
@@ -69,5 +70,11 @@ Constant = {
 				message : 'Server internal error'
 			}
 		},
+	},
+
+	TIMEOUT : {
+		MAXIMUM_TIME_MESSAGE_APPEAR : {
+			time : 20000,
+		}
 	}
 }

@@ -13,7 +13,6 @@ html
 		script(src = '/vendor/requirejs/require.js' data-main = 'javascripts/main')
 	body(ng-cloak)
 		div.loading.AjaxLoading
-			
 		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation, ng-controller =' NavBarCtrl')
 			div.container
 				div.navbar-header
@@ -44,9 +43,15 @@ html
 										button.btn.btn-primary.btn-block(type='submit') Login		
 										div.form-group
 						li(ng-switch-default)
-							a Welcome {{NavBarCtrl.user.userName}}
+							ul.nav.navbar-nav 
+								li 
+									a Welcome {{NavBarCtrl.user.userName}}
+								li
+									a Logout
 		main.main-content.view-animate(ng-view)
 		script(type = 'text/ng-template', id = 'ajaxLoading.html')
 			div
 				span.reloader
-				span.ajax-status {{api.status.message}}
+				span.ajax-status {{AjaxLoadingDirective.status.message}}
+				span.remove-status(ng-click = 'AjaxLoadingDirective.hideMessage()')
+					strong hide it

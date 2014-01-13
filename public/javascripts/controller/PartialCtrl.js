@@ -2,19 +2,26 @@ define(['app'], function(app){
 
 	var Controller = {
 
-		HomePartialCtrl : function($scope){
+		HomePartialCtrl : function($scope, sessionService){
 
-			this.isLogin 	       = false;
+			this.isLogin 	       = sessionService.state.isLogin;
 			
-			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code, function(){
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.name, function(event, args){
 				
-				$scope.HomePartialCtrl.isLogin  = true;
+				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
+					$scope.HomePartialCtrl.isLogin  = true;
+					sessionService.changeLoginState(true);
+				}
+				else{
+					$scope.HomePartialCtrl.isLogin  = false;
+					sessionService.changeLoginState(true);
+				}
 			});
 
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, AjaxNotiService){
+		NavBarCtrl : function($scope){
 
 			this.user = {
 				isLogin : false,
@@ -32,15 +39,22 @@ define(['app'], function(app){
 				} 
 			};
 
-			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.code, function(){
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.name, function(event, args){
 
-					$scope.NavBarCtrl.isLogin  = true;
+				if(args.code && args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
+
+					$scope.NavBarCtrl.user.isLogin  = true;
+					$scope.NavBarCtrl.user.userName = 'Shit fuck';
+				}
+				else
+
+					$scope.NavBarCtrl.user.isLogin  = false;
 			})
 
 			return $scope.NavBarCtrl = this;
 		},
 	}
 
-	app.controller('HomePartialCtrl', ['$scope', Controller.HomePartialCtrl]);
+	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', Controller.NavBarCtrl]);
 }) 
