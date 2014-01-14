@@ -21,7 +21,24 @@ define(['app'], function(app){
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope){
+		NavBarCtrl : function($scope, loginService, broadCastService){
+
+			function UserLoginSuccessHandle(data){
+				
+				data          = data || {};
+				data.code     = data.code || Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
+
+				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
+			
+			}
+
+			function UserLoginErrorHandle(){
+
+				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
+
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
+			}
 
 			this.user = {
 				isLogin : false,
@@ -29,32 +46,31 @@ define(['app'], function(app){
 				password : ''
 			};
 			
-			this.loginSubmit = function(){
+			this.loginSubmit  = function(){
 				
-				var userName = this.user.userName;
-				var password = this.user.password;
+				var userName  = this.user.userName;
+				var password  = this.user.password;
+				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
 
-				if(userName && password){
-					//add in login service here
+				try{
+					if(userName && password){
+						//add in login service here
+						loginService.loginUser({userName : userName, password : password}).then(function(data){
+
+											   }, function(){
+
+											   });
+					}
+				}
+				catch(error){
+					throw(error + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 				} 
 			};
-
-			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.name, function(event, args){
-
-				if(args.code && args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
-
-					$scope.NavBarCtrl.user.isLogin  = true;
-					$scope.NavBarCtrl.user.userName = 'Shit fuck';
-				}
-				else
-
-					$scope.NavBarCtrl.user.isLogin  = false;
-			})
 
 			return $scope.NavBarCtrl = this;
 		},
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', Controller.NavBarCtrl]);
 }) 

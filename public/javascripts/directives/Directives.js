@@ -43,6 +43,7 @@ define(['app'], function(app){
 					
 					if(code){
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code){
+							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							changeStateToLoading(element);
 							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.LOADING.message;
 							return false;
@@ -66,7 +67,7 @@ define(['app'], function(app){
 
 						changeStateToError(element);
 						$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.SERVER_ERROR.message;
-						
+						return false;
 					}
 					else{
 
@@ -97,7 +98,7 @@ define(['app'], function(app){
 							changeStatusMessage(code, element);
 						}
 						catch(error){
-							console.log(error + ' in ' + Constant.DEBUG.LOCATION.AJAX_LOADING_DIRECTIVE);
+							throw(error + ' in ' + Constant.DEBUG.LOCATION.AJAX_LOADING_DIRECTIVE);
 						}
 					}
 					else
@@ -112,7 +113,7 @@ define(['app'], function(app){
 				scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.name, function(event, args){
 					
 					if(args.code){
-					
+						
 						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
 					}
 				})

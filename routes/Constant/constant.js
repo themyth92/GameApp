@@ -1,23 +1,55 @@
-function Constant(){
-	var constant = {
-		error : {
+var constant = {
+
+	STATUS: {
+	
+		ERROR : {
 			USER_REGISTERED : {
 				code : '101',
 				message : 'User name already registerd'
-			}
+			},
+
+			USER_CREDENTIAL_WRONG_FORMAT : {
+				code : '102',
+				message : 'There is something wrong with user format send to server' 
+			},
+
+			SERVER_ERROR : {
+				code : '502',
+				message : 'Server problem'
+			},
 		},
 
-		success : {
-			USER_REGISTER : {
+		SUCCESS : {
+			USER_REGISTER_SUCCESS : {
 				code : '201',
 				message : 'User register successfully'
 			}
-		}
-	}
+		},
+	},
 
-	this.sendStatus = function(action, isError){
-		return isError ? constant.error[action] : constant.success[action];
+
+
+	DATABASE :{
+		
+		COLLECTION :{
+			user : 'User'
+		},
+
+		ERROR : {
+
+			USER_NAME_DATABASE_ERROR : {
+
+				EXIST_MORE_THAN_ONE_USER_NAME : 'There exist more than one user name in the database'
+			}
+		},
+
+		name : 'gameApp'
+	},
+
+	NUMBER : {
+		NO_USER_EXIST : 0,
+		USER_ALREADY_EXIST : 1,
 	}
 } 
 
-exports.constant = Constant;
+exports.constant = constant;

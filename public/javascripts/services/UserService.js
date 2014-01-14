@@ -2,27 +2,50 @@ define(['app'], function(app){
 
 	var UserRegisterService = function($http, $q){
 
-		var registerService = {};
-		var deffered = $q.defer();
+		return {
+			register : function(data){
 
-		registerService.register = function(data){
+				var deffered = $q.defer();
 			
-			$http({
-				method : 'POST',
-				url : Constant.URL.ACTION.USER_REGISTER.url,
-				data : data
-			}).
-			success(function(data, status, header, config){
-				deffered.resolve(data);
-			}).
-			error(function(){
-				deffered.reject();
-			});
+				$http({
+					method : 'POST',
+					url : Constant.URL.ACTION.USER_REGISTER.url,
+					data : data
+				}).
+				success(function(data, status, header, config){
+					deffered.resolve(data);
+				}).
+				error(function(){
+					deffered.reject();
+				});
 
-			return deffered.promise;
+				return deffered.promise;		
+			}
 		}
+	};
 
-		return registerService;
+	var UserLoginService = function($http, $q){
+
+		return {
+			loginUser : function(data){
+
+				var deffered = $q.defer();
+
+				$http({
+					method : 'POST',
+					url : Constant.URL.ACTION.USER_LOGIN.url,
+					data : data
+				}).
+				success(function(data, status, header, config){
+					deffered.resolve(data);
+				}).
+				error(function(){
+					deffered.reject();
+				});
+
+				return deffered.promise;	
+			}
+		}
 	};
 
 	var BroadCastService = function($rootScope){
@@ -30,13 +53,19 @@ define(['app'], function(app){
 		return {
 			broadCastEvent : function(eventName, code, data){
 
-				if(data){
-					$rootScope.$broadcast(eventName, {code : code, data : data});
-					console.log('Broadcast event ' + eventName + ' with code = ' + code);	
+				if(code){
+					if(data){
+						$rootScope.$broadcast(eventName, {code : code, data : data});
+						console.log('Broadcast event ' + eventName + ' with code = ' + code);	
+					}
+					else{
+						$rootScope.$broadcast(eventName, {code : code});
+						console.log('Broadcast event ' + eventName + ' with code = ' + code);
+					}
 				}
 				else{
-					$rootScope.$broadcast(eventName, {code : code});
-					console.log('Broadcast event ' + eventName + ' with code = ' + code);
+					$rootScope.$broadcast(eventName);
+					console.log('Broadcast event ' + eventName);
 				}
 			}
 		}
@@ -59,6 +88,7 @@ define(['app'], function(app){
 	}
 	
 	app.factory('UserRegisterService', ['$http', '$q', UserRegisterService]);
+	app.factory('UserLoginService', ['$http', '$q', UserLoginService]);
 	app.factory('BroadCastService', ['$rootScope', BroadCastService]);
 	app.factory('StoreSessionService', StoreSessionService);
 }) 

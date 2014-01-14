@@ -1,8 +1,11 @@
 var Constant = Constant || {};
 
 Constant = {
+	
 	NOTIFICATION : {
+		
 		ACTION : {
+			
 			USER_REGISTER : {
 				name : 'USER REGISTER',
 				code : '001',
@@ -16,6 +19,23 @@ Constant = {
 					USER_REGISTER_SUCCESS : {
 						code : '201',
 						message : 'User register successfully'
+					}
+				}
+			},
+
+			USER_LOGIN :{
+				name  : 'USER LOGIN', 
+				login : '002',
+				ERROR :{
+					USER_LOGIN_FAIL : {
+						code    : '102',
+						message : 'User name or password does not match' 
+					},
+				},
+				SUCCESS : {
+					USER_LOGIN_SUCCESS : {
+						code : '202',
+						message : 'User login successfully'
 					}
 				}
 			}
@@ -36,6 +56,9 @@ Constant = {
 		ACTION :{
 			USER_REGISTER : {
 				url : '/user/register'
+			},
+			USER_LOGIN : {
+				url : '/user/login'
 			}
 		}
 	},
@@ -56,7 +79,8 @@ Constant = {
 	DEBUG :{
 		LOCATION :{
 			USER_REGISTER_CTRL : 'user register controller',
-			AJAX_LOADING_DIRECTIVE   : 'ajax loading directive'
+			AJAX_LOADING_DIRECTIVE   : 'ajax loading directive',
+			NAV_BAR_CTRL : 'nav bar controller'
 		},
 		ERROR :{
 
