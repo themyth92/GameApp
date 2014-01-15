@@ -25,7 +25,7 @@ Constant = {
 
 			USER_LOGIN :{
 				name  : 'USER LOGIN', 
-				login : '002',
+				code : '002',
 				ERROR :{
 					USER_LOGIN_FAIL : {
 						code    : '102',

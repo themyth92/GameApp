@@ -34,12 +34,12 @@ html
 								b.caret
 							ul.dropdown-menu.row
 								div.col-lg-12
-									form(role='form' ng-submit = 'NavBartrl.loginSubmit()')
+									form(role='form' ng-submit = 'NavBarCtrl.loginSubmit()')
 										div.form-group
 										div.form-group
-											input.form-control#login-user-name(type='text', placeholder='Enter user name', required, ng-maxlength = '20', ng-model = 'NavBarCtrl.user.userName')
+											input.form-control(type='text', placeholder='Enter user name', required, ng-maxlength = '20', ng-model = 'NavBarCtrl.user.userName')
 										div.form-group
-											input.form-control#login-password(type='password', placeholder='Enter password', required, ng-maxlength = '20', ng-model = 'NavBarCtrl.user.password')
+											input.form-control(type='password', placeholder='Enter password', required, ng-maxlength = '20', ng-model = 'NavBarCtrl.user.password')
 										button.btn.btn-primary.btn-block(type='submit') Login		
 										div.form-group
 						li(ng-switch-default)

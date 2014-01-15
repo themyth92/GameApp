@@ -42,7 +42,10 @@ define(['app'], function(app){
 				function changeStatusMessage(code, element){
 					
 					if(code){
-						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code){
+
+						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code ||
+						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code){
+
 							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							changeStateToLoading(element);
 							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.LOADING.message;
@@ -50,10 +53,10 @@ define(['app'], function(app){
 						}
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code){
+							
 							changeStateToError(element);
 							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.message;
-							hideMessageTimeout(element);
-							
+							hideMessageTimeout(element);	
 							return false;
 						}
 
@@ -65,6 +68,22 @@ define(['app'], function(app){
 							return false;
 						}
 
+						if(code == Constant.NOTIFICATION.ACTION.USER_LOGIN.ERROR.USER_LOGIN_FAIL.code){
+
+							changeStateToError(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.USER_LOGIN.ERROR.USER_LOGIN_FAIL.message;
+							hideMessageTimeout(element);	
+							return false;
+						}
+
+						if(code == Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code){
+
+							changeStateToSuccess(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.message;
+							hideMessageTimeout(element);	
+							return false;
+						}
+
 						changeStateToError(element);
 						$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.SERVER_ERROR.message;
 						return false;
@@ -72,6 +91,7 @@ define(['app'], function(app){
 					else{
 
 						$scope.AjaxLoadingDirective.status.message = '';
+						$scope.AjaxLoadingDirective.changeStateToNormal(element);
 						return false;
 					}
 				}
@@ -114,6 +134,14 @@ define(['app'], function(app){
 					
 					if(args.code){
 						
+						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
+					}
+				})
+
+				scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGIN.name, function(event, args){
+
+					if(args.code){
+
 						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
 					}
 				})

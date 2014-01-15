@@ -31,11 +31,19 @@ define(['app'], function(app){
 
 					case Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code :
 
-						   //need add data here about user login credential
-						   (data.data && data.data.userName && data.data._id) ? data.code = data.code : data.code = Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
-						   broadCastService.broadCastEvent(eventName, data.code, data.data);
-						   sessionService.changeLoginState(true);
-						   setUserLogin(true);
+						   if(data.data && data.data.userName && data.data._id){
+
+						   		broadCastService.broadCastEvent(eventName, data.code, data.data);
+						   		sessionService.changeLoginState(true);
+						   		setUserLogin(true);
+						   }
+						   else{
+						   		data.code = Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
+						   		broadCastEvent.broadCastEvent(eventName, data.code); 
+						   		sessionService.changeLoginState(false);
+						   		setUserLogin(false); 
+						   } 
+
 						   break;
 					
 					default :
@@ -44,7 +52,6 @@ define(['app'], function(app){
 							sessionService.changeLoginState(false);
 							setUserLogin(false);
 							throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
-
 				}			
 			}
 
@@ -91,7 +98,7 @@ define(['app'], function(app){
 					throw(error + ' in ' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 				}		
 			};
-
+			
 			return $scope.UserRegisterCtrl = this;
 		},
 	}

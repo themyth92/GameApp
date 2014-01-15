@@ -21,15 +21,49 @@ define(['app'], function(app){
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, loginService, broadCastService){
+		NavBarCtrl : function($scope, loginService, broadCastService, sessionService){
 
 			function UserLoginSuccessHandle(data){
-				
+
 				data          = data || {};
 				data.code     = data.code || Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
 
 				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
-			
+				
+				switch(data.code){
+					
+					case  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
+							
+							broadCastService.broadCastEvent(eventName, data.code);
+						//	setUserLogin(false);
+							sessionService.changeLoginState(false);
+							throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
+						   
+						    break;
+
+					case Constant.NOTIFICATION.ACTION.USER_LOGIN.ERROR.USER_LOGIN_FAIL.code :
+
+						   broadCastService.broadCastEvent(eventName, data.code);
+						   sessionService.changeLoginState(false);
+						//   setUserLogin(false);
+						   break;
+
+					case Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_REGISTER_SUCCESS.code :
+
+						   //need add data here about user login credential
+						   broadCastService.broadCastEvent(eventName, data.code);
+						   sessionService.changeLoginState(true);
+						//   setUserLogin(true);
+						   break;
+					
+					default :
+
+							broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+							sessionService.changeLoginState(false);
+						//	setUserLogin(false);
+							throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
+
+				}			
 			}
 
 			function UserLoginErrorHandle(){
@@ -40,25 +74,34 @@ define(['app'], function(app){
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 			}
 
+			function setUserLogin(isLogin){
+				
+				if(isLogin)
+					$scope.NavBarCtrl.user.isLogin = true;
+				else
+					$scope.NavBarCtrl.user.isLogin = false;
+			}
+
 			this.user = {
-				isLogin : false,
+				isLogin : sessionService.state,
 				userName : '',
 				password : ''
 			};
-			
+
 			this.loginSubmit  = function(){
-				
+
 				var userName  = this.user.userName;
 				var password  = this.user.password;
 				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
 
 				try{
 					if(userName && password){
-						//add in login service here
+
+						broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.ACTION.USER_LOGIN.code);
 						loginService.loginUser({userName : userName, password : password}).then(function(data){
-
+													UserLoginSuccessHandle(data);
 											   }, function(){
-
+											   		UserLoginErrorHandle();
 											   });
 					}
 				}
@@ -72,5 +115,5 @@ define(['app'], function(app){
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', Controller.NavBarCtrl]);
 }) 
