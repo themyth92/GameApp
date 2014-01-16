@@ -21,6 +21,11 @@ var constant = {
 			SERVER_ERROR : {
 				code : '502',
 				message : 'Server problem'
+			},
+
+			SESSION_NOT_EXIST :{
+				code : '103',
+				message : 'Session not exist'
 			}
 		},
 
@@ -34,6 +39,11 @@ var constant = {
 			USER_LOGIN_SUCCESS : {
 				code : '202',
 				message : 'User login successfully'
+			},
+
+			SESSION_EXIST : {
+				code : '203',
+				message : 'Session exist'
 			}
 		},
 	},

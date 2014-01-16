@@ -83,6 +83,16 @@ function Api(){
 			
 			res.json(dataSendBack);	
 		}
+	}
+
+	this.authenticateUser = function(req, res){
+		
+		var dataSendBack;
+
+		if(attr.user.authenticateUser(req))
+			return {
+			
+			}
 	}	
 };
 
