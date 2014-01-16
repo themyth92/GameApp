@@ -17,6 +17,7 @@ define([], function(){
 	myApp.run(['StoreSessionService', function(sessionService){
 		
 		sessionService.authenticateSession().then(function(data){
+			console.log(data);
 		//	sessionService.changeLoginState(true, 'vcl');
 		}, function(){
 		//	sessionService.changeLoginState(false);

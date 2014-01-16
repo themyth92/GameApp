@@ -87,12 +87,53 @@ function Api(){
 
 	this.authenticateUser = function(req, res){
 		
-		var dataSendBack;
+		var dataSendBack, promise;
+		console.log(req.session);
+		var promise = attr.user.authenticateUser(req);
 
-		if(attr.user.authenticateUser(req))
-			return {
-			
+		if(promise){
+
+			promise.then(function(doc){
+
+				var data;
+				
+				if(data = attr.user.authenticateUserSuccessCallBack(doc)){
+
+					dataSendBack = {
+						code : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.code,
+						message : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.message,
+						data   : {
+							_id : data._id,
+							userName : data.userName
+						}
+					}
+				}
+				else
+					dataSendBack = {
+						code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+						message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message	
+					}
+
+				res.json(dataSendBack);
+
+			}, function(err){
+
+				dataSendBack = {
+					code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+					message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message	
+				}
+
+				res.json(dataSendBack);
+			})
+		}
+		else{
+			dataSendBack = {
+				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
 			}
+
+			res.json(dataSendBack);
+		}
 	}	
 };
 
@@ -103,9 +144,4 @@ exports.index = function(req, res){
 var Api = new Api();
 exports.registerUser = Api.registerUser;
 exports.loginUser    = Api.loginUser;
-exports.authenticateUser = function(req, res){
-	res.json({
-		code : '203',
-		message : 'session exist'
-	})
-}
+exports.authenticateUser = Api.authenticateUser;

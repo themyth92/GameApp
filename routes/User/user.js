@@ -188,6 +188,29 @@ function User(UserModel, bCrypt){
 			return serverErrorCallBack();
 		}
 	}
+
+	this.authenticateUser = function(req){
+		
+		if(req.session.user){
+			
+			var userName = req.session.user;
+			var query = UserModel.find({userNane : userName}, '_id userName');
+
+			return query.exec();
+		}
+		else
+			return false;
+	}
+
+	this.authenticateUserSuccessCallBack = function(doc){
+
+		if(doc._id && doc.userName){
+			
+			return {id : doc._id, userName : doc.userName};
+		}
+		else
+			return false;
+	}
 } 
 
 exports.user = User;
