@@ -16,11 +16,30 @@ define([], function(){
 
 	myApp.run(['StoreSessionService', function(sessionService){
 		
+		function checkDataFromAuthentication(data){
+		
+			if(data){
+
+				if(data.data){
+					
+					if(data.data._id && data.data.userName){
+
+						var userName = data.data.userName;
+						sessionService.changeLoginState(true, userName);
+
+						return true;
+					}
+				}		
+			}
+
+			sessionService.changeLoginState(false);
+			return false;		
+		}
+
 		sessionService.authenticateSession().then(function(data){
-			console.log(data);
-		//	sessionService.changeLoginState(true, 'vcl');
+			checkDataFromAuthentication(data);
 		}, function(){
-		//	sessionService.changeLoginState(false);
+			sessionService.changeLoginState(false);
 		})
 	}])
 

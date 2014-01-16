@@ -48,6 +48,27 @@ define(['app'], function(app){
 		}
 	};
 
+	var UserLogoutService = function($http, $q){
+
+		return {
+			logoutUser : function(){
+
+				var deffered = $q.defer();
+
+				$http({
+					method: 'POST',
+					url : Constant.URL.ACTION.USER_LOGOUT.url
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(){
+					deffered.reject();
+				});
+			}
+		}
+	}
+
 	var BroadCastService = function($rootScope){
 		
 		return {
@@ -111,4 +132,5 @@ define(['app'], function(app){
 	app.factory('UserLoginService', ['$http', '$q', UserLoginService]);
 	app.factory('BroadCastService', ['$rootScope', BroadCastService]);
 	app.factory('StoreSessionService',['$http', '$q', StoreSessionService]);
+	app.factory('UserLogoutService', ['$http', '$q', UserLogoutService]);
 }) 

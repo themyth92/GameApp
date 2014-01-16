@@ -88,7 +88,7 @@ function Api(){
 	this.authenticateUser = function(req, res){
 		
 		var dataSendBack, promise;
-		console.log(req.session);
+
 		var promise = attr.user.authenticateUser(req);
 
 		if(promise){
@@ -96,7 +96,7 @@ function Api(){
 			promise.then(function(doc){
 
 				var data;
-				
+
 				if(data = attr.user.authenticateUserSuccessCallBack(doc)){
 
 					dataSendBack = {

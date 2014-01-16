@@ -48,9 +48,7 @@ function User(UserModel, bCrypt){
 
 	function generateUserSession(req){
 
-		req.session.regenerate(function(){
-			req.session.user = req.body.userName;
-		})
+		req.session.userName = req.body.userName;
 	}
 
 	this.storeRegisterUser = function(req, res){
@@ -190,11 +188,12 @@ function User(UserModel, bCrypt){
 	}
 
 	this.authenticateUser = function(req){
-		
-		if(req.session.user){
-			
-			var userName = req.session.user;
-			var query = UserModel.find({userNane : userName}, '_id userName');
+	
+		if(req.session.userName){
+				
+			var userName = req.session.userName;
+
+			var query = UserModel.find({userName : userName} , '_id userName');
 
 			return query.exec();
 		}
@@ -203,10 +202,30 @@ function User(UserModel, bCrypt){
 	}
 
 	this.authenticateUserSuccessCallBack = function(doc){
+	
+		if(doc){
 
-		if(doc._id && doc.userName){
-			
-			return {id : doc._id, userName : doc.userName};
+			switch(doc.length){
+
+				case Constant.constant.NUMBER.NO_USER_EXIST : 
+					return false
+				break;
+				
+				case Constant.constant.NUMBER.USER_ALREADY_EXIST:
+
+					if(doc[0]._id && doc[0].userName){
+						return {_id : doc[0]._id, userName : doc[0].userName};
+					}
+					else
+						return false;
+				break;
+				
+				default:
+					throw(Constant.constant.DATABASE.ERROR.USER_NAME_DATABASE_ERROR.EXIST_MORE_THAN_ONE_USER_NAME);
+					return false
+				break;
+			}
+
 		}
 		else
 			return false;

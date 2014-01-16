@@ -6,6 +6,7 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
+var MongoStore = require('connect-mongo')(express);
 var app = express();
 
 // all environments
@@ -17,8 +18,13 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
+app.use(express.bodyParser()) ;
 app.use(express.cookieParser());  
-app.use(express.session({ secret: 'gameApp', cookie: {maxAge: 100000}}));
+app.use(express.session({ secret: 'gameApp' , store : new MongoStore({
+																	db : 'gameApp',
+																	host :'127.0.0.1',
+																	port : 27017
+																	 }), cookie: {maxAge: 600*10000}}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

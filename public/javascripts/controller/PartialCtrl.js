@@ -10,11 +10,9 @@ define(['app'], function(app){
 				
 				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
 					$scope.HomePartialCtrl.isLogin  = true;
-				//	sessionService.changeLoginState(true);
 				}
 				else{
 					$scope.HomePartialCtrl.isLogin  = false;
-				//	sessionService.changeLoginState(true);
 				}
 			});
 
@@ -22,18 +20,16 @@ define(['app'], function(app){
 				
 				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code){
 					$scope.HomePartialCtrl.isLogin  = true;
-				//	sessionService.changeLoginState(true);
 				}
 				else{
 					$scope.HomePartialCtrl.isLogin  = false;
-				//	sessionService.changeLoginState(true);
 				}
 			});
 
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, loginService, broadCastService, sessionService){
+		NavBarCtrl : function($scope, loginService, broadCastService, sessionService, userLogoutService){
 
 			function UserLoginSuccessHandle(data){
 				
@@ -136,6 +132,15 @@ define(['app'], function(app){
 		    	}
 		    })
 
+		    this.logoutSubmit = function(){
+
+		    	userLogoutService.logoutUser().then(function(data){
+
+		    	}, function(err){
+		    		
+		    	})
+		    }
+
 			$scope.$watch(function(){return sessionService.state.isLogin}, function(){$scope.NavBarCtrl.user.isLogin = sessionService.state.isLogin; $scope.NavBarCtrl.user.userName = sessionService.state.userName});
 
 			return $scope.NavBarCtrl = this;
@@ -143,5 +148,5 @@ define(['app'], function(app){
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
 }) 

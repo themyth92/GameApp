@@ -38,6 +38,11 @@ Constant = {
 						message : 'User login successfully'
 					}
 				}
+			},
+
+			USER_LOGOUT : {
+				name :'USER LOGOUT',
+				code : '004'
 			}
 		},
 		COMMON :{
@@ -62,6 +67,9 @@ Constant = {
 			},
 			USER_AUTHENTICATE :{
 				url : '/user/authenticate'
+			},
+			USER_LOGOUT : {
+				url : '/user/logout'
 			}
 		}
 	},
