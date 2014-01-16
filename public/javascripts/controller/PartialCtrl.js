@@ -10,11 +10,11 @@ define(['app'], function(app){
 				
 				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code){
 					$scope.HomePartialCtrl.isLogin  = true;
-					sessionService.changeLoginState(true);
+				//	sessionService.changeLoginState(true);
 				}
 				else{
 					$scope.HomePartialCtrl.isLogin  = false;
-					sessionService.changeLoginState(true);
+				//	sessionService.changeLoginState(true);
 				}
 			});
 
@@ -22,11 +22,11 @@ define(['app'], function(app){
 				
 				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code){
 					$scope.HomePartialCtrl.isLogin  = true;
-					sessionService.changeLoginState(true);
+				//	sessionService.changeLoginState(true);
 				}
 				else{
 					$scope.HomePartialCtrl.isLogin  = false;
-					sessionService.changeLoginState(true);
+				//	sessionService.changeLoginState(true);
 				}
 			});
 
@@ -47,15 +47,15 @@ define(['app'], function(app){
 					case  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
 							
 							broadCastService.broadCastEvent(eventName, data.code);
+							sessionService.changeLoginState(false, '');
 							setUserLogin(false);
-							sessionService.changeLoginState(false);
 							throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
 						    break;
 
 					case Constant.NOTIFICATION.ACTION.USER_LOGIN.ERROR.USER_LOGIN_FAIL.code :
-
+						   
+						   sessionService.changeLoginState(false, '');
 						   broadCastService.broadCastEvent(eventName, data.code);
-						   sessionService.changeLoginState(false);
 						   setUserLogin(false);
 						   break;
 
@@ -63,14 +63,14 @@ define(['app'], function(app){
 
 						   //need add data here about user login credential
 						   broadCastService.broadCastEvent(eventName, data.code);
-						   sessionService.changeLoginState(true);
+						   sessionService.changeLoginState(true, $scope.NavBarCtrl.user.userName);
 						   setUserLogin(true);
 						   break;
 					
 					default :
 
 						   broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
-						   sessionService.changeLoginState(false);
+						   sessionService.changeLoginState(false, '');
 						   setUserLogin(false);
 						   throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 						   break;
@@ -136,15 +136,12 @@ define(['app'], function(app){
 		    	}
 		    })
 
+			$scope.$watch(function(){return sessionService.state.isLogin}, function(){$scope.NavBarCtrl.user.isLogin = sessionService.state.isLogin; $scope.NavBarCtrl.user.userName = sessionService.state.userName});
+
 			return $scope.NavBarCtrl = this;
 		},
-
-		MainCtrl : function($scope){
-
-		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', Controller.NavBarCtrl]);
-	app.controller('MainCtrl', ['$scope', Controller.MainCtrl]);
 }) 

@@ -93,3 +93,9 @@ exports.index = function(req, res){
 var Api = new Api();
 exports.registerUser = Api.registerUser;
 exports.loginUser    = Api.loginUser;
+exports.authenticateUser = function(req, res){
+	res.json({
+		code : '203',
+		message : 'session exist'
+	})
+}

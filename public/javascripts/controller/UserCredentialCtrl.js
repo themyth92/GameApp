@@ -17,7 +17,7 @@ define(['app'], function(app){
 							
 							broadCastService.broadCastEvent(eventName, data.code);
 							setUserLogin(false);
-							sessionService.changeLoginState(false);
+							sessionService.changeLoginState(false, '');
 							throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
 						   
 						    break;
@@ -25,7 +25,7 @@ define(['app'], function(app){
 					case Constant.NOTIFICATION.ACTION.USER_REGISTER.ERROR.USER_ALREADY_REGISTER.code :
 
 						   broadCastService.broadCastEvent(eventName, data.code);
-						   sessionService.changeLoginState(false);
+						   sessionService.changeLoginState(false, '');
 						   setUserLogin(false);
 						   break;
 
@@ -34,13 +34,13 @@ define(['app'], function(app){
 						   if(data.data && data.data.userName && data.data._id){
 
 						   		broadCastService.broadCastEvent(eventName, data.code, data.data);
-						   		sessionService.changeLoginState(true);
+						   		sessionService.changeLoginState(true, $scope.UserRegisterCtrl.user.userName);
 						   		setUserLogin(true);
 						   }
 						   else{
 						   		data.code = Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
 						   		broadCastEvent.broadCastEvent(eventName, data.code); 
-						   		sessionService.changeLoginState(false);
+						   		sessionService.changeLoginState(false, '');
 						   		setUserLogin(false); 
 						   } 
 
@@ -49,7 +49,7 @@ define(['app'], function(app){
 					default :
 
 							broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
-							sessionService.changeLoginState(false);
+							sessionService.changeLoginState(false, '');
 							setUserLogin(false);
 							throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 				}			

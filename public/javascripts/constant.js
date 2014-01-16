@@ -59,6 +59,9 @@ Constant = {
 			},
 			USER_LOGIN : {
 				url : '/user/login'
+			},
+			USER_AUTHENTICATE :{
+				url : '/user/authenticate'
 			}
 		}
 	},

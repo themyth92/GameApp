@@ -71,17 +71,37 @@ define(['app'], function(app){
 		}
 	};
 
-	var StoreSessionService = function(){
+	var StoreSessionService = function($http, $q){
 
 		var sessionService = {};
 		
 		sessionService.state = {
 			
-			isLogin  : false
+			isLogin  : false,
+			userName : ''
 		}
 
-		sessionService.changeLoginState = function(state){
+		sessionService.changeLoginState = function(state, userName){
 			sessionService.state.isLogin = state;
+			sessionService.state.userName = userName;
+		}
+
+		sessionService.authenticateSession = function(){
+
+			var deffered = $q.defer();
+
+			$http({
+					method : 'GET',
+					url : Constant.URL.ACTION.USER_AUTHENTICATE.url
+				}).
+				success(function(data, status, header, config){
+					deffered.resolve(data);
+				}).
+				error(function(){
+					deffered.reject();
+				});
+
+			return deffered.promise;
 		}
 
 		return sessionService;
@@ -90,5 +110,5 @@ define(['app'], function(app){
 	app.factory('UserRegisterService', ['$http', '$q', UserRegisterService]);
 	app.factory('UserLoginService', ['$http', '$q', UserLoginService]);
 	app.factory('BroadCastService', ['$rootScope', BroadCastService]);
-	app.factory('StoreSessionService', StoreSessionService);
+	app.factory('StoreSessionService',['$http', '$q', StoreSessionService]);
 }) 
