@@ -18,13 +18,25 @@ define(['app'], function(app){
 				}
 			});
 
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGIN.name, function(event, args){
+				
+				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code){
+					$scope.HomePartialCtrl.isLogin  = true;
+					sessionService.changeLoginState(true);
+				}
+				else{
+					$scope.HomePartialCtrl.isLogin  = false;
+					sessionService.changeLoginState(true);
+				}
+			});
+
 			return $scope.HomePartialCtrl = this;
 		},
 
 		NavBarCtrl : function($scope, loginService, broadCastService, sessionService){
 
 			function UserLoginSuccessHandle(data){
-
+				
 				data          = data || {};
 				data.code     = data.code || Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
 
@@ -35,42 +47,40 @@ define(['app'], function(app){
 					case  Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code :
 							
 							broadCastService.broadCastEvent(eventName, data.code);
-						//	setUserLogin(false);
+							setUserLogin(false);
 							sessionService.changeLoginState(false);
 							throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
-						   
 						    break;
 
 					case Constant.NOTIFICATION.ACTION.USER_LOGIN.ERROR.USER_LOGIN_FAIL.code :
 
 						   broadCastService.broadCastEvent(eventName, data.code);
 						   sessionService.changeLoginState(false);
-						//   setUserLogin(false);
+						   setUserLogin(false);
 						   break;
 
-					case Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_REGISTER_SUCCESS.code :
+					case Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code :
 
 						   //need add data here about user login credential
 						   broadCastService.broadCastEvent(eventName, data.code);
 						   sessionService.changeLoginState(true);
-						//   setUserLogin(true);
+						   setUserLogin(true);
 						   break;
 					
 					default :
 
-							broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
-							sessionService.changeLoginState(false);
-						//	setUserLogin(false);
-							throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
-
+						   broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+						   sessionService.changeLoginState(false);
+						   setUserLogin(false);
+						   throw('Unhandle case in '  +  Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
+						   break;
 				}			
 			}
 
 			function UserLoginErrorHandle(){
 
 				var eventName = Constant.NOTIFICATION.ACTION.USER_LOGIN.name;
-
-				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.code);
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 			}
 
@@ -83,7 +93,7 @@ define(['app'], function(app){
 			}
 
 			this.user = {
-				isLogin : sessionService.state,
+				isLogin : sessionService.state.isLogin,
 				userName : '',
 				password : ''
 			};
@@ -110,10 +120,31 @@ define(['app'], function(app){
 				} 
 			};
 
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_REGISTER.name, function(event, args){
+  
+         		if(args.code && 
+         		   args.code == Constant.NOTIFICATION.ACTION.USER_REGISTER.SUCCESS.USER_REGISTER_SUCCESS.code &&
+         		   args.data &&
+         		   args.data.userName){
+ 					
+		        	$scope.NavBarCtrl.user.isLogin  = true;
+		        	$scope.NavBarCtrl.user.userName = args.data.userName;
+		        }
+		        else{
+
+		          $scope.NavBarCtrl.user.isLogin  = false;
+		    	}
+		    })
+
 			return $scope.NavBarCtrl = this;
 		},
+
+		MainCtrl : function($scope){
+
+		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', Controller.NavBarCtrl]);
+	app.controller('MainCtrl', ['$scope', Controller.MainCtrl]);
 }) 

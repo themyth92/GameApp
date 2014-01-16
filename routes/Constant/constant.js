@@ -8,26 +8,35 @@ var constant = {
 				message : 'User name already registerd'
 			},
 
-			USER_CREDENTIAL_WRONG_FORMAT : {
+			USER_LOGIN :{
 				code : '102',
+				message : 'User name login fail'
+			},
+
+			USER_CREDENTIAL_WRONG_FORMAT : {
+				code : '501',
 				message : 'There is something wrong with user format send to server' 
 			},
 
 			SERVER_ERROR : {
 				code : '502',
 				message : 'Server problem'
-			},
+			}
 		},
 
 		SUCCESS : {
+			
 			USER_REGISTER_SUCCESS : {
 				code : '201',
 				message : 'User register successfully'
+			},
+
+			USER_LOGIN_SUCCESS : {
+				code : '202',
+				message : 'User login successfully'
 			}
 		},
 	},
-
-
 
 	DATABASE :{
 		

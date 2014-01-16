@@ -58,7 +58,6 @@ define(['app'], function(app){
 			function UserRegisterErrorHandle(){
 
 				var eventName = Constant.NOTIFICATION.ACTION.USER_REGISTER.name;
-
 				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 			}
@@ -98,6 +97,16 @@ define(['app'], function(app){
 					throw(error + ' in ' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 				}		
 			};
+
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGIN.name, function(event, args){
+				
+				if (args.code && args.code == Constant.NOTIFICATION.ACTION.USER_LOGIN.SUCCESS.USER_LOGIN_SUCCESS.code){
+					$scope.UserRegisterCtrl.user.isLogin  = true;
+				}
+				else{
+					$scope.UserRegisterCtrl.user.isLogin  = false;
+				}
+			});
 			
 			return $scope.UserRegisterCtrl = this;
 		},

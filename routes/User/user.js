@@ -3,8 +3,6 @@ var Constant = require('../Constant/constant');
 function User(UserModel, bCrypt){
 	
 	//private varibles
-	var attr = {
-	}
 
 	function returnMessageToClientOnRegister(isExist){
 		
@@ -17,6 +15,24 @@ function User(UserModel, bCrypt){
 			return {
 				code : Constant.constant.STATUS.SUCCESS.USER_REGISTER_SUCCESS.code,
 				message : Constant.constant.STATUS.SUCCESS.USER_REGISTER_SUCCESS.message
+			}
+	}
+
+	function returnMessageToClienOnLogin(isSuccess){
+
+		if(isSuccess)
+			
+			return {
+
+				code : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.code,
+				message : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.message
+			}
+		else
+			
+			return {
+
+				code : Constant.constant.STATUS.ERROR.USER_LOGIN.code,
+				message : Constant.constant.STATUS.ERROR.USER_LOGIN.message
 			}
 	}
 
@@ -66,7 +82,7 @@ function User(UserModel, bCrypt){
 				}	
 				else{
 
-					res.json(checkUserExistErrorCallback(err));
+					res.json(serverErrorCallBack(err));
 				}
 			});	
 		}		
@@ -74,7 +90,7 @@ function User(UserModel, bCrypt){
 			return false;
 	}
 
-	this.checkUserExistErrorCallback = function(err){
+	this.serverErrorCallBack = function(err){
 
 		if(err){
 			throw(err);
@@ -87,6 +103,7 @@ function User(UserModel, bCrypt){
 	}	
 
 	this.checkUserExistSuccessCallback = function(doc){
+		
 		if(doc){
 			switch(doc.length){
 
@@ -105,7 +122,7 @@ function User(UserModel, bCrypt){
 			}
 		}
 		else
-			return checkUserExistErrorCallback();
+			return serverErrorCallBack();
 	}
 
 	//public methods
@@ -120,6 +137,56 @@ function User(UserModel, bCrypt){
 
 		var query    = UserModel.find({userName : userName});
 		return query.exec();
+	}
+
+	this.loginUser = function(req){
+
+		var userName, password;
+
+		if(req.body.userName && req.body.password)	
+			userName = req.body.userName, password = req.body.password;
+		else 
+			return false;
+
+		var query = UserModel.find({userName : userName}, 'password');
+		return query.exec();
+	}
+
+	this.loginUserSuccessCallBack = function(doc, req){
+
+		if(doc){
+			
+			switch(doc.length){
+
+				case Constant.constant.NUMBER.NO_USER_EXIST : 
+					return returnMessageToClienOnLogin(false);
+				break;
+				
+				case Constant.constant.NUMBER.USER_ALREADY_EXIST:
+
+					var hashedPassword = doc[0].password;
+					var password       = req.body.password;
+					
+					if(comparePassword(password, hashedPassword)){
+						
+						generateUserSession(req);
+						return returnMessageToClienOnLogin(true);
+					}
+					else
+						return returnMessageToClienOnLogin(false);
+
+				break;
+				
+				default:
+
+					throw(Constant.constant.DATABASE.ERROR.USER_NAME_DATABASE_ERROR.EXIST_MORE_THAN_ONE_USER_NAME);
+					return returnMessageToClienOnLogin(false);
+				break;
+			}
+		}
+		else{
+			return serverErrorCallBack();
+		}
 	}
 } 
 

@@ -1,8 +1,6 @@
-
 /*
  * GET home page.
  */
-
 var Constant   = require('./Constant/constant.js');
 var mongoose   = require('mongoose');
 var db         = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
@@ -19,17 +17,10 @@ function Api(){
 		user : new User(UserModel, bCrypt), 
 	};
 
-	function generateSession(req){
-		var userName = req.body.userName;
-		req.session.regenerate(function(){
-			req.session.user = userName;
-		})
-	}
-
 	//declare public methods
 	this.registerUser = function(req, res){
 
-		var user, password, promise, dataSendBack = {};
+		var promise, dataSendBack = {};
 		
 		promise = attr.user.registerUser(req);
 		
@@ -49,7 +40,7 @@ function Api(){
 				}
 			}, function(err){
 
-				dataSendBack = attr.user.checkUserExistErrorCallBack(err);
+				dataSendBack = attr.user.serverErrorCallBack(err);
 				res.json(dataSendBack);
 			})	
 		}
@@ -62,7 +53,37 @@ function Api(){
 			res.json(dataSendBack);
 		}
 		
-	};	
+	};
+
+	this.loginUser = function(req, res){
+
+		var user, password, promise, dataSendBack;
+
+		promise = attr.user.loginUser(req);
+
+		if(promise){
+			
+			promise.then(function(doc){
+				
+				dataSendBack = attr.user.loginUserSuccessCallBack(doc, req);
+				res.json(dataSendBack);
+
+			}, function(err){
+
+				dataSendBack = attr.user.serverErrorCallBack(err);
+				res.json(dataSendBack);
+
+			})
+		}
+		else{
+
+			dataSendBack = {
+							code : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
+							message : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.message}; 
+			
+			res.json(dataSendBack);	
+		}
+	}	
 };
 
 exports.index = function(req, res){
@@ -71,3 +92,4 @@ exports.index = function(req, res){
 
 var Api = new Api();
 exports.registerUser = Api.registerUser;
+exports.loginUser    = Api.loginUser;
