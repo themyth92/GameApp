@@ -107,6 +107,11 @@ define(['app'], function(app){
 					$scope.UserRegisterCtrl.user.isLogin  = false;
 				}
 			});
+
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGOUT.name, function(){
+			
+				$scope.UserRegisterCtrl.user.isLogin  = false;
+			});
 			
 			return $scope.UserRegisterCtrl = this;
 		},

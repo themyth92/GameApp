@@ -26,6 +26,10 @@ define(['app'], function(app){
 				}
 			});
 
+			$scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGOUT.name, function(){
+				$scope.HomePartialCtrl.isLogin  = false;
+			});
+
 			return $scope.HomePartialCtrl = this;
 		},
 
@@ -134,10 +138,18 @@ define(['app'], function(app){
 
 		    this.logoutSubmit = function(){
 
+		    	var eventName = Constant.NOTIFICATION.ACTION.USER_LOGOUT.name;
+
 		    	userLogoutService.logoutUser().then(function(data){
 
+		    		broadCastService.broadCastEvent(eventName);
+		    		sessionService.changeLoginState(false);
+
 		    	}, function(err){
-		    		
+
+		    		broadCastService.broadCastEvent(eventName);
+		    		sessionService.changeLoginState(false);
+		    		throw(err + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 		    	})
 		    }
 

@@ -135,6 +135,16 @@ function Api(){
 			res.json(dataSendBack);
 		}
 	}	
+
+	this.logoutUser = function(req, res){
+		
+		attr.user.destroySession(req);
+
+		res.json({
+			code : '204',
+			message : 'Logout success'
+		})
+	}
 };
 
 exports.index = function(req, res){
@@ -145,3 +155,4 @@ var Api = new Api();
 exports.registerUser = Api.registerUser;
 exports.loginUser    = Api.loginUser;
 exports.authenticateUser = Api.authenticateUser;
+exports.logoutUser = Api.logoutUser;

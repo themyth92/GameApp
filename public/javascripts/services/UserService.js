@@ -65,6 +65,8 @@ define(['app'], function(app){
 				error(function(){
 					deffered.reject();
 				});
+
+				return deffered.promise;
 			}
 		}
 	}

@@ -230,6 +230,11 @@ function User(UserModel, bCrypt){
 		else
 			return false;
 	}
+
+	this.destroySession = function(req){
+
+		delete req.session.userName;
+	}
 } 
 
 exports.user = User;
