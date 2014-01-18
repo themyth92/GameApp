@@ -157,8 +157,13 @@ define(['app'], function(app){
 
 			return $scope.NavBarCtrl = this;
 		},
+
+		UploadFileCtrl : function(){
+
+		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
+	app.controller('UploadFileCtrl', Controller.UploadFileCtrl);
 }) 

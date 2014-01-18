@@ -7,6 +7,7 @@ require(['app',
 		 'services/UserService',
 		 'controller/PartialCtrl',
 		 'controller/UserCredentialCtrl',
+		 'controller/FileUploadCtrl',
 		 'directives/Directives'], 
 	function(){
 		angular.bootstrap(document, ['myApp']);

@@ -1,5 +1,5 @@
 define([], function(){
-	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ngResource']);
+	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ngResource', 'angularFileUpload']);
 
 	myApp.config(['$routeProvider', '$controllerProvider', '$provide', 
 		function($routeProvider, $controllerProvider, $provide){
@@ -8,6 +8,10 @@ define([], function(){
 				when('/home', {
 					templateUrl : 'partials/home.html',
 					controller : 'HomePartialCtrl'
+				}).
+				when('/upload',{
+					templateUrl : 'partials/upload.html',
+					controller : 'UploadFileCtrl'
 				}).
 				otherwise({
 					redirectTo : '/home'

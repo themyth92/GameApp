@@ -1,0 +1,112 @@
+<div class = 'page-wrapper page-upload'>
+	<div class = 'container'>
+		
+		<!-- title and instruction for uploading image-->
+		<div class = 'row'>
+			<div class = 'col-xs-1 visible-xs'></div>
+			<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 highlight'>
+				<p class = 'text-primary'>I) Instructions : you can upload image that you want to have in you game creation part. It includes both image for creating obstacle and image to create your own rewards. Please select your choice when uploading your image. <strong class = 'text-danger'>Warning: The maximum dimesion of the image is 40x40 pixel.</strong> </p>
+			</div>
+			<div class = 'col-xs-1 visible-xs'></div>
+		</div>
+		
+		<!-- Image upload controller -->
+		<div ng-controller = 'ImageUploadCtrl'>
+			
+			<div class = 'row' ng-repeat-start = 'image in ImageUploadCtrl.images'>&nbsp;
+			</div>	
+				
+			<!-- Form upload image -->
+			<div class="fileinput fileinput-new row" data-provides="fileinput" ng-repeat-end>
+	  			
+	  			<div class = 'col-xs-1 visible-xs'></div>
+	  			<div class="fileinput-preview thumbnail col-lg-3" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+				
+				<div class = 'col-lg-1'></div>
+				<div class = 'col-xs-1 visible-xs'></div>
+
+		 	 	<div class = 'col-lg-5 col-md-8 col-sm-8 col-xs-10'>
+		 	 		
+		 	 		<div class = 'row'>
+		 	 			<input type = 'text' class="form-control" ng-model = 'image.title' required placeholder="Image title">
+		 	 		</div>
+		 	 		<div class = 'row'>
+				 	 	<label class="radio-inline">
+							<input type="radio" name = 'image.selection.name' ng-model = 'image.selection.select' value="Obstacles" checked> Obstacles
+						</label>
+						<label class="radio-inline">	
+							<input type="radio" name = 'image.selection.name' ng-model = 'image.selection.select' value="Rewards"> Rewards
+						</label>
+					</div>
+					<div class = 'row'>
+						&nbsp;
+					</div>
+			 	 	<div class = 'row'>
+			    		<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="..."></span>
+			    		<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+			  		</div>
+		  		</div>
+
+			</div>
+		
+			<!-- button for uploading image -->
+			<div class = 'row'>
+				<div class = 'col-xs-1 visible-xs'></div>
+				<button type="button" class="btn btn-default" ng-click = 'ImageUploadCtrl.addImage()'>Add another image</button>
+			</div>
+			<div class = 'row'>
+				&nbsp;
+			</div>
+		</div>
+		<!-- Image upload controller -->	
+
+		<!-- title for uploading question -->
+		<div class = 'row'>
+			<div class = 'col-xs-1 visible-xs'></div>
+			<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 highlight'>
+				<p class = 'text-primary'>II) Instructions : you can add in the question that you want to include in your game creation part. The question can be any kinds but it must have 3 choices. All the questions will be checked by the teacher.</p>
+			</div>
+			<div class = 'col-xs-1 visible-xs'></div>
+		</div>
+		
+		<!-- Question upload controller -->
+		<div ng-contrller = 'QuestionUploadCtrl'>
+			
+			<div class = 'row'>&nbsp;</div>	
+				
+			<!-- uploading question form -->
+			<div class = 'row'>
+				<div class = 'col-xs-1 visible-xs'></div>
+				<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 well'>
+					<div class="form-group">
+						<label for="exampleInputPassword1">Question 1</label>
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Question title">
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control"  placeholder="Answer 3">
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control"  placeholder="Answer 2">
+					</div>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Answer 1">
+					</div>
+				</div>
+				<div class = 'col-xs-1 visible-xs'></div>
+			</div>
+			
+			<!--action button /-->
+			<div class = 'row'>
+				<div class = 'col-xs-1 visible-xs'></div>
+				<button type="button" class="btn btn-default">Add question</button>
+				<button type="button" class="btn btn-success">Submit all</button>
+			</div>
+
+		</div>
+	</div>	
+</div>
+
+
+

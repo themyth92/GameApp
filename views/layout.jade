@@ -7,6 +7,7 @@ html
 		script(src = '/vendor/jquery/jquery.min.js')
 		script(src = '/vendor/bootstrap/dist/js/bootstrap.min.js')
 		script(src = '/vendor/angular/angular.min.js')
+		script(src = '/vendor/ng-file-upload/angular-file-upload.min.js')
 		script(src = '/vendor/angular-route/angular-route.min.js')
 		script(src = '/vendor/angular-animate/angular-animate.min.js')
 		script(src = '/vendor/angular-resource/angular-resource.min.js')
@@ -25,14 +26,14 @@ html
 				div.collapse.navbar-collapse#top-nav
 					ul.nav.navbar-nav
 						li
-							a(href='#') Home
+							a(href='#/home') Home
 						li
 							a(href='#') Gallery
 					ul.nav.navbar-nav.navbar-right(ng-switch on = 'NavBarCtrl.user.isLogin')
 						li.dropdown(ng-switch-when = 'false')
 							a.dropdown-toggle(data-toggle = 'dropdown') Login
 								b.caret
-							ul.dropdown-menu.row
+							ul.dropdown-menu.row.login-form
 								div.col-lg-12
 									form(role='form' ng-submit = 'NavBarCtrl.loginSubmit()')
 										div.form-group
@@ -46,8 +47,18 @@ html
 							ul.nav.navbar-nav 
 								li 
 									a Welcome {{NavBarCtrl.user.userName}}
-								li(ng-click = 'NavBarCtrl.logoutSubmit()')
-									a Logout
+								li.dropdown
+									a.dropdown-toggle(href = '#', data-toggle = 'dropdown') User Preference
+										b.caret
+									ul.dropdown-menu
+										li
+											a(href = '#/upload') 
+												span.glyphicon.glyphicon-cloud-upload
+												|&nbsp; &nbsp; Upload your file	
+										li(ng-click = 'NavBarCtrl.logoutSubmit()')
+											a
+												span.glyphicon.glyphicon-off
+												|&nbsp; &nbsp; Logout
 		main.main-content.view-animate(ng-view)
 		script(type = 'text/ng-template', id = 'ajaxLoading.html')
 			div
