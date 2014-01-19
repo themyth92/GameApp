@@ -11,7 +11,7 @@ define([], function(){
 				}).
 				when('/upload',{
 					templateUrl : 'partials/upload.html',
-					controller : 'UploadFileCtrl'
+					controller : 'FileUploadCtrl'
 				}).
 				otherwise({
 					redirectTo : '/home'

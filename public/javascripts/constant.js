@@ -40,6 +40,11 @@ Constant = {
 				}
 			},
 
+			FILE_UPLOAD :{
+				name : 'UPLOAD FILE',
+				code : '003',
+			},
+
 			USER_LOGOUT : {
 				name :'USER LOGOUT',
 				code : '004'
@@ -91,7 +96,8 @@ Constant = {
 		LOCATION :{
 			USER_REGISTER_CTRL : 'user register controller',
 			AJAX_LOADING_DIRECTIVE   : 'ajax loading directive',
-			NAV_BAR_CTRL : 'nav bar controller'
+			NAV_BAR_CTRL : 'nav bar controller',
+			IMAGE_UPLOAD_CTRL : 'image upload controller',
 		},
 		ERROR :{
 
@@ -111,5 +117,5 @@ Constant = {
 		MAXIMUM_TIME_MESSAGE_APPEAR : {
 			time : 20000,
 		}
-	}
+	},
 }

@@ -158,12 +158,26 @@ define(['app'], function(app){
 			return $scope.NavBarCtrl = this;
 		},
 
-		UploadFileCtrl : function(){
+		FileUploadCtrl : function($scope, broadCastService, uploadService){
 
+			this.submitFile = function(){
+
+				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name;
+				broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code);
+				
+				if(uploadService.isAbleToSubmit.image && uploadService.isAbleToSubmit.question){
+					console.log('ready to submit');
+				}
+				else{
+					return false;
+				}
+			}
+
+			return $scope.FileUploadCtrl = this;
 		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
-	app.controller('UploadFileCtrl', Controller.UploadFileCtrl);
+	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', Controller.FileUploadCtrl]);
 }) 

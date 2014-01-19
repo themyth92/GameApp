@@ -13,46 +13,14 @@
 		<!-- Image upload controller -->
 		<div ng-controller = 'ImageUploadCtrl'>
 			
-			<div class = 'row' ng-repeat-start = 'image in ImageUploadCtrl.images'>&nbsp;
-			</div>	
-				
-			<!-- Form upload image -->
-			<div class="fileinput fileinput-new row" data-provides="fileinput" ng-repeat-end>
-	  			
-	  			<div class = 'col-xs-1 visible-xs'></div>
-	  			<div class="fileinput-preview thumbnail col-lg-3" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
-				
-				<div class = 'col-lg-1'></div>
-				<div class = 'col-xs-1 visible-xs'></div>
-
-		 	 	<div class = 'col-lg-5 col-md-8 col-sm-8 col-xs-10'>
-		 	 		
-		 	 		<div class = 'row'>
-		 	 			<input type = 'text' class="form-control" ng-model = 'image.title' required placeholder="Image title">
-		 	 		</div>
-		 	 		<div class = 'row'>
-				 	 	<label class="radio-inline">
-							<input type="radio" name = 'image.selection.name' ng-model = 'image.selection.select' value="Obstacles" checked> Obstacles
-						</label>
-						<label class="radio-inline">	
-							<input type="radio" name = 'image.selection.name' ng-model = 'image.selection.select' value="Rewards"> Rewards
-						</label>
-					</div>
-					<div class = 'row'>
-						&nbsp;
-					</div>
-			 	 	<div class = 'row'>
-			    		<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="..."></span>
-			    		<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-			  		</div>
-		  		</div>
-
+			<div ng-repeat = 'image in ImageUploadCtrl.images'>
+				<div class = 'ImageUpload' ></div>
 			</div>
 		
 			<!-- button for uploading image -->
 			<div class = 'row'>
 				<div class = 'col-xs-1 visible-xs'></div>
-				<button type="button" class="btn btn-default" ng-click = 'ImageUploadCtrl.addImage()'>Add another image</button>
+				<button type="button" class="btn btn-default" ng-click = 'ImageUploadCtrl.addImage()'>Add image</button>
 			</div>
 			<div class = 'row'>
 				&nbsp;
@@ -101,12 +69,49 @@
 			<div class = 'row'>
 				<div class = 'col-xs-1 visible-xs'></div>
 				<button type="button" class="btn btn-default">Add question</button>
-				<button type="button" class="btn btn-success">Submit all</button>
+				<button type="button" class="btn btn-success" ng-click = 'FileUploadCtrl.submitFile()'>Submit all</button>
 			</div>
 
 		</div>
 	</div>	
 </div>
+<script type = 'text/ng-template' id = 'image.html'>
+	<div class="fileinput fileinput-new row" data-provides="fileinput">
+	  			
+		<div class = 'col-xs-1 visible-xs'></div>
+		<div class="fileinput-preview thumbnail col-lg-3" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+	
+		<div class = 'col-lg-1'></div>
+		<div class = 'col-xs-1 visible-xs'></div>
+
+	 	<div class = 'col-lg-5 col-md-8 col-sm-8 col-xs-10'>
+	 		<div class = 'row uploadImageHelper'>
+	 		</div>
+
+	 		<div class = 'row'>
+	 			<input type = 'text' class="form-control" ng-model = 'image.title' required placeholder="Image title">
+	 		</div>
+
+	 		<div class = 'row'>
+		 	 	<label class="radio-inline">
+					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.selection.select' value="Obstacles" checked> Obstacles
+				</label>
+				<label class="radio-inline">	
+					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.selection.select' value="Rewards"> Rewards
+				</label>
+			</div>
+		
+			<div class = 'row'>
+				&nbsp;
+			</div>
+	 	 	<div class = 'row'>
+	    		<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists" 'ImageUploadCtrl.changeImage($files, $index)'>Change</span><input type="file" ng-file-select = 'ImageUploadCtrl.onFileSelect($files, $index)' name="..."></span>
+	    		<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput" ng-click = 'ImageUploadCtrl.removeImage($files, $index)'>Remove</a>
+	  		</div>
+		</div>
+
+	</div>
+</script>
 
 
 

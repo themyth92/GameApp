@@ -152,5 +152,33 @@ define(['app'], function(app){
 				}
 			}
 		}
-	}])
+	}]);
+
+	app.directive('ImageUpload',['UploadService', function(uploadService){
+
+		return {
+			restrict : 'C',
+			templateUrl : 'image.html',
+			controller : 'ImageUploadCtrl',
+			
+			link : function(scope, element, attrs){	
+				
+
+				var helper = {
+					noTitle : 'Please insert your image title',
+					noImage : 'Please insert your image'
+				} 
+
+				scope.ImageUploadDirective = {
+					helper : 'hello world',
+				}	
+
+				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, function(event, args){
+					angular.forEach(element, function(){
+
+					})
+				})	
+			}
+		}
+	}])	
 }) 
