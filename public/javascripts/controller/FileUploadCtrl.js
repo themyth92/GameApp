@@ -28,15 +28,10 @@ define(['app'], function(app){
 					return false;
 			}
 
-			this.error = {
-				fileDimensionError : false 
-			}
-
-			this.images = [{title : '', selection : {select : 'Rewards'}}];
+			this.images = [];
 			
 			this.addImage = function(){
-
-				this.images.push({title : '', selection : {select : uploadImageType.reward}});
+				this.images.push({title : '', select : uploadImageType.reward, wrongDimension : false, helper : '', isError : false});
 				uploadService.files.push({file : '', title : '', select : ''});
 			}
 
@@ -44,19 +39,25 @@ define(['app'], function(app){
 
 				if(checkFileDimension($files)){
 					
-					this.error.fileDimensionError = false;
-					
 					if(uploadService.files[$index]){
-						uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].selection.select});
+						uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
 					}
 					
 					else{
-						uploadService.files.push({file : $files[0].result, title : this.images[$index].title, select : this.images[$index].selection.select});
+						uploadService.files.push({file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
 					}
 				}
 				else{
 
-					this.error.fileDimensionError = true;
+					this.images[$index].wrongDimension = true;
+
+					if(uploadService.files[$index]){
+						uploadService.files.splice($index, 1, {file : '', title : '', select : ''});
+					}
+					
+					else{
+						uploadService.files.push({file : '', title : '', select : ''});
+					}
 				}
 				
 			}
@@ -64,7 +65,7 @@ define(['app'], function(app){
 			this.changeImage = function($files, $index){
 				
 				if(uploadService.files[$index]){
-					uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].selection.select});
+					uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
 				}
 				else{
 					throw('Unhandle problem in ' + Constant.DEBUG.LOCATION.IMAGE_UPLOAD_CTRL);

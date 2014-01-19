@@ -14,13 +14,13 @@
 		<div ng-controller = 'ImageUploadCtrl'>
 			
 			<div ng-repeat = 'image in ImageUploadCtrl.images'>
-				<div class = 'ImageUpload' ></div>
+				<div class = 'ImageUpload' index = '{{$index}}' ></div>
 			</div>
 		
 			<!-- button for uploading image -->
 			<div class = 'row'>
 				<div class = 'col-xs-1 visible-xs'></div>
-				<button type="button" class="btn btn-default" ng-click = 'ImageUploadCtrl.addImage()'>Add image</button>
+				<button type="button" class="btn btn-info" ng-click = 'ImageUploadCtrl.addImage()'>Add image</button>
 			</div>
 			<div class = 'row'>
 				&nbsp;
@@ -68,7 +68,7 @@
 			<!--action button /-->
 			<div class = 'row'>
 				<div class = 'col-xs-1 visible-xs'></div>
-				<button type="button" class="btn btn-default">Add question</button>
+				<button type="button" class="btn btn-info">Add question</button>
 				<button type="button" class="btn btn-success" ng-click = 'FileUploadCtrl.submitFile()'>Submit all</button>
 			</div>
 
@@ -85,7 +85,7 @@
 		<div class = 'col-xs-1 visible-xs'></div>
 
 	 	<div class = 'col-lg-5 col-md-8 col-sm-8 col-xs-10'>
-	 		<div class = 'row uploadImageHelper'>
+	 		<div class = 'row uploadImageHelper hidden'> {{image.helper}}
 	 		</div>
 
 	 		<div class = 'row'>
@@ -94,10 +94,10 @@
 
 	 		<div class = 'row'>
 		 	 	<label class="radio-inline">
-					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.selection.select' value="Obstacles" checked> Obstacles
+					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.select' value="Obstacles" checked> Obstacles
 				</label>
 				<label class="radio-inline">	
-					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.selection.select' value="Rewards"> Rewards
+					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.select' value="Rewards"> Rewards
 				</label>
 			</div>
 		
@@ -107,6 +107,9 @@
 	 	 	<div class = 'row'>
 	    		<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists" 'ImageUploadCtrl.changeImage($files, $index)'>Change</span><input type="file" ng-file-select = 'ImageUploadCtrl.onFileSelect($files, $index)' name="..."></span>
 	    		<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput" ng-click = 'ImageUploadCtrl.removeImage($files, $index)'>Remove</a>
+	  		</div>
+	  		<div class = 'row btn-remove-image-box'>
+	  			<button class = 'btn btn-danger' ng-click = 'ImageUploadDirective.removeImageBox($index)'>Remove box</button>
 	  		</div>
 		</div>
 

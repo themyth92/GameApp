@@ -160,24 +160,83 @@ define(['app'], function(app){
 			restrict : 'C',
 			templateUrl : 'image.html',
 			controller : 'ImageUploadCtrl',
-			
+
 			link : function(scope, element, attrs){	
 				
 
 				var helper = {
 					noTitle : 'Please insert your image title',
-					noImage : 'Please insert your image'
+					noImage : 'Please insert your image',
+					both    : 'Please insert your image and image title',
+					wrongDimension : 'Your image is not in correct dimension'
 				} 
 
+				function checkImageArray(ctrl, service){
+
+					if(ctrl){
+						if(ctrl.wrongDimension){
+							ctrl.helper = helper.wrongDimension;
+							return false;
+						}
+						else
+							if(ctrl.title.trim() == '' && service.file.trim() == ''){
+								ctrl.helper = helper.both;
+								ctrl.isError = true;
+								return false;
+							}
+						else
+							if(ctrl.title.trim() == ''){
+								ctrl.helper = helper.noTitle;
+								ctr.isError = true;
+								return false;
+							}
+						else
+							if(service.file.trim() == ''){
+								ctrl.helper = helper.noImage;
+								ctrl.isError = true;
+								return false;
+							}
+						else{
+							ctrl.isError = false;
+							return true;
+						}
+					}
+
+					ctrl.isError = true;
+					throw('Unhandle error in ' + Constant.DEBUG.LOCATION.IMAGE_UPLOAD_DIRECTIVE);
+					return false;
+				}
+
+				function addHelperClass(element){
+					element.find('.uploadImageHelper').removeClass('hidden').addClass('text-danger');
+				}
+
+				function removeHelperClass(element){
+					element.find('.uploadImageHelper').removeClass('text-danger').addClass('hidden');
+				}
+
 				scope.ImageUploadDirective = {
-					helper : 'hello world',
-				}	
+					
+					removeImageBox : function(index){
 
-				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, function(event, args){
-					angular.forEach(element, function(){
+						scope.$parent.ImageUploadCtrl.images.splice(index, 1);
+						uploadService.files.splice(index, 1);
+					}
+				}
 
-					})
-				})	
+				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKING.name, function(event, args){
+
+					var index = attrs.index;
+
+					if(scope.$parent.ImageUploadCtrl.images[index] && uploadService.files[index]){
+
+						removeHelperClass(element);
+
+						if(!checkImageArray(scope.$parent.ImageUploadCtrl.images[index], uploadService.files[index])){
+							addHelperClass(element);
+						}
+					}
+				})
 			}
 		}
 	}])	

@@ -43,11 +43,17 @@ Constant = {
 			FILE_UPLOAD :{
 				name : 'UPLOAD FILE',
 				code : '003',
+				PARTIAL :{
+					UPLOAD_CHECKING :{
+						code : '004',
+						name : 'UPLOAD CHECKING'
+					}
+				}
 			},
 
 			USER_LOGOUT : {
 				name :'USER LOGOUT',
-				code : '004'
+				code : '005'
 			}
 		},
 		COMMON :{
@@ -98,6 +104,7 @@ Constant = {
 			AJAX_LOADING_DIRECTIVE   : 'ajax loading directive',
 			NAV_BAR_CTRL : 'nav bar controller',
 			IMAGE_UPLOAD_CTRL : 'image upload controller',
+			IMAGE_UPLOAD_DIRECTIVE : 'image upload directive'
 		},
 		ERROR :{
 
