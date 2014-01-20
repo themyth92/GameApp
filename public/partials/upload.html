@@ -5,7 +5,7 @@
 		<div class = 'row'>
 			<div class = 'col-xs-1 visible-xs'></div>
 			<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 highlight'>
-				<p class = 'text-primary'>I) Instructions : you can upload image that you want to have in you game creation part. It includes both image for creating obstacle and image to create your own rewards. Please select your choice when uploading your image. <strong class = 'text-danger'>Warning: The maximum dimesion of the image is 40x40 pixel.</strong> </p>
+				<p class = 'text-primary'>I) Instructions : you can upload image that you want to have in you game creation part. It includes both image for creating obstacle and image to create your own rewards. Please select your choice when uploading your image. <strong class = 'text-danger'>Warning: The maximum dimesion of the image is 160x160 pixel.</strong> </p>
 			</div>
 			<div class = 'col-xs-1 visible-xs'></div>
 		</div>
@@ -38,43 +38,23 @@
 		</div>
 		
 		<!-- Question upload controller -->
-		<div ng-contrller = 'QuestionUploadCtrl'>
-			
-			<div class = 'row'>&nbsp;</div>	
-				
-			<!-- uploading question form -->
-			<div class = 'row'>
-				<div class = 'col-xs-1 visible-xs'></div>
-				<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 well'>
-					<div class="form-group">
-						<label for="exampleInputPassword1">Question 1</label>
-					</div>
-					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Question title">
-					</div>
-					<div class="form-group">
-						<input type="text" class="form-control"  placeholder="Answer 3">
-					</div>
-					<div class="form-group">
-						<input type="text" class="form-control"  placeholder="Answer 2">
-					</div>
-					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Answer 1">
-					</div>
+		<div ng-controller = 'QuestionUploadCtrl'>
+			<div ng-repeat = 'question in QuestionUploadCtrl.questions'>
+				<div class = 'QuestionUpload' index = '{{$index}}'>
+					
 				</div>
-				<div class = 'col-xs-1 visible-xs'></div>
 			</div>
-			
+
 			<!--action button /-->
 			<div class = 'row'>
 				<div class = 'col-xs-1 visible-xs'></div>
-				<button type="button" class="btn btn-info">Add question</button>
+				<button type="button" class="btn btn-info" ng-click = 'QuestionUploadCtrl.addQuestion()'>Add question</button>
 				<button type="button" class="btn btn-success" ng-click = 'FileUploadCtrl.submitFile()'>Submit all</button>
 			</div>
-
 		</div>
 	</div>	
 </div>
+
 <script type = 'text/ng-template' id = 'image.html'>
 	<div class="fileinput fileinput-new row" data-provides="fileinput">
 	  			
@@ -113,6 +93,39 @@
 	  		</div>
 		</div>
 
+	</div>
+</script>
+
+<script type = 'text/ng-template' id = 'question.html'>
+	<div class = 'row'>&nbsp;</div>	
+				
+	<!-- uploading question form -->
+	<div class = 'row'>
+		<div class = 'col-xs-1 visible-xs'></div>
+		<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 well'>
+			<div class="form-group">
+				<label>Question {{$index + 1}}</label>
+			</div>
+			<div class="form-group">
+				<label class = 'uploadQuestionHelper hidden'>{{question.helper}}</label>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model = 'question.title' placeholder="Question title">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model = 'question.ans1' placeholder="Answer 1">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model = 'question.ans2' placeholder="Answer 2">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model = 'question.ans3' placeholder="Answer 3">
+			</div>
+			<div class="form-group">
+				<button class = 'btn btn-danger'>Remove question</button>
+			</div>
+		</div>
+		<div class = 'col-xs-1 visible-xs'></div>
 	</div>
 </script>
 

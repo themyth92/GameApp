@@ -165,12 +165,6 @@ define(['app'], function(app){
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name;
 
 				$scope.$broadcast(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKING.name);
-			/*	if(uploadService.isAbleToSubmit.image && uploadService.isAbleToSubmit.question){
-					console.log('ready to submit');
-				}
-				else{
-					return false;
-				}*/
 			}
 
 			return $scope.FileUploadCtrl = this;

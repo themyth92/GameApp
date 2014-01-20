@@ -86,7 +86,14 @@ define(['app'], function(app){
 		},
 
 		QuestionUploadCtrl : function($scope){
+			
+			this.questions = [];
 
+			this.addQuestion = function(){
+				this.questions.push({title : '', ans1 : '', ans2 : '', ans3 : '', helper : '', isError : false});
+			}
+
+			return $scope.QuestionUploadCtrl = this;
 		}
 	}
 

@@ -187,7 +187,7 @@ define(['app'], function(app){
 						else
 							if(ctrl.title.trim() == ''){
 								ctrl.helper = helper.noTitle;
-								ctr.isError = true;
+								ctrl.isError = true;
 								return false;
 							}
 						else
@@ -197,6 +197,8 @@ define(['app'], function(app){
 								return false;
 							}
 						else{
+							service.file.title = ctrl.title;
+							service.file.select= ctrl.select;
 							ctrl.isError = false;
 							return true;
 						}
@@ -237,6 +239,18 @@ define(['app'], function(app){
 						}
 					}
 				})
+			}
+		}
+	}])
+
+	app.directive('QuestionUpload', ['UploadService', function(uploadService){
+		return {
+			restrict : 'C',
+			templateUrl : 'question.html',
+			controller : 'QuestionUploadCtrl',
+			
+			link : function(scope, attrs, element){
+
 			}
 		}
 	}])	
