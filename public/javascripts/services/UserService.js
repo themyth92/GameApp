@@ -10,7 +10,8 @@ define(['app'], function(app){
 				$http({
 					method : 'POST',
 					url : Constant.URL.ACTION.USER_REGISTER.url,
-					data : data
+					data : data,
+					timeout: Constant.TIMEOUT.TIMEOUT_SERVER.time
 				}).
 				success(function(data, status, header, config){
 					deffered.resolve(data);
@@ -34,7 +35,8 @@ define(['app'], function(app){
 				$http({
 					method : 'POST',
 					url : Constant.URL.ACTION.USER_LOGIN.url,
-					data : data
+					data : data,
+					timeout: Constant.TIMEOUT.TIMEOUT_SERVER.time
 				}).
 				success(function(data, status, header, config){
 					deffered.resolve(data);
@@ -57,7 +59,7 @@ define(['app'], function(app){
 
 				$http({
 					method: 'POST',
-					url : Constant.URL.ACTION.USER_LOGOUT.url
+					url : Constant.URL.ACTION.USER_LOGOUT.url,
 				}).
 				success(function(data){
 					deffered.resolve(data);

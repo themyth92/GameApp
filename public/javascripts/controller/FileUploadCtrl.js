@@ -1,81 +1,52 @@
 define(['app'], function(app){
 	var Controller = {
 		
-		ImageUploadCtrl : function($scope, $upload, uploadService){
+		ImageUploadCtrl : function($scope){
 
 			var uploadImageType = {
 				reward : 'Rewards',
 				obstacle : 'Obstacles'
 			}
 
-			var imageSize = {
-				width : 160,
-				height : 160
+			var fileSize = 30000;
+
+			function checkFileSize(file){
+
+				if(file.size)
+					return ((file.size < fileSize) ? true : false);
 			}
 
-			function checkFileDimension($file){
+			var parent = $scope.$parent.FileUploadCtrl;
+
+			this.checkErrorArray = function(){
 				
-				if($file.result){
-					var img = new Image();
-					img.src = $file.result;
-					
-					if(img.width > imageSize.width || img.height > imageSize.height)
-						return false;
-					else
-						return true;
-				}
-				else
-					return false;
+				for(var i = 0 ; i < parent.images.length ; i++)
+					if(parent.images[i].isError == false) 
+						return false ;
+				
+				return true;
 			}
-
-			this.images = [];
 			
 			this.addImage = function(){
-				this.images.push({title : '', select : uploadImageType.reward, wrongDimension : false, helper : '', isError : false});
-				uploadService.files.push({file : '', title : '', select : ''});
+				parent.images.push({title : '', select : uploadImageType.reward, file : {}, wrongDimension : false, helper : '', isError : false});
 			}
 
-			this.onFileSelect = function($files, $index){
-
-				if(checkFileDimension($files)){
-					
-					if(uploadService.files[$index]){
-						uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
-					}
-					
-					else{
-						uploadService.files.push({file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
-					}
-				}
-				else{
-
-					this.images[$index].wrongDimension = true;
-
-					if(uploadService.files[$index]){
-						uploadService.files.splice($index, 1, {file : '', title : '', select : ''});
-					}
-					
-					else{
-						uploadService.files.push({file : '', title : '', select : ''});
-					}
-				}
+			this.onFileSelect = function($file, $index){
 				
+				if($file[0]){
+					if(checkFileSize($file[0])){
+						parent.images[$index].file = $file[0];
+					}
+					else{
+						parent.images[$index].wrongDimension = true;
+					}
+				}	
 			}
 
-			this.changeImage = function($files, $index){
-				
-				if(uploadService.files[$index]){
-					uploadService.files.splice($index, 1, {file : $files[0].result, title : this.images[$index].title, select : this.images[$index].select});
-				}
-				else{
-					throw('Unhandle problem in ' + Constant.DEBUG.LOCATION.IMAGE_UPLOAD_CTRL);
-				}
-			}
+			this.removeImage = function($index){
 
-			this.removeImage = function($files, $index){
-
-				if(uploadService.files[$index]){
-					uploadService.files.splice($index, 1, {file : '', title : '', select : ''});
+				if(parent.images[$index]){
+					parent.images[$index].file = {};
 				}
 				else{
 					throw('Unhandle problem in ' + Constant.DEBUG.LOCATION.IMAGE_UPLOAD_CTRL);
@@ -86,17 +57,26 @@ define(['app'], function(app){
 		},
 
 		QuestionUploadCtrl : function($scope){
-			
-			this.questions = [];
+
+			var parent = $scope.$parent.fileUploadCtrl;
+
+			this.checkErrorArray = function(){
+				
+				for(var i = 0 ; i < parent.questions.length ; i++)
+					if(parent.questions[i].isError == false) 
+						return false;
+				
+				return true;
+			}
 
 			this.addQuestion = function(){
-				this.questions.push({title : '', ans1 : '', ans2 : '', ans3 : '', helper : '', isError : false});
+				parent.questions.push({title : '', ans1 : '', ans2 : '', ans3 : '', helper : '', isError : false});
 			}
 
 			return $scope.QuestionUploadCtrl = this;
 		}
 	}
 
-	app.controller('ImageUploadCtrl', ['$scope', '$upload', 'UploadService', Controller.ImageUploadCtrl]);
+	app.controller('ImageUploadCtrl', ['$scope', Controller.ImageUploadCtrl]);
 	app.controller('QuestionUploadCtrl', ['$scope', Controller.QuestionUploadCtrl]);
 }) 

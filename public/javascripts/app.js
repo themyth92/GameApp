@@ -18,7 +18,7 @@ define([], function(){
 				})
 	}])
 
-	myApp.run(['StoreSessionService', function(sessionService){
+	myApp.run(['StoreSessionService', '$rootScope', '$location', function(sessionService, $rootScope, $location){
 		
 		function checkDataFromAuthentication(data){
 		
@@ -37,6 +37,7 @@ define([], function(){
 			}
 
 			sessionService.changeLoginState(false);
+			$location.path('/home');
 			return false;		
 		}
 
@@ -44,6 +45,13 @@ define([], function(){
 			checkDataFromAuthentication(data);
 		}, function(){
 			sessionService.changeLoginState(false);
+		})
+
+		$rootScope.$on('$routeChangeStart', function(event, next, current){
+			
+			if(!(sessionService.state.isLogin)){
+				$location.path('/home');
+			}
 		})
 	}])
 

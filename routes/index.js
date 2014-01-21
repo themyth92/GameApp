@@ -156,3 +156,9 @@ exports.registerUser = Api.registerUser;
 exports.loginUser    = Api.loginUser;
 exports.authenticateUser = Api.authenticateUser;
 exports.logoutUser = Api.logoutUser;
+exports.uploadImage = function(req, res){
+	console.log(req.files);
+}
+exports.uploadQuestion = function(req,res){
+
+}

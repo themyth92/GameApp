@@ -47,13 +47,23 @@ Constant = {
 					UPLOAD_CHECKING :{
 						code : '004',
 						name : 'UPLOAD CHECKING'
+					},
+					UPLOAD_CHECKED : {
+						code : '005',
+						name : 'UPLOAD CHECKED',
+						IMAGE : {
+							code : '006'
+						},
+						QUESTION : {
+							code :'007'
+						}
 					}
 				}
 			},
 
 			USER_LOGOUT : {
 				name :'USER LOGOUT',
-				code : '005'
+				code : '008'
 			}
 		},
 		COMMON :{
@@ -103,8 +113,10 @@ Constant = {
 			USER_REGISTER_CTRL : 'user register controller',
 			AJAX_LOADING_DIRECTIVE   : 'ajax loading directive',
 			NAV_BAR_CTRL : 'nav bar controller',
+			FILE_UPLOAD_CTRL : 'file upload controller',
 			IMAGE_UPLOAD_CTRL : 'image upload controller',
-			IMAGE_UPLOAD_DIRECTIVE : 'image upload directive'
+			IMAGE_UPLOAD_DIRECTIVE : 'image upload directive',
+			QUESTION_UPLOAD_DIRECTIVE : 'question upload directive'
 		},
 		ERROR :{
 
@@ -123,6 +135,10 @@ Constant = {
 	TIMEOUT : {
 		MAXIMUM_TIME_MESSAGE_APPEAR : {
 			time : 20000,
+		},
+
+		TIMEOUT_SERVER : {
+			time : 20000
 		}
 	},
 }

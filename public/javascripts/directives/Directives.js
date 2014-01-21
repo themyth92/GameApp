@@ -171,15 +171,16 @@ define(['app'], function(app){
 					wrongDimension : 'Your image is not in correct dimension'
 				} 
 
-				function checkImageArray(ctrl, service){
+				function checkImageArray(ctrl){
 
 					if(ctrl){
 						if(ctrl.wrongDimension){
 							ctrl.helper = helper.wrongDimension;
+							ctrl.isError = false;
 							return false;
 						}
 						else
-							if(ctrl.title.trim() == '' && service.file.trim() == ''){
+							if(ctrl.title.trim() == '' && JSON.stringify(ctrl.file) == '{}'){
 								ctrl.helper = helper.both;
 								ctrl.isError = true;
 								return false;
@@ -191,14 +192,12 @@ define(['app'], function(app){
 								return false;
 							}
 						else
-							if(service.file.trim() == ''){
+							if(JSON.stringify(ctrl.file) == '{}'){
 								ctrl.helper = helper.noImage;
 								ctrl.isError = true;
 								return false;
 							}
 						else{
-							service.file.title = ctrl.title;
-							service.file.select= ctrl.select;
 							ctrl.isError = false;
 							return true;
 						}
@@ -217,25 +216,37 @@ define(['app'], function(app){
 					element.find('.uploadImageHelper').removeClass('text-danger').addClass('hidden');
 				}
 
+				var parent = scope.$parent.$parent.FileUploadCtrl;
+
 				scope.ImageUploadDirective = {
 					
 					removeImageBox : function(index){
 
-						scope.$parent.ImageUploadCtrl.images.splice(index, 1);
-						uploadService.files.splice(index, 1);
-					}
+						parent.images.splice(index, 1);
+					},
 				}
 
 				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKING.name, function(event, args){
 
 					var index = attrs.index;
 
-					if(scope.$parent.ImageUploadCtrl.images[index] && uploadService.files[index]){
+					if(parent.images[index]){
 
 						removeHelperClass(element);
 
-						if(!checkImageArray(scope.$parent.ImageUploadCtrl.images[index], uploadService.files[index])){
+						if(!checkImageArray(parent.images[index])){
 							addHelperClass(element);
+						}
+
+						if(index == parent.images.length - 1){
+						
+							if(scope.ImageUploadCtrl.checkErrorArray()){
+								uploadService.isAbleToSubmit.image = true;
+							}
+							else
+								uploadService.isAbleToSubmit.image = false;
+
+							scope.$emit(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.name, {code : Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.IMAGE.code});
 						}
 					}
 				})
@@ -249,8 +260,73 @@ define(['app'], function(app){
 			templateUrl : 'question.html',
 			controller : 'QuestionUploadCtrl',
 			
-			link : function(scope, attrs, element){
+			link : function(scope, element, attrs){
 
+				var helper = {
+					noTitle : 'Please specify your question title',
+					noAns   : 'Please specify 3 choices of your answer'
+				}
+
+				function addHelperClass(element){
+					element.find('.uploadQuestionHelper').removeClass('hidden').addClass('text-danger');
+				}
+
+				function removeHelperClass(element){
+					element.find('.uploadQuestionHelper').removeClass('text-danger').addClass('hidden');
+				}
+
+				function checkQuestionArray(ctrl){
+
+					if(ctrl){
+
+						if(ctrl.title.trim() == ''){
+							ctrl.helper = helper.noTitle;
+							ctrl.isError = true;
+							return false;
+						}
+						else
+							if(ctrl.ans1.trim() == '' || ctrl.ans2.trim() == '' || ctrl.ans3.trim() == ''){
+								ctrl.helper = helper.noAns;
+								ctrl.isError = true;
+								return false;
+							}
+						else
+							ctrl.isError = false;
+							return true;
+					}
+
+					ctrl.isError = true;
+					throw('Unhandle error in ' + Constant.DEBUG.LOCATION.QUESTION_UPLOAD_DIRECTIVE);
+					return false;	
+				}
+
+				var parent = scope.$parent.$parent.FileUploadCtrl;
+
+				scope.QuestionUploadDirective = {
+					removeQuestionBox : function(index){
+						parent.questions.splice(index, 1);
+					}
+				}
+
+				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKING.name, function(event, args){
+
+					var index = attrs.index;
+					removeHelperClass(element);
+
+					if(!checkQuestionArray(parent.questions[index]))
+						addHelperClass(element);
+
+					if(index == parent.questions.length - 1){
+						
+						if(scope.QuestionUploadCtrl.checkErrorArray()){
+							uploadService.isAbleToSubmit.question = true;
+						}
+						else
+							uploadService.isAbleToSubmit.question = false;
+
+						scope.$emit(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.name, {code : Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.QUESTION.code});
+					}
+				})
 			}
 		}
 	}])	

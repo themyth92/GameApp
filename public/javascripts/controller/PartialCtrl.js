@@ -33,7 +33,7 @@ define(['app'], function(app){
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, loginService, broadCastService, sessionService, userLogoutService){
+		NavBarCtrl : function($scope, $location, loginService, broadCastService, sessionService, userLogoutService){
 
 			function UserLoginSuccessHandle(data){
 				
@@ -144,11 +144,13 @@ define(['app'], function(app){
 
 		    		broadCastService.broadCastEvent(eventName);
 		    		sessionService.changeLoginState(false);
-
+		    		$location.path('/home');
+		    		
 		    	}, function(err){
 
 		    		broadCastService.broadCastEvent(eventName);
 		    		sessionService.changeLoginState(false);
+		    		$location.path('/home');
 		    		throw(err + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 		    	})
 		    }
@@ -160,6 +162,29 @@ define(['app'], function(app){
 
 		FileUploadCtrl : function($scope, broadCastService, uploadService){
 
+			function isReadyToUpload(){
+				
+				if(uploadService.isAbleToSubmit.image && uploadService.isAbleToSubmit.question)
+					return true;
+				else
+					return false;
+			}
+
+			function uploadSuccessHandle(data){
+
+			}
+
+			function uploadErrorHandle(){
+
+			}
+
+			function uploadImage(){
+
+			}
+
+			this.images    = [];
+			this.questions = [];
+
 			this.submitFile = function(){
 
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name;
@@ -167,11 +192,43 @@ define(['app'], function(app){
 				$scope.$broadcast(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKING.name);
 			}
 
+			$scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.name, function(event, args){
+
+				if(args.code){
+					if(args.code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.IMAGE.code){
+						/*if(isReadyToUpload()){
+							upload all file here
+
+						}
+						else
+							return false;*/
+						uploadService.uploadImage($scope.FileUploadCtrl.images).then(function(datas){
+																					}, function(){
+
+																					})
+					}
+					else
+						if(args.code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.QUESTION.code){
+							/*if(isReadyToUpload()){
+								upload all file here
+								broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, {code : Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code});
+
+							}
+							else
+								return false;*/
+						}
+					else
+						throw('Unhandle error in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
+				}
+				else
+					throw('Unhandle error in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
+			})
+
 			return $scope.FileUploadCtrl = this;
 		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', 'UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', Controller.FileUploadCtrl]);
 }) 

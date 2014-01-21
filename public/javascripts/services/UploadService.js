@@ -4,32 +4,38 @@ define(['app'], function(app){
 
 		UploadService = {};
 
-		UploadService.files = [];
-
 		UploadService.isAbleToSubmit = {
 			image : false,
 			question : false
 		}
 
-		UploadService.uploadImage = function(file){
-				
-			var deffered = $q.defer();
-			
-			$upload.upload({
-				
-				url   : 'upload/image',
-				method: 'POST',
-				file  : file.file,
-				data  : {title : file.title}	
-			}).
-			success(function(data){
-				deffered.resolve(data);
-			}).
-			error(function(error){
-				deffered.reject();
-			});
+		UploadService.uploadImage = function(files){
 
-			return deffered.promise;
+			var promises = [];
+			
+			for(var i = 0 ; i < files.length ; i ++){
+
+				var deffered = $q.defer();
+				var file     = files[i];
+
+				$upload.upload({
+				
+					url   : 'upload/image',
+					method: 'POST',
+					file  : file.file,
+					data  : {title : file.title, select : file.select}	
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject();
+				});
+
+				promises.push(deffered.promise);
+			}
+
+			return $q.all(promises);
 		}
 
 		UploadService.uploadQuestion = function(question){
