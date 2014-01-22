@@ -58,6 +58,26 @@ Constant = {
 							code :'007'
 						}
 					}
+				},
+				ERROR : {
+					UPLOAD_SESSION_ERROR :{
+						code    : '103',
+						message : 'Your session has expired. Please reload browser and try uploading again'
+					},
+					UPLOAD_IMAGE_ERROR : {
+						code    : '104',
+						message : 'There are some errors from server. We can not proceed your image uploading.'
+					},
+					UPLOAD_QUESTION_ERROR;{
+						code    : '105',
+						message : 'There are errors from server. We can not proceed your question uploading'
+					}
+				},
+				SUCCESS : {
+					UPLOAD_SUCCESS :{
+						code : '204',
+						message : 'Your uploading is successful'
+					}
 				}
 			},
 

@@ -20,6 +20,16 @@ define([], function(){
 
 	myApp.run(['StoreSessionService', '$rootScope', '$location', function(sessionService, $rootScope, $location){
 		
+		function registerRouteChage(){
+
+			$rootScope.$on('$routeChangeStart', function(event, next, current){
+
+				if(!(sessionService.state.isLogin)){
+					$location.path('/home');
+				}
+			})
+		}
+
 		function checkDataFromAuthentication(data){
 		
 			if(data){
@@ -30,29 +40,27 @@ define([], function(){
 
 						var userName = data.data.userName;
 						sessionService.changeLoginState(true, userName);
-
+						registerRouteChage();
 						return true;
 					}
 				}		
 			}
 
-			sessionService.changeLoginState(false);
 			$location.path('/home');
+			sessionService.changeLoginState(false);
+			registerRouteChage();
 			return false;		
 		}
 
 		sessionService.authenticateSession().then(function(data){
+
 			checkDataFromAuthentication(data);
 		}, function(){
 			sessionService.changeLoginState(false);
 		})
 
-		$rootScope.$on('$routeChangeStart', function(event, next, current){
-			
-			if(!(sessionService.state.isLogin)){
-				$location.path('/home');
-			}
-		})
+		
+		
 	}])
 
 	return myApp; 

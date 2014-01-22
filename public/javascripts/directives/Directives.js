@@ -44,8 +44,9 @@ define(['app'], function(app){
 					if(code){
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code ||
-						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code){
-
+						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code || 
+						   code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code){
+						   	
 							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							changeStateToLoading(element);
 							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.LOADING.message;
@@ -139,6 +140,14 @@ define(['app'], function(app){
 				})
 
 				scope.$on(Constant.NOTIFICATION.ACTION.USER_LOGIN.name, function(event, args){
+
+					if(args.code){
+
+						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
+					}
+				})
+
+				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, function(event, args){
 
 					if(args.code){
 

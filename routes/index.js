@@ -1,20 +1,24 @@
 /*
  * GET home page.
  */
-var Constant   = require('./Constant/constant.js');
-var mongoose   = require('mongoose');
-var db         = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
-var UserSchema = require('../models/UserSchema').UserSchema;
-var UserModel  = db.model(Constant.constant.DATABASE.COLLECTION.user, UserSchema); 
-var bCrypt     = require('bcrypt');
+var Constant      = require('./Constant/constant.js');
+var mongoose      = require('mongoose');
+var db            = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
+var UserSchema    = require('../models/UserSchema').UserSchema;
+var UploadSchema  = require('../models/UserSchema').UploadSchema;
 
-var User       = require('./User/user.js').user;
+var UploadModel   = db.model(Constant.constant.DATABASE.COLLECTION.upload, UploadSchema);
+var UserModel     = db.model(Constant.constant.DATABASE.COLLECTION.user, UserSchema); 
+var bCrypt        = require('bcrypt');
+var User          = require('./User/user.js').user;
+var Upload        = require('./Upload/upload.js').upload;
 
 function Api(){
 	
 	//declare private attributes
 	var attr = {
-		user : new User(UserModel, bCrypt), 
+		user : new User(UserModel, bCrypt),
+		upload : new Upload(UserModel, UploadModel) 
 	};
 
 	//declare public methods
@@ -145,20 +149,43 @@ function Api(){
 			message : 'Logout success'
 		})
 	}
+
+	this.uploadImage = function(req, res){
+
+		if(req.session.userName){
+			attr.upload.uploadImage(req, res);
+		}
+		else{
+			res.json({
+				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
+			})
+		}
+	}
+
+	this.uploadQuestion = function(req, res){
+
+		if(req.session.userName){
+			attr.upload.uploadQuestion(req, res);
+		}
+		else{
+			res.json({
+				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
+			})
+		}
+	}
 };
 
 exports.index = function(req, res){
   res.render('index', { title: 'Game Application' });
 };
 
-var Api = new Api();
-exports.registerUser = Api.registerUser;
-exports.loginUser    = Api.loginUser;
-exports.authenticateUser = Api.authenticateUser;
-exports.logoutUser = Api.logoutUser;
-exports.uploadImage = function(req, res){
-	console.log(req.files);
-}
-exports.uploadQuestion = function(req,res){
+var Api                  = new Api();
 
-}
+exports.registerUser     = Api.registerUser;
+exports.loginUser        = Api.loginUser;
+exports.authenticateUser = Api.authenticateUser;
+exports.logoutUser       = Api.logoutUser;
+exports.uploadImage      = Api.uploadImage;
+exports.uploadQuestion   = Api.uploadQuestion;

@@ -9,21 +9,42 @@ define(['app'], function(app){
 			question : false
 		}
 
-		UploadService.uploadImage = function(files){
+		UploadService.uploadImage = function(file, successCallBack, errorCallBack, index){
 
-			var promises = [];
+		//	for(var i = 0 ; i < files.length ; i ++){
+
+		//		var file     = files[i];
 			
-			for(var i = 0 ; i < files.length ; i ++){
-
-				var deffered = $q.defer();
-				var file     = files[i];
-
 				$upload.upload({
 				
 					url   : 'upload/image',
 					method: 'POST',
 					file  : file.file,
 					data  : {title : file.title, select : file.select}	
+				}).
+				success(function(data){
+					successCallBack(data, index);
+				}).
+				error(function(error){
+					errorCallBack(error);
+				});
+		//	}
+		}
+
+		UploadService.uploadQuestion = function(questions){
+
+			var promises = [];
+
+			for(var i = 0 ; i < questions.length ; i++){
+
+				var deffered  = $q.defer();
+				var question = questions[i]; 
+			
+				$http({
+
+					url   : 'upload/question',
+					method: 'POST',
+					data  : question
 				}).
 				success(function(data){
 					deffered.resolve(data);
@@ -34,27 +55,8 @@ define(['app'], function(app){
 
 				promises.push(deffered.promise);
 			}
-
-			return $q.all(promises);
-		}
-
-		UploadService.uploadQuestion = function(question){
-
-			var deffered = $q.defer();
 			
-			$http({
-				url   : 'upload/question',
-				method: 'POST',
-				data  : question
-			}).
-			success(function(data){
-				deffered.resolve(data);
-			}).
-			error(function(error){
-				deffered.reject();
-			});
-
-			return deffered.promise;
+			return $q.all(promises);
 		}
 
 		return UploadService;

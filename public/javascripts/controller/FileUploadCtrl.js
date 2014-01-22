@@ -58,7 +58,7 @@ define(['app'], function(app){
 
 		QuestionUploadCtrl : function($scope){
 
-			var parent = $scope.$parent.fileUploadCtrl;
+			var parent = $scope.$parent.FileUploadCtrl;
 
 			this.checkErrorArray = function(){
 				

@@ -18,7 +18,7 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(express.bodyParser({keepExtensions: true, uploadDir: "uploads"})) ;
+app.use(express.bodyParser({keepExtensions: true})) ;
 app.use(express.cookieParser());  
 app.use(express.session({ secret: 'gameApp' , store : new MongoStore({
 																	db : 'gameApp',

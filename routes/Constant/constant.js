@@ -44,6 +44,11 @@ var constant = {
 			SESSION_EXIST : {
 				code : '203',
 				message : 'Session exist'
+			},
+
+			UPLOAD_SUCCESS : {
+				code : '204',
+				message : 'Upload success'
 			}
 		},
 	},
@@ -51,7 +56,8 @@ var constant = {
 	DATABASE :{
 		
 		COLLECTION :{
-			user : 'User'
+			user : 'User',
+			upload : 'Upload'
 		},
 
 		ERROR : {

@@ -163,6 +163,19 @@ define(['app'], function(app){
 		FileUploadCtrl : function($scope, broadCastService, uploadService){
 
 			function isReadyToUpload(){
+
+				if($scope.FileUploadCtrl.images.length == 0 && $scope.FileUploadCtrl.questions.length == 0){
+					uploadService.isAbleToSubmit.image    = false;
+					uploadService.isAbleToSubmit.question = false;
+				}
+
+				if($scope.FileUploadCtrl.images.length == 0){
+					uploadService.isAbleToSubmit.image = true;
+				}
+
+				if($scope.FileUploadCtrl.questions.length == 0){
+					uploadService.isAbleToSubmit.question = true;
+				}
 				
 				if(uploadService.isAbleToSubmit.image && uploadService.isAbleToSubmit.question)
 					return true;
@@ -170,16 +183,72 @@ define(['app'], function(app){
 					return false;
 			}
 
-			function uploadSuccessHandle(data){
+			function uploadImageSuccessHandle(data, index){
+
+				if(index == $scope.FileUploadCtrl.images.length - 1){
+					
+					if($scope.FileUploadCtrl.questions.length > 0){
+						
+						//upload question here
+						uploadService.uploadQuestion($scope.FileUploadCtrl.questions).then(function(datas){
+
+																							}, function(){
+
+																							})
+					}
+					else{
+						//notify done uploading
+						broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.code);
+					}
+				}
+				else{
+					index++;
+					
+					data      	  = data || {};
+					data.code 	  = data.code || Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
+					var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name; 
+
+					switch(data.code){
+
+						case Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code:
+							
+							broadCastService.broadCastEvent(eventName, data.code);
+							throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.message);
+						break;
+						
+						case Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.code:
+
+							broadCastService.broadCastEvent(eventName, data.code);
+						break;
+
+						case Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.FILE_UPLOAD_SUCCESS.code:
+
+							uploadService.uploadImage($scope.FileUploadCtrl.images[index], uploadImageSuccessHandle, uploadErrorHandle, index);
+						break;
+
+						case Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_SESSION_ERROR.code:
+
+							broadCastService.broadCastEvent(eventName, data.code);
+						break;
+						
+						default:
+
+							broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
+							throw('Unhandle error in '  +  Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
+						break;
+					}
+				}
+			}
+
+			function uploadQuestionSuccessHandle(datas){
 
 			}
 
 			function uploadErrorHandle(){
-
-			}
-
-			function uploadImage(){
-
+				
+				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name;
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
 			}
 
 			this.images    = [];
@@ -196,26 +265,29 @@ define(['app'], function(app){
 
 				if(args.code){
 					if(args.code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.IMAGE.code){
-						/*if(isReadyToUpload()){
-							upload all file here
+					/*	if(isReadyToUpload()){
+							broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code);
 
 						}
 						else
 							return false;*/
-						uploadService.uploadImage($scope.FileUploadCtrl.images).then(function(datas){
-																					}, function(){
-
-																					})
+						var index = 0;
+						uploadService.uploadImage($scope.FileUploadCtrl.images[index], uploadImageSuccessHandle, uploadImageErrorHandle, index);			
 					}
 					else
 						if(args.code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.PARTIAL.UPLOAD_CHECKED.QUESTION.code){
-							/*if(isReadyToUpload()){
-								upload all file here
-								broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, {code : Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code});
+							
+							//if(isReadyToUpload()){
+								//broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code);
+								uploadService.uploadQuestion($scope.FileUploadCtrl.questions).then(function(datas){
+																						
+																					}, function(errors){
+																						
+																					})
 
-							}
-							else
-								return false;*/
+							//}
+							//else
+							//	return false;
 						}
 					else
 						throw('Unhandle error in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
