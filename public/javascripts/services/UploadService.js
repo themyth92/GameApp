@@ -49,7 +49,7 @@ define(['app'], function(app){
 					deffered.reject();
 				});
 
-				promises.push(deffered.promise);
+				promises.push(deffered);
 			}
 			
 			return $q.all(promises);

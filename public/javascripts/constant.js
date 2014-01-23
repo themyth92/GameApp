@@ -162,3 +162,21 @@ Constant = {
 		}
 	},
 }
+/*
+constant {
+ConstantEnum = {
+	ERROR1 : 1,
+	ERROR2 : 2
+}
+
+ConstantSolution  = {
+	ConstantEnum.ERROR1 : "FUKCDKFJKDSL:FJKDLJKL",
+	ConstantEnum.ERROR2 : { 
+		message : functioN(),
+		resolve : functin()
+	}
+}
+}
+
+constant.define( "ERROR3" , messaage(), resolve())
+*/
