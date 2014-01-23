@@ -280,7 +280,7 @@ define(['app'], function(app){
 			}
 
 			function uploadQuestionSuccessHandle(datas){
-
+				
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name; 
 				broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.code);	
 			}

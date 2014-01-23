@@ -64,9 +64,9 @@ define(['app'], function(app){
 				
 				for(var i = 0 ; i < parent.questions.length ; i++)
 					if(parent.questions[i].isError == false) 
-						return false;
+						return true;
 				
-				return true;
+				return false;
 			}
 
 			this.addQuestion = function(){

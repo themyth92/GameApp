@@ -59,38 +59,116 @@ function Upload(UserModel, UploadModel){
 			};
 	}
 
+	function writeImage(newPath, fileName, ext, res, data){
+
+		fs.writeFile(newPath + '/' + fileName + '.' + ext, data, function(err){
+					
+			if(err){
+				throw(err);
+				res.json(storeImageErrorCallBack());
+			}
+			else{
+				res.json({
+							code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
+						  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
+						  });
+			}
+		})
+	}
+
 	function storeImageInFD(res, userID, path, fileName, ext){
 
 		fs.readFile(path, function(err, data){
 			
-			var newPath = __dirname + "/../../uploads/" + userID + '/';
+			var newPath    = __dirname + "/../../uploads/" + userID + '/';
+			var uploadPath = __dirname + "/../../uploads/"; 
 
 			if(!err){
 
-				fs.mkdir(newPath, function(error){
+				fs.stat(uploadPath, function(error, stats){
 
-					if(!error){
+					//if folder uploads no exist
+					if(error){
 
-						fs.writeFile(newPath + '/' + fileName + '.' + ext, data, function(err){
-					
-							if(err){
-								throw(err);
-								res.json(storeImageErrorCallBack());
+						//create upload folder
+						fs.mkdir(uploadPath, function(error){
+
+							if(error){
+
+								//throw error if creating got problem
+								throw(error);
+								res.json(serverErrorCallBack());
 							}
 							else{
-								res.json({
-											code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
-										  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
-										  });
+
+								//check folder user exist
+								fs.stat(newPath, function(error, stats){
+
+									//folder user not exist
+									if(error){
+
+										//create folder for user
+										fs.mkdir(newPath, function(error){
+
+											//if can not create folder
+											if(error){
+
+												//throw error if creating got problem
+												throw(error);
+												res.json(serverErrorCallBack());
+											}
+											else{
+
+												//create file
+												writeImage(newPath, fileName, ext, res, data);
+											}
+										})
+									}
+									else{
+
+										//folder user exist
+										//create file
+										writeImage(newPath, fileName, ext, res, data);
+									}			
+								})
 							}
 						})
 					}
 					else{
-						throw(error);
-						res.json(serverErrorCallBack(error));
+
+						//folder already exist
+						//check folder user exist
+						fs.stat(newPath, function(error, stats){
+
+							//folder user not exist
+							if(error){
+
+								//create folder for user
+								fs.mkdir(newPath, function(error){
+
+									//if can not create folder
+									if(error){
+
+										//throw error if creating got problem
+										throw(error);
+										res.json(serverErrorCallBack());
+									}
+									else{
+
+										//create file
+										writeImage(newPath, fileName, ext, res, data);
+									}
+								})
+							}
+							else{
+
+								//folder user exist
+								//create file
+								writeImage(newPath, fileName, ext, res, data);
+							}			
+						})
 					}
-					
-				});	
+				})
 			}
 			else{
 

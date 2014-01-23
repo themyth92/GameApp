@@ -34,7 +34,7 @@ define(['app'], function(app){
 			for(var i = 0 ; i < questions.length ; i++){
 
 				var deffered  = $q.defer();
-				var question = questions[i]; 
+				var question  = questions[i]; 
 			
 				$http({
 
