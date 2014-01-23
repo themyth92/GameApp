@@ -51,6 +51,14 @@ function Upload(UserModel, UploadModel){
 			};
 	}
 
+	function storeImageErrorCallBack(){
+
+		return {
+				code : Constant.constant.ERROR.IMAGE_UPLOAD_ERROR.code, 
+				message : Constant.constant.ERROR.IMAGE_UPLOAD_ERROR.message
+			};
+	}
+
 	function storeImageInFD(res, userID, path, fileName, ext){
 
 		fs.readFile(path, function(err, data){
@@ -61,25 +69,33 @@ function Upload(UserModel, UploadModel){
 
 				fs.mkdir(newPath, function(error){
 
-					fs.writeFile(newPath + '/' + fileName + '.' + ext, data, function(err){
+					if(!error){
+
+						fs.writeFile(newPath + '/' + fileName + '.' + ext, data, function(err){
 					
-						if(err){
-							throw(err);
-							res.json(serverErrorCallBack(err));
-						}
-						else{
-							res.json({
-										code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
-									  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
-									  });
-						}
-					})
+							if(err){
+								throw(err);
+								res.json(storeImageErrorCallBack());
+							}
+							else{
+								res.json({
+											code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
+										  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
+										  });
+							}
+						})
+					}
+					else{
+						throw(error);
+						res.json(serverErrorCallBack(error));
+					}
+					
 				});	
 			}
 			else{
 
 				throw(err);
-				res.json(serverErrorCallBack(err));
+				res.json(storeImageErrorCallBack());
 			}
 		})
 	}
@@ -104,7 +120,7 @@ function Upload(UserModel, UploadModel){
 					storeImageInFD(res, userID, path, fileName, ext);
 				}
 				else{
-					res.json(serverErrorCallBack(error));
+					res.json(storeImageErrorCallBack(error));
 				}
 			})
 		}

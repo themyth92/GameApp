@@ -5,30 +5,26 @@ define(['app'], function(app){
 		UploadService = {};
 
 		UploadService.isAbleToSubmit = {
-			image : false,
+			image    : false,
 			question : false
 		}
 
 		UploadService.uploadImage = function(file, successCallBack, errorCallBack, index){
 
-		//	for(var i = 0 ; i < files.length ; i ++){
-
-		//		var file     = files[i];
+			$upload.upload({
 			
-				$upload.upload({
-				
-					url   : 'upload/image',
-					method: 'POST',
-					file  : file.file,
-					data  : {title : file.title, select : file.select}	
-				}).
-				success(function(data){
-					successCallBack(data, index);
-				}).
-				error(function(error){
-					errorCallBack(error);
-				});
-		//	}
+				url   : 'upload/image',
+				method: 'POST',
+				file  : file.file,
+				data  : {title : file.title, select : file.select}	
+			}).
+			success(function(data){
+				successCallBack(data, index);
+			}).
+			error(function(error){
+				errorCallBack(error);
+			});
+		
 		}
 
 		UploadService.uploadQuestion = function(questions){

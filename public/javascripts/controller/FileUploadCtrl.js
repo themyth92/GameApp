@@ -21,7 +21,7 @@ define(['app'], function(app){
 			this.checkErrorArray = function(){
 				
 				for(var i = 0 ; i < parent.images.length ; i++)
-					if(parent.images[i].isError == false) 
+					if(parent.images[i].isError == true) 
 						return false ;
 				
 				return true;

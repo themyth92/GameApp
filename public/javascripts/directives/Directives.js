@@ -85,6 +85,30 @@ define(['app'], function(app){
 							return false;
 						}
 
+						if(code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.code){
+
+							changeStateToSuccess(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.message;
+							hideMessageTimeout(element);	
+							return false;
+						}
+
+						if(code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_SESSION_ERROR.code){
+
+							changeStateToError(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_SESSION_ERROR.message;
+							hideMessageTimeout(element);	
+							return false;
+						}
+
+						if(code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_IMAGE_ERROR.code){
+
+							changeStateToError(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_IMAGE_ERROR.message;
+							hideMessageTimeout(element);	
+							return false;
+						}
+
 						changeStateToError(element);
 						$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.COMMON.SERVER_ERROR.message;
 						return false;

@@ -68,7 +68,7 @@ Constant = {
 						code    : '104',
 						message : 'There are some errors from server. We can not proceed your image uploading.'
 					},
-					UPLOAD_QUESTION_ERROR;{
+					UPLOAD_QUESTION_ERROR:{
 						code    : '105',
 						message : 'There are errors from server. We can not proceed your question uploading'
 					}

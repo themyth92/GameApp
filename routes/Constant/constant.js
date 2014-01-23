@@ -23,6 +23,11 @@ var constant = {
 				message : 'Server problem'
 			},
 
+			IMAGE_UPLOAD_ERROR : {
+				code : '104',
+				message : 'Image upload error'
+			},
+
 			SESSION_NOT_EXIST :{
 				code : '103',
 				message : 'Session not exist'
