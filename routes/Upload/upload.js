@@ -210,9 +210,9 @@ function Upload(UserModel, UploadModel){
 		} 
 	}
 
-	function insertQuestionInDB(res, userID, title, ans1, ans2, ans3){
+	function insertQuestionInDB(res, userID, title, answers){
 
-		UploadModel.findOneAndUpdate({userID : userID}, {$push : {question : {title : title, ans1 : ans1, ans2 : ans2, ans3 : ans3}}}, {upsert : true}, function(error, doc){
+		UploadModel.findOneAndUpdate({userID : userID}, {$push : {question : {title : title, answers : answers}}}, {upsert : true}, function(error, doc){
 
 			if(!error && doc){
 
@@ -272,9 +272,9 @@ function Upload(UserModel, UploadModel){
 					res.json(dataSendBack);
 				}
 				else{
-
-					if(data.title && data.ans1 && data.ans2 && data.ans3){
-						insertQuestionInDB(res, id, data.title, data.ans1, data.ans2, data.ans3);
+					
+					if(data.title && data.answers){
+						insertQuestionInDB(res, id, data.title, data.answers);
 					}
 					else
 						res.json({

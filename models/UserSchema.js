@@ -21,11 +21,13 @@ var ImageSchema      = new Schema({
 	ext    : String
 })
 
+var AnswerSchema = new Schema({
+	answer : String
+})
+
 var QuestionSchema   = new Schema({
-	title : String,
-	ans1  : String,
-	ans2  : String,
-	ans3  : String
+	title   : String,
+	answers : [AnswerSchema]
 })
 
 var UploadSchema     = new Schema({

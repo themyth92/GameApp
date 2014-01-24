@@ -31,10 +31,8 @@ define(['app'], function(app){
 
 			var promises = [];
 
-			for(var i = 0 ; i < questions.length ; i++){
-
-				var deffered  = $q.defer();
-				var question  = questions[i]; 
+			angular.forEach(questions, function(question){
+				var deffered  = $q.defer(); 
 			
 				$http({
 
@@ -50,7 +48,7 @@ define(['app'], function(app){
 				});
 
 				promises.push(deffered);
-			}
+			});
 			
 			return $q.all(promises);
 		}

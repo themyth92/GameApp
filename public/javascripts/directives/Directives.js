@@ -297,7 +297,7 @@ define(['app'], function(app){
 
 				var helper = {
 					noTitle : 'Please specify your question title',
-					noAns   : 'Please specify 3 choices of your answer'
+					noAns   : 'Please specify choices of your answer'
 				}
 
 				function addHelperClass(element){
@@ -306,6 +306,23 @@ define(['app'], function(app){
 
 				function removeHelperClass(element){
 					element.find('.uploadQuestionHelper').removeClass('text-danger').addClass('hidden');
+				}
+
+				function checkAnswerArray(answers){
+
+					for(var i = 0 ; i < answers.length ; i++){
+
+						if(answers[i].answer){
+
+							if(answers[i].answer.trim == ''){
+								return false
+							}
+						}
+						else
+							return false;
+					}
+
+					return true;
 				}
 
 				function checkQuestionArray(ctrl){
@@ -318,7 +335,7 @@ define(['app'], function(app){
 							return false;
 						}
 						else
-							if(ctrl.ans1.trim() == '' || ctrl.ans2.trim() == '' || ctrl.ans3.trim() == ''){
+							if(!checkAnswerArray(ctrl.answers)){
 								ctrl.helper = helper.noAns;
 								ctrl.isError = true;
 								return false;
@@ -336,8 +353,27 @@ define(['app'], function(app){
 				var parent = scope.$parent.$parent.FileUploadCtrl;
 
 				scope.QuestionUploadDirective = {
+
 					removeQuestionBox : function(index){
 						parent.questions.splice(index, 1);
+					},
+
+					addAnswer : function(index){
+
+						parent.questions[index].answers.push({answer : ''});
+					},
+
+					removeAnswer : function(index){
+
+						parent.questions[index].answers.pop();	
+					},
+
+					checkAddAnsBtn : function(index){
+						return parent.questions[index].answers.length >= 3;
+					},
+
+					checkRemoveAnsBtn : function(index){
+						return parent.questions[index].answers.length <=1;
 					}
 				}
 
