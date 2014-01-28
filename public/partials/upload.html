@@ -104,18 +104,28 @@
 	<div class = 'row'>
 		<div class = 'col-xs-1 visible-xs'></div>
 		<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 well'>
+			
 			<div class="form-group">
 				<label>Question {{$index + 1}}</label>
 			</div>
+			
 			<div class="form-group">
 				<label class = 'uploadQuestionHelper hidden'>{{question.helper}}</label>
 			</div>
+			
 			<div class="form-group">
 				<input type="text" class="form-control" ng-model = 'question.title' placeholder="Question title">
 			</div>
 
 			<div class="form-group" ng-repeat = 'ans in question.answers'>
 				<input type="text" class="form-control" ng-model = 'ans.answer' placeholder="Answer {{$index + 1}}">
+			</div>
+			
+			<div class='form-group'>
+				<label>Your answer : </label>
+					<label class="radio-inline" ng-repeat = 'ans in question.answers'>
+				  		<input type="radio"  name = 'answer{{$parent.$index}}' ng-model = 'question.select' value="{{$index+1}}">{{$index+1}}
+					</label>
 			</div>
 			
 			<div class="form-group">

@@ -1,6 +1,6 @@
-/*
- * GET home page.
- */
+/*==================
+  routing index
+ ==================*/
 var Constant      = require('./Constant/constant.js');
 var mongoose      = require('mongoose');
 var db            = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
@@ -26,12 +26,15 @@ function Api(){
 
 		var promise, dataSendBack = {};
 		
+		//create a promise for checking user already registered in database
 		promise = attr.user.registerUser(req);
 		
 		if(promise){
 
+			//excecute the callback for the promise
 			promise.then(function(doc){
 				
+				//check the data from the callback data doc
 				dataSendBack = attr.user.checkUserExistSuccessCallback(doc);
 						
 				if(dataSendBack.code == Constant.constant.STATUS.SUCCESS.USER_REGISTER_SUCCESS.code){
@@ -51,24 +54,25 @@ function Api(){
 		else{
 
 			dataSendBack = {
-							code : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
+							code    : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
 							message : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.message}; 
 			
 			res.json(dataSendBack);
 		}
-		
 	};
 
 	this.loginUser = function(req, res){
 
 		var user, password, promise, dataSendBack;
 
+		//check the user inside database success callback
 		promise = attr.user.loginUser(req);
 
 		if(promise){
 			
 			promise.then(function(doc){
 				
+				//check data sendback from the database and return result to user
 				dataSendBack = attr.user.loginUserSuccessCallBack(doc, req);
 				res.json(dataSendBack);
 
@@ -82,13 +86,16 @@ function Api(){
 		else{
 
 			dataSendBack = {
-							code : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
+							code    : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
 							message : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.message}; 
 			
 			res.json(dataSendBack);	
 		}
 	}
 
+	/*
+		check if the session already exist for user
+	*/
 	this.authenticateUser = function(req, res){
 		
 		var dataSendBack, promise;
@@ -104,17 +111,17 @@ function Api(){
 				if(data = attr.user.authenticateUserSuccessCallBack(doc)){
 
 					dataSendBack = {
-						code : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.code,
+						code    : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.code,
 						message : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.message,
-						data   : {
-							_id : data._id,
+						data    : {
+							_id      : data._id,
 							userName : data.userName
 						}
 					}
 				}
 				else
 					dataSendBack = {
-						code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+						code    : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
 						message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message	
 					}
 
@@ -123,7 +130,7 @@ function Api(){
 			}, function(err){
 
 				dataSendBack = {
-					code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+					code    : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
 					message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message	
 				}
 
@@ -132,7 +139,7 @@ function Api(){
 		}
 		else{
 			dataSendBack = {
-				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+				code    : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
 				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
 			}
 
@@ -140,16 +147,19 @@ function Api(){
 		}
 	}	
 
+	/*
+		lazy stuff, dont check if the session is destroyed or not
+	*/
 	this.logoutUser = function(req, res){
 		
 		attr.user.destroySession(req);
 
 		res.json({
-			code : '204',
+			code    : '204',
 			message : 'Logout success'
 		})
 	}
-
+	
 	this.uploadImage = function(req, res){
 
 		if(req.session.userName){

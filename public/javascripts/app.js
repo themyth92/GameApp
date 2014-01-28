@@ -7,11 +7,15 @@ define([], function(){
 			$routeProvider.
 				when('/home', {
 					templateUrl : 'partials/home.html',
-					controller : 'HomePartialCtrl'
+					controller  : 'HomePartialCtrl'
 				}).
 				when('/upload',{
 					templateUrl : 'partials/upload.html',
-					controller : 'FileUploadCtrl'
+					controller  : 'FileUploadCtrl'
+				}).
+				when('/questionList',{
+					templateUrl : 'partials/questionList.html',
+					controller  : 'QuestionListCtrl'
 				}).
 				otherwise({
 					redirectTo : '/home'

@@ -235,6 +235,8 @@ define(['app'], function(app){
 								throw('Unhandle error in '  +  Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
 							break;
 						}
+
+						restartScreen();
 					}
 				}
 				else{
@@ -283,13 +285,21 @@ define(['app'], function(app){
 				
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name; 
 				broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.code);	
+				restartScreen();
 			}
 
 			function uploadErrorHandle(){
 				
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name;
 				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				restartScreen();
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
+			}
+
+			function restartScreen(){
+
+				$scope.FileUploadCtrl.images    = [];
+				$scope.FileUploadCtrl.questions = [];
 			}
 
 			this.images    = [];
@@ -348,10 +358,15 @@ define(['app'], function(app){
 			})
 
 			return $scope.FileUploadCtrl = this;
-		}
+		},
+
+		QuestionListCtrl : function(){
+
+		},
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', Controller.FileUploadCtrl]);
+	app.controller('QuestionListCtrl', ['$scope', Controller.QuestionListCtrl]);
 }) 

@@ -297,7 +297,8 @@ define(['app'], function(app){
 
 				var helper = {
 					noTitle : 'Please specify your question title',
-					noAns   : 'Please specify choices of your answer'
+					noAns   : 'Please specify choices of your answer',
+					noChoice: 'Please specify your correct answer'
 				}
 
 				function addHelperClass(element){
@@ -337,6 +338,12 @@ define(['app'], function(app){
 						else
 							if(!checkAnswerArray(ctrl.answers)){
 								ctrl.helper = helper.noAns;
+								ctrl.isError = true;
+								return false;
+							}
+						else 
+							if(ctrl.select.trim() == ''){
+								ctrl.helper = helper.noChoice;
 								ctrl.isError = true;
 								return false;
 							}

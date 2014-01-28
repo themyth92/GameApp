@@ -1,16 +1,18 @@
-var mongoose    = require('mongoose');
-var Schema      = mongoose.Schema;
-
-var UserSchema  = new Schema({
+/*=========================================
+	Create all the database schema
+===========================================*/
+var mongoose         = require('mongoose');
+var Schema           = mongoose.Schema;
+var UserSchema       = new Schema({
 	
 	userName : {
-		type : String, 
+		type     : String, 
 		required : true, 
-		unique : true
+		unique   : true
 	},
 	
 	password : {
-		type : String,
+		type     : String,
 		required : true
 	}	
 }) ;
@@ -21,24 +23,25 @@ var ImageSchema      = new Schema({
 	ext    : String
 })
 
-var AnswerSchema = new Schema({
+var AnswerSchema     = new Schema({
 	answer : String
 })
 
 var QuestionSchema   = new Schema({
 	title   : String,
-	answers : [AnswerSchema]
+	answers : [AnswerSchema],
+	select  : String
 })
 
 var UploadSchema     = new Schema({
 	
 	userID : {
-		type : String,
+		type     : String,
 		required : true,
-		unique : true
+		unique   : true
 	},
 
-	image : [ImageSchema],
+	image    : [ImageSchema],
 	question : [QuestionSchema]
 })
 
