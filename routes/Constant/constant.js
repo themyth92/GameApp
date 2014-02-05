@@ -54,8 +54,18 @@ var constant = {
 			UPLOAD_SUCCESS : {
 				code : '204',
 				message : 'Upload success'
+			},
+
+			RETRIEVE_QUESTION_SUCCESS :{
+				code : '205',
+				message : 'Retrieve question success'
 			}
 		},
+	},
+
+	SOCKET : {
+		sendQuestion                : 'send:question',
+		receiveQuestionUploadResult : 'receive:question'
 	},
 
 	DATABASE :{

@@ -22,7 +22,7 @@ define([], function(){
 				})
 	}])
 
-	myApp.run(['StoreSessionService', '$rootScope', '$location', function(sessionService, $rootScope, $location){
+	myApp.run(['StoreSessionService', '$rootScope', '$location','$route', function(sessionService, $rootScope, $location, $route){
 		
 		function registerRouteChage(){
 
@@ -30,6 +30,18 @@ define([], function(){
 
 				if(!(sessionService.state.isLogin)){
 					$location.path('/home');
+				}
+				else{
+					if(sessionService.state.isTeacher){
+						if($location.path() == '/uploads'){
+							$location.path('/home');			
+						}
+					}
+					else{
+						if($location.path() == '/questionList'){
+							$location.path('/home');
+						}
+					}
 				}
 			})
 		}
@@ -42,8 +54,9 @@ define([], function(){
 					
 					if(data.data._id && data.data.userName){
 
-						var userName = data.data.userName;
-						sessionService.changeLoginState(true, userName);
+						var userName  = data.data.userName;
+						var isTeacher = data.data.isTeacher;
+						sessionService.changeLoginState(true, userName, isTeacher);
 						registerRouteChage();
 						return true;
 					}

@@ -8,44 +8,14 @@
 					<tr>
 						<th>User Name</th>
 						<th>Questions</th>
-						<th>Accept</th>
+						<th>Accept ?</th>
 					</tr>
 				</thead>
 
 				<!-- body of table -->
 				<tbody>
-					<tr>
-						<td>Your user name</td>
-						<td>
-							<div class = 'form-group text-danger'>
-								Question title	
-							</div>
-							<div class = 'form-group'>
-								<div class = 'radio'>
-									<label>
-										<input type ='radio' name = 'hello' checked>
-										Answer question 1
-									</label>
-								</div>
-								<div class = 'radio'>
-									<label>
-										<input type ='radio' name = 'hello'>
-										Answer question 2
-									</label>
-								</div>
-								<div class = 'radio'>
-									<label>
-										<input type ='radio' name = 'hello'>
-										Answer question 3
-									</label>
-								</div>
-							</div>
-						</td>
-						<td>
-							<div class = 'checkbox'>
-								<label><input type = 'checkbox'>Choose your correct</label>
-							</div>
-						</td>
+					<tr ng-repeat = 'question in QuestionListCtrl.questionList' class = 'QuestionList'>
+						
 					</tr>
 				</tbody>
 			</table>
@@ -57,3 +27,24 @@
 		</div>
 	</div>
 </div>
+<script type = 'text/ng-template' id = 'questionList.html'>
+	<td>{{question.userName}}</td>
+	<td>
+		<div class = 'form-group text-danger'>
+			{{question.title}}	
+		</div>
+		<div class = 'form-group'>
+			<div class = 'radio' ng-repeat = 'ans in question.answers'>
+				<label>
+					<input type ='radio' disabled name = 'questionList{{$parent.$index}}' ng-checked='{{question.select == $index + 1}}'>
+					{{ans.answer}}
+				</label>
+			</div>
+		</div>
+	</td>
+	<td>
+		<div class = 'checkbox'>
+			<label><input type = 'checkbox'>You accept it ?</label>
+		</div>
+	</td>
+</script>

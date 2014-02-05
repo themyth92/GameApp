@@ -1,4 +1,5 @@
 define(['app'], function(app){
+	
 	app.directive('AjaxLoading', ['$timeout', function($timeout){
 		return {
 			restrict : 'C',
@@ -44,8 +45,9 @@ define(['app'], function(app){
 					if(code){
 
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code ||
-						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code || 
-						   code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code){
+						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code    || 
+						   code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code   ||
+						   code == Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.code){
 						   	
 							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							changeStateToLoading(element);
@@ -106,6 +108,14 @@ define(['app'], function(app){
 							changeStateToError(element);
 							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_IMAGE_ERROR.message;
 							hideMessageTimeout(element);	
+							return false;
+						}
+
+						//if the retrieval of question list is success, no need to show user anything
+						if(code == Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.SUCCESS.code){
+							
+							$scope.AjaxLoadingDirective.status.message = '';							
+							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							return false;
 						}
 
@@ -172,6 +182,14 @@ define(['app'], function(app){
 				})
 
 				scope.$on(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, function(event, args){
+
+					if(args.code){
+
+						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
+					}
+				})
+
+				scope.$on(Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name, function(event, args){
 
 					if(args.code){
 
@@ -405,5 +423,18 @@ define(['app'], function(app){
 				})
 			}
 		}
-	}])	
+	}])
+
+	app.directive('QuestionList', function(){
+		
+		return {
+			restrict    : 'C',
+			templateUrl : 'questionList.html',
+
+			link: function(scope, element, attrs) {
+				
+				var parent = scope.$parent.QuestionListCtrl;
+			}
+		};
+	});	
 }) 

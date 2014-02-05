@@ -102,13 +102,15 @@ define(['app'], function(app){
 		
 		sessionService.state = {
 			
-			isLogin  : false,
-			userName : ''
+			isLogin   : false,
+			userName  : '',
+			isTeacher : false 
 		}
 
-		sessionService.changeLoginState = function(state, userName){
-			sessionService.state.isLogin = state;
-			sessionService.state.userName = userName;
+		sessionService.changeLoginState = function(state, userName, isTeacher){
+			sessionService.state.isLogin   = state;
+			sessionService.state.userName  = userName;
+			sessionService.state.isTeacher = isTeacher;
 		}
 
 		sessionService.authenticateSession = function(){
@@ -116,25 +118,52 @@ define(['app'], function(app){
 			var deffered = $q.defer();
 
 			$http({
-					method : 'GET',
-					url : Constant.URL.ACTION.USER_AUTHENTICATE.url
-				}).
-				success(function(data, status, header, config){
-					deffered.resolve(data);
-				}).
-				error(function(){
-					deffered.reject();
-				});
+				method : 'GET',
+				url : Constant.URL.ACTION.USER_AUTHENTICATE.url
+			}).
+			success(function(data, status, header, config){
+				deffered.resolve(data);
+			}).
+			error(function(){
+				deffered.reject();
+			});
 
 			return deffered.promise;
 		}
 
 		return sessionService;
-	}
+	};
+
+	var QuestionListService = function($http, $q){
+
+		var questionListService = {};
+
+		questionListService.retrieveList = function(){
+
+			var deffered = $q.defer(); 
+
+			$http({
+				method : 'GET',
+				url    : Constant.URL.ACTION.QUESTION_LIST.url,
+				timeout: Constant.TIMEOUT.TIMEOUT_SERVER.time
+			}).
+			success(function(data){
+				deffered.resolve(data);
+			}).
+			error(function(){
+				deferred.reject();
+			})
+
+			return deffered.promise;
+		}
+
+		return questionListService;
+	} 
 	
 	app.factory('UserRegisterService', ['$http', '$q', UserRegisterService]);
 	app.factory('UserLoginService', ['$http', '$q', UserLoginService]);
 	app.factory('BroadCastService', ['$rootScope', BroadCastService]);
 	app.factory('StoreSessionService',['$http', '$q', StoreSessionService]);
 	app.factory('UserLogoutService', ['$http', '$q', UserLogoutService]);
+	app.factory('QuestionListRetrieveService', ['$http', '$q', QuestionListService]);
 }) 

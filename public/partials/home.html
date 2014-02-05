@@ -26,6 +26,13 @@
 							<div class = 'form-group'>
 								<input class = 'form-control input-lg' id = 'register-password' type = 'password' placeholder = 'Enter your password' required ng-maxlength = '20' ng-model = 'UserRegisterCtrl.user.password'>
 							</div>
+							<div class = 'form-group'>
+								<div class="checkbox">
+								    <label>
+								      	<input type="checkbox" ng-model = 'UserRegisterCtrl.user.isTeacher'> Are you a teacher ?
+								    </label>
+								</div>
+							</div>
 							<button class = 'btn btn-success btn-lg btn-block' type = 'submit'>Register</button>
 						</form>
 

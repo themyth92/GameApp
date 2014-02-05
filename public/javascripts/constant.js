@@ -81,6 +81,15 @@ Constant = {
 				}
 			},
 
+			RETRIEVE_QUESTION_LIST :{
+				name : 'RETRIEVE QUESTION LIST',
+				code : '009',
+				SUCCESS : {
+					code    : '205',
+					message : 'Retrieve question success'
+				}
+			},
+
 			USER_LOGOUT : {
 				name :'USER LOGOUT',
 				code : '008'
@@ -98,6 +107,11 @@ Constant = {
 		}
 	},
 
+	SOCKET :{
+		sendQuestion 			    : 'send:question',
+		receiveQuestionUploadResult : 'receive:question'
+	},
+
 	URL :{
 		ACTION :{
 			USER_REGISTER : {
@@ -111,6 +125,9 @@ Constant = {
 			},
 			USER_LOGOUT : {
 				url : '/user/logout'
+			},
+			QUESTION_LIST :{
+				url : '/retrieve/questions'
 			}
 		}
 	},
@@ -136,7 +153,8 @@ Constant = {
 			FILE_UPLOAD_CTRL : 'file upload controller',
 			IMAGE_UPLOAD_CTRL : 'image upload controller',
 			IMAGE_UPLOAD_DIRECTIVE : 'image upload directive',
-			QUESTION_UPLOAD_DIRECTIVE : 'question upload directive'
+			QUESTION_UPLOAD_DIRECTIVE : 'question upload directive',
+			QUESTION_LIST_CTRL : 'question list controller'
 		},
 		ERROR :{
 

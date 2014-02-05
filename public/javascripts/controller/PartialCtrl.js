@@ -63,7 +63,7 @@ define(['app'], function(app){
 
 						   //need add data here about user login credential
 						   broadCastService.broadCastEvent(eventName, data.code);
-						   sessionService.changeLoginState(true, $scope.NavBarCtrl.user.userName);
+						   sessionService.changeLoginState(true, $scope.NavBarCtrl.user.userName, data.data.isTeacher);
 						   setUserLogin(true);
 						   break;
 					
@@ -93,9 +93,10 @@ define(['app'], function(app){
 			}
 
 			this.user = {
-				isLogin : sessionService.state.isLogin,
-				userName : '',
-				password : ''
+				isLogin   : sessionService.state.isLogin,
+				userName  : '',
+				password  : '',
+				isTeacher : sessionService.state.isTeacher
 			};
 
 			this.loginSubmit  = function(){
@@ -127,12 +128,14 @@ define(['app'], function(app){
          		   args.data &&
          		   args.data.userName){
  					
-		        	$scope.NavBarCtrl.user.isLogin  = true;
-		        	$scope.NavBarCtrl.user.userName = args.data.userName;
+		        	$scope.NavBarCtrl.user.isLogin   = true;
+		        	$scope.NavBarCtrl.user.userName  = args.data.userName;
+		        	$scope.NavBarCtrl.user.isTeacher = args.data.isTeacher; 
 		        }
 		        else{
 
-		          $scope.NavBarCtrl.user.isLogin  = false;
+		          $scope.NavBarCtrl.user.isLogin   = false;
+		          $scope.NavBarCtrl.user.isTeacher = false;
 		    	}
 		    })
 
@@ -155,12 +158,16 @@ define(['app'], function(app){
 		    	})
 		    }
 
-			$scope.$watch(function(){return sessionService.state.isLogin}, function(){$scope.NavBarCtrl.user.isLogin = sessionService.state.isLogin; $scope.NavBarCtrl.user.userName = sessionService.state.userName});
+			$scope.$watch(function(){return sessionService.state.isLogin}, function(){
+				$scope.NavBarCtrl.user.isLogin   = sessionService.state.isLogin; 
+				$scope.NavBarCtrl.user.userName  = sessionService.state.userName;
+				$scope.NavBarCtrl.user.isTeacher = sessionService.state.isTeacher;
+			});
 
 			return $scope.NavBarCtrl = this;
 		},
 
-		FileUploadCtrl : function($scope, broadCastService, uploadService){
+		FileUploadCtrl : function($scope, broadCastService, uploadService, socketService){
 
 			function isReadyToUpload(){
 
@@ -191,11 +198,7 @@ define(['app'], function(app){
 					
 					if($scope.FileUploadCtrl.questions.length > 0){
 						
-						uploadService.uploadQuestion($scope.FileUploadCtrl.questions).then(function(datas){
-																								uploadQuestionSuccessHandle(datas);
-																							}, function(){
-																								uploadErrorHandle();
-																							})
+						socketService.emit(Constant.SOCKET.sendQuestion, $scope.FileUploadCtrl.questions, uploadQuestionSuccessHandle);
 					}
 					else{
 						
@@ -282,7 +285,7 @@ define(['app'], function(app){
 			}
 
 			function uploadQuestionSuccessHandle(datas){
-				
+
 				var eventName = Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name; 
 				broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.FILE_UPLOAD.name, Constant.NOTIFICATION.ACTION.FILE_UPLOAD.SUCCESS.UPLOAD_SUCCESS.code);	
 				restartScreen();
@@ -339,11 +342,8 @@ define(['app'], function(app){
 									uploadService.uploadImage($scope.FileUploadCtrl.images[index], uploadImageSuccessHandle, uploadErrorHandle, index);			
 								}
 								else{
-									uploadService.uploadQuestion($scope.FileUploadCtrl.questions).then(function(datas){
-																						uploadQuestionSuccessHandle(datas);	
-																					}, function(errors){
-																						uploadErrorHandle();
-																					})	
+
+									socketService.emit(Constant.SOCKET.sendQuestion, $scope.FileUploadCtrl.questions, uploadQuestionSuccessHandle);	
 								}
 								
 							}
@@ -356,17 +356,75 @@ define(['app'], function(app){
 				else
 					throw('Unhandle error in ' + Constant.DEBUG.LOCATION.FILE_UPLOAD_CTRL);
 			})
+			
+			socketService.on(Constant.SOCKET.receiveQuestionUploadResult, uploadQuestionSuccessHandle);
 
 			return $scope.FileUploadCtrl = this;
 		},
 
-		QuestionListCtrl : function(){
+		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService){
 
+			function retrieveListFromData(data){
+
+				if(data.data){
+
+					for(var i = 0 ; i < data.data.length ; i++){
+
+						data.data[i].question = data.data[i].question || [];
+						for(var j = 0 ; j < data.data[i].question.length; j++){
+
+							var obj 	   = {};
+							var partial    = data.data[i]               || {};
+							obj.userName   = partial.userName 			|| 'None';
+							obj._id        = partial._id      			|| 'None';
+							obj.title      = partial.question[j].title  || 'None';
+							obj.select     = partial.question[j].select || 'None';
+							obj.answers    = partial.question[j].answers|| [];
+							obj.questionID = partial.question[j]._id    || 'None';
+							
+							$scope.QuestionListCtrl.questionList.push(obj);
+						}	
+					}
+				}
+			}
+
+			function retrieveQuestionListSuccessHandle(data){
+				
+				data      	  = data || {};
+				data.code 	  = data.code || Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER;
+				
+				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name
+				broadCastService.broadCastEvent(eventName, data.code);
+				retrieveListFromData(data);
+			}
+
+			function retrieveQuestionListErrorHandle(error){
+
+				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name;
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.QUESTION_LIST_CTRL);
+			}
+
+			function retrieveQuestionList(){
+
+				broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name, Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.code);
+				questionListRetrieveServive.retrieveList().then(function(data){
+					retrieveQuestionListSuccessHandle(data);
+				}, function(error){
+					retrieveQuestionListErrorHandle(error);
+				})
+			}
+
+			this.questionList = [];
+
+			retrieveQuestionList();
+			
+			return $scope.QuestionListCtrl = this;
 		},
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
-	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', Controller.FileUploadCtrl]);
-	app.controller('QuestionListCtrl', ['$scope', Controller.QuestionListCtrl]);
+	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
+	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', Controller.QuestionListCtrl]);
 }) 

@@ -3,45 +3,12 @@ var fs       = require('fs');
 
 function Upload(UserModel, UploadModel){
 
-	function retrieveUserID(userName){
-		
-		var query = UserModel.find({userName : userName}, '_id');
-		return query.exec();
-	}
-
 	function getExtension(fileName){
 		var ext;
 
 		//return the extension of the image, 
 		//if no extension specified, jpg will be used instead
 		return (ext = fileName.split('.').pop() ? ext : 'jpg');
-	}
-	/*
-		return the user id if it is exist in the database
-	*/
-	function retrieveUserIDSuccessCallBack(doc){
-		
-		if(doc){
-
-			switch(doc.length){
-				
-				case Constant.constant.NUMBER.NO_USER_EXIST : 
-					return false;
-				break;
-				
-				case Constant.constant.NUMBER.USER_ALREADY_EXIST:
-					return doc[0]._id;	
-				break;
-				
-				default:
-					throw(Constant.constant.DATABASE.ERROR.USER_NAME_DATABASE_ERROR.EXIST_MORE_THAN_ONE_USER_NAME);
-					return false;
-				
-				break;
-			}
-		}
-		else
-			return false;
 	}
 
 	function serverErrorCallBack(err){
@@ -84,11 +51,11 @@ function Upload(UserModel, UploadModel){
 		})
 	}
 
-	function storeImageInFD(res, userID, path, fileName, ext){
+	function storeImageInFD(res, userName, path, fileName, ext){
 
 		fs.readFile(path, function(err, data){
 			
-			var newPath    = __dirname + "/../../uploads/" + userID + '/';
+			var newPath    = __dirname + "/../../uploads/" + userName + '/';
 			var uploadPath = __dirname + "/../../uploads/"; 
 
 			if(!err){
@@ -186,7 +153,7 @@ function Upload(UserModel, UploadModel){
 		})
 	}
 
-	function insertImageInDB(res, userID, files, data){
+	function insertImageInDB(res, userName, files, data){
 
 		var ext   = (files.file.originalFileName ? getExtension(files.file.originalFileName) : getExtension(''));
 		var title, choice;
@@ -198,7 +165,7 @@ function Upload(UserModel, UploadModel){
 			choice = data.select;
 
 			//push the data of image into the database
-			UploadModel.findOneAndUpdate({userID : userID}, {$push : {image : {title : title, choice : choice, ext : ext}}}, {upsert : true}, function(error, doc){
+			UploadModel.findOneAndUpdate({userName : userName}, {$push : {image : {title : title, choice : choice, ext : ext}}}, {upsert : true}, function(error, doc){
 
 				if(!error && doc){
 
@@ -208,7 +175,7 @@ function Upload(UserModel, UploadModel){
 					var path     = files.file.path || '';
 					
 					//store that image in server 
-					storeImageInFD(res, userID, path, fileName, ext);
+					storeImageInFD(res, userName, path, fileName, ext);
 				}
 				else{
 					res.json(storeImageErrorCallBack(error));
@@ -223,81 +190,13 @@ function Upload(UserModel, UploadModel){
 		} 
 	}
 
-	function insertQuestionInDB(res, userID, title, answers, select){
-
-		UploadModel.findOneAndUpdate({userID : userID}, {$push : {question : {title : title, answers : answers, select : select}}}, {upsert : true}, function(error, doc){
-
-			if(!error && doc){
-
-				res.json({
-							code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
-						  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
-						  });
-			}
-			else{
-				res.json(serverErrorCallBack(error));
-			}
-		})
-	}
-
 	this.uploadImage = function(req, res){
 
 		var userName = req.session.userName;
 		var files    = req.files;
 		var data     = req.body;
-
-		retrieveUserID(userName).
-
-			then(function(doc){
-				
-				var id;
-				
-				if(!(id = retrieveUserIDSuccessCallBack(doc))){
-					
-					res.json(serverErrorCallBack());
-				}
-				else{
-
-					insertImageInDB(res, id, files, data);
-				}
-
-			}, function(err){
-
-				res.json(serverErrorCallBack(err));
-			})
-	}
-
-	this.uploadQuestion = function(req, res){
-
-		var data 	 = req.body;
-		var userName = req.session.userName;
-
-		retrieveUserID(userName).
-
-			then(function(doc){
-				
-				var id;
-				
-				if(!(id = retrieveUserIDSuccessCallBack(doc))){
-					
-					res.json(serverErrorCallBack());
-				}
-				else{
-					
-					if(data.title && data.answers && data.select){
-						insertQuestionInDB(res, id, data.title, data.answers, data.select);
-					}
-					else
-						res.json({
-								  code    : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.code,
-								  message : Constant.constant.STATUS.ERROR.USER_CREDENTIAL_WRONG_FORMAT.message
-								})
-				}
-
-			}, function(err){
-
-				res.json(serverErrorCallBack(err));
-			})		
+		
+		insertImageInDB(res, userName, files, data);
 	}
 }
 

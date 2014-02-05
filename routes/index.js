@@ -1,7 +1,7 @@
 /*==================
   routing index
  ==================*/
-var Constant      = require('./Constant/constant.js');
+var Constant      = require('./Constant/constant');
 var mongoose      = require('mongoose');
 var db            = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
 var UserSchema    = require('../models/UserSchema').UserSchema;
@@ -10,15 +10,18 @@ var UploadSchema  = require('../models/UserSchema').UploadSchema;
 var UploadModel   = db.model(Constant.constant.DATABASE.COLLECTION.upload, UploadSchema);
 var UserModel     = db.model(Constant.constant.DATABASE.COLLECTION.user, UserSchema); 
 var bCrypt        = require('bcrypt');
-var User          = require('./User/user.js').user;
-var Upload        = require('./Upload/upload.js').upload;
+var User          = require('./User/user').user;
+var Upload        = require('./Upload/upload').upload;
+var Socket        = require('./Socket/socket').socket;
+var QuestionList  = require('./User/questionList').questionList;
 
 function Api(){
 	
 	//declare private attributes
 	var attr = {
-		user : new User(UserModel, bCrypt),
-		upload : new Upload(UserModel, UploadModel) 
+		user   		 : new User(UserModel, bCrypt),
+		upload 		 : new Upload(UserModel, UploadModel),
+		questionList : new QuestionList(UserModel, UploadModel) 
 	};
 
 	//declare public methods
@@ -114,8 +117,9 @@ function Api(){
 						code    : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.code,
 						message : Constant.constant.STATUS.SUCCESS.SESSION_EXIST.message,
 						data    : {
-							_id      : data._id,
-							userName : data.userName
+							_id       : data._id,
+							userName  : data.userName,
+							isTeacher : data.isTeacher
 						}
 					}
 				}
@@ -173,17 +177,22 @@ function Api(){
 		}
 	}
 
-	this.uploadQuestion = function(req, res){
+	this.retrieveQuestionList = function(req, res){
 
 		if(req.session.userName){
-			attr.upload.uploadQuestion(req, res);
+			attr.questionList.retrieveQuestionList(req, res);
 		}
 		else{
 			res.json({
 				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
 				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
-			})
+			})	
 		}
+	}
+
+	this.socketConnect = function(socket, session){
+		var socketVar = new Socket(UserModel, UploadModel, socket, session);
+		socketVar.sendQuestion();
 	}
 };
 
@@ -191,11 +200,12 @@ exports.index = function(req, res){
   res.render('index', { title: 'Game Application' });
 };
 
-var Api                  = new Api();
+var Api   	                 = new Api();
 
-exports.registerUser     = Api.registerUser;
-exports.loginUser        = Api.loginUser;
-exports.authenticateUser = Api.authenticateUser;
-exports.logoutUser       = Api.logoutUser;
-exports.uploadImage      = Api.uploadImage;
-exports.uploadQuestion   = Api.uploadQuestion;
+exports.registerUser     	 = Api.registerUser;
+exports.loginUser        	 = Api.loginUser;
+exports.authenticateUser 	 = Api.authenticateUser;
+exports.logoutUser       	 = Api.logoutUser;
+exports.uploadImage      	 = Api.uploadImage;
+exports.socketConnect    	 = Api.socketConnect;
+exports.retrieveQuestionList = Api.retrieveQuestionList;

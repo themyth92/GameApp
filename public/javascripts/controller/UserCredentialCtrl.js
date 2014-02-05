@@ -71,22 +71,25 @@ define(['app'], function(app){
 			}
 			
 			this.user = {
-				isLogin : sessionService.state.isLogin,
-				userName : '',
-				password : ''
+				isLogin   : sessionService.state.isLogin,
+				userName  : '',
+				password  : '',
+				isTeacher : sessionService.state.isTeacher 
 			};
 
 			this.registerSubmit = function(){
 
-				var userName = this.user.userName;
-				var password = this.user.password;
+				var userName   = this.user.userName;
+				var password   = this.user.password;
+				var isTeacher  = this.user.isTeacher;
+
 				var eventName = Constant.NOTIFICATION.ACTION.USER_REGISTER.name;
 
 				try{
 					if(userName && password){
 
 						broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.ACTION.USER_REGISTER.code);
-						registerService.register({userName : userName, password : password}).then(function(data){
+						registerService.register({userName : userName, password : password, isTeacher : isTeacher}).then(function(data){
 														UserRegisterSuccessHandle(data);
 												   },  function(){
 												   		UserRegisterErrorHandle();

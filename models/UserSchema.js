@@ -14,6 +14,11 @@ var UserSchema       = new Schema({
 	password : {
 		type     : String,
 		required : true
+	},
+
+	isTeacher : {
+		type     : Boolean,
+		required : true
 	}	
 }) ;
 
@@ -30,12 +35,16 @@ var AnswerSchema     = new Schema({
 var QuestionSchema   = new Schema({
 	title   : String,
 	answers : [AnswerSchema],
-	select  : String
+	select  : String,
+	accept  : {
+		type    : Boolean,
+		default : false
+		} 
 })
 
 var UploadSchema     = new Schema({
 	
-	userID : {
+	userName : {
 		type     : String,
 		required : true,
 		unique   : true

@@ -18,14 +18,15 @@ function User(UserModel, bCrypt){
 			}
 	}
 
-	function returnMessageToClienOnLogin(isSuccess){
+	function returnMessageToClienOnLogin(isSuccess, isTeacher){
 
 		if(isSuccess)
 			
 			return {
 
-				code : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.code,
-				message : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.message
+				code    : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.code,
+				message : Constant.constant.STATUS.SUCCESS.USER_LOGIN_SUCCESS.message,
+				data    : {isTeacher : isTeacher}
 			}
 		else
 			
@@ -53,16 +54,17 @@ function User(UserModel, bCrypt){
 
 	this.storeRegisterUser = function(req, res){
 		
-		var userName, password;
+		var userName, password, isTeacher;
 
-		userName = req.body.userName;
-		password = req.body.password;
+		userName  = req.body.userName;
+		password  = req.body.password;
+		isTeacher = req.body.isTeacher; 
 		
 		if(userName && password){
 
 			var hashedPassword = hashPassword(password);
 				
-			var user = new UserModel({userName : userName, password : hashedPassword});
+			var user = new UserModel({userName : userName, password : hashedPassword, isTeacher : isTeacher});
 			
 			user.save(function(err, doc){
 
@@ -73,7 +75,8 @@ function User(UserModel, bCrypt){
 					var dataSendBack  = returnMessageToClientOnRegister(false);
 					dataSendBack.data = {
 							userName : doc.userName,
-							_id      : doc._id
+							_id      : doc._id,
+							isTeacher: doc.isTeacher
 					}
 					
 					res.json(dataSendBack);	
@@ -146,7 +149,7 @@ function User(UserModel, bCrypt){
 		else 
 			return false;
 
-		var query = UserModel.find({userName : userName}, 'password');
+		var query = UserModel.find({userName : userName}, 'password isTeacher');
 		return query.exec();
 	}
 
@@ -164,11 +167,12 @@ function User(UserModel, bCrypt){
 
 					var hashedPassword = doc[0].password;
 					var password       = req.body.password;
+					var isTeacher      = doc[0].isTeacher;
 					
 					if(comparePassword(password, hashedPassword)){
 						
 						generateUserSession(req);
-						return returnMessageToClienOnLogin(true);
+						return returnMessageToClienOnLogin(true, isTeacher);
 					}
 					else
 						return returnMessageToClienOnLogin(false);
@@ -193,7 +197,7 @@ function User(UserModel, bCrypt){
 				
 			var userName = req.session.userName;
 
-			var query = UserModel.find({userName : userName} , '_id userName');
+			var query = UserModel.find({userName : userName} , '_id userName isTeacher');
 
 			return query.exec();
 		}
@@ -214,7 +218,7 @@ function User(UserModel, bCrypt){
 				case Constant.constant.NUMBER.USER_ALREADY_EXIST:
 
 					if(doc[0]._id && doc[0].userName){
-						return {_id : doc[0]._id, userName : doc[0].userName};
+						return {_id : doc[0]._id, userName : doc[0].userName, isTeacher : doc[0].isTeacher};
 					}
 					else
 						return false;

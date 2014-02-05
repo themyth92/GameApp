@@ -44,12 +44,12 @@ define(['app'], function(app){
 					deffered.resolve(data);
 				}).
 				error(function(error){
-					deffered.reject();
+					deffered.reject(error);
 				});
 
-				promises.push(deffered);
+				promises.push(deffered.promise);
 			});
-			
+				
 			return $q.all(promises);
 		}
 
