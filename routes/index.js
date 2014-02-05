@@ -190,6 +190,19 @@ function Api(){
 		}
 	}
 
+	this.uploadQuestionList = function(req, res){
+		
+		if(req.session.userName && req.body){
+			attr.questionList.uploadQuestionList(req, res);
+		}
+		else{
+			res.json({
+				code : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+				message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message
+			})	
+		}
+	}
+
 	this.socketConnect = function(socket, session){
 		var socketVar = new Socket(UserModel, UploadModel, socket, session);
 		socketVar.sendQuestion();
@@ -209,3 +222,4 @@ exports.logoutUser       	 = Api.logoutUser;
 exports.uploadImage      	 = Api.uploadImage;
 exports.socketConnect    	 = Api.socketConnect;
 exports.retrieveQuestionList = Api.retrieveQuestionList;
+exports.uploadQuestionList   = Api.uploadQuestionList;

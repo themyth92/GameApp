@@ -22,7 +22,7 @@ function QuestionList(UserModel, UploadModel){
 
 	function retrieveList(){
 
-		var query = UploadModel.find({'question.accept' : false}, 'userName question');
+		var query = UploadModel.find({'question.accept' : true}, 'userName question');
 		return query.exec();
 	}
 
@@ -34,10 +34,24 @@ function QuestionList(UserModel, UploadModel){
 		}
 		
 		if(doc){
+			console.log(doc);
 			dataSendBack.data = doc;
 		}
 
 		return dataSendBack;
+	}
+
+	function uploadList(data){
+
+		data.map(function(question){
+
+			question = question || {};
+
+			if(question.id && question.questionID){
+				UploadModel.findOneAndUpdate({_id : question.id , 'question._id' : question.questionID}, 
+											 {$set : {'question.$.accept' : true}});
+			}
+		})
 	}
 
 	this.retrieveQuestionList = function(req, res){
@@ -54,6 +68,37 @@ function QuestionList(UserModel, UploadModel){
 				}, function(error){
 					res.json(serverErrorCallBack(error));
 				})
+			}
+			else{
+
+				var dataSendBack = {
+						code    : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.code,
+						message : Constant.constant.STATUS.ERROR.SESSION_NOT_EXIST.message	
+					}
+
+				res.json(dataSendBack);
+			}
+		}, function(error){
+			serverErrorCallBack(error);
+		})
+	}
+
+	this.uploadQuestionList = function(req, res){
+
+		var userName = req.session.userName;
+		var data     = req.body;
+
+		checkUserTeacher(userName).then(function(doc){
+			
+			if(doc){
+
+				//ok user is teacher
+				uploadList(data);
+				var dataSendBack = {
+					code : Constant.constant.STATUS.SUCCESS.UPLOAD_QUESTION_LIST_SUCCESS.code,
+					message : Constant.constant.STATUS.SUCCESS.UPLOAD_QUESTION_LIST_SUCCESS.message
+				}
+				res.json(dataSendBack);
 			}
 			else{
 

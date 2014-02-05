@@ -53,6 +53,25 @@ define(['app'], function(app){
 			return $q.all(promises);
 		}
 
+		UploadService.uploadQuestionList = function(question){
+
+			var deffered = $q.defer();
+			$http({
+
+				url   : 'upload/questionList',
+				method: 'POST',
+				data  : question
+			}).
+			success(function(data){
+				deffered.resolve(data);
+			}).
+			error(function(error){
+				deffered.reject(error);
+			});
+
+			return deffered.promise;			
+		}
+
 		return UploadService;
 	};
 

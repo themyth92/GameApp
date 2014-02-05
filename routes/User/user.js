@@ -91,6 +91,18 @@ function User(UserModel, bCrypt){
 			return false;
 	}
 
+	function serverErrorCallBack(err){
+		
+		if(err){
+			throw(err);
+		}
+
+		return {
+				code : Constant.constant.ERROR.SERVER_ERROR.code, 
+				message : Constant.constant.ERROR.SERVER_ERROR.message
+		};		
+	}
+
 	this.serverErrorCallBack = function(err){
 
 		if(err){

@@ -58,7 +58,7 @@ define(['app'], function(app){
 			function UserRegisterErrorHandle(){
 
 				var eventName = Constant.NOTIFICATION.ACTION.USER_REGISTER.name;
-				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.code);
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.USER_REGISTER_CTRL);
 			}
 
@@ -74,9 +74,9 @@ define(['app'], function(app){
 				isLogin   : sessionService.state.isLogin,
 				userName  : '',
 				password  : '',
-				isTeacher : sessionService.state.isTeacher 
+				isTeacher : false 
 			};
-
+			
 			this.registerSubmit = function(){
 
 				var userName   = this.user.userName;

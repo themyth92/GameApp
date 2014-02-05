@@ -59,6 +59,11 @@ var constant = {
 			RETRIEVE_QUESTION_SUCCESS :{
 				code : '205',
 				message : 'Retrieve question success'
+			},
+
+			UPLOAD_QUESTION_LIST_SUCCESS : {
+				code : '206',
+				message : 'Upload question success'
 			}
 		},
 	},

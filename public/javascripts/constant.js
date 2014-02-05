@@ -90,6 +90,15 @@ Constant = {
 				}
 			},
 
+			UPLOAD_QUESTION_LIST : {
+				name : 'UPLOAD QUESTION LIST',
+				code : '010',
+				SUCCESS : {
+					code : '206',
+					message : 'Your change has been saved successfully'
+				},
+			},
+
 			USER_LOGOUT : {
 				name :'USER LOGOUT',
 				code : '008'

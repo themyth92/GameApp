@@ -362,7 +362,7 @@ define(['app'], function(app){
 			return $scope.FileUploadCtrl = this;
 		},
 
-		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService){
+		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService, uploadService){
 
 			function retrieveListFromData(data){
 
@@ -381,7 +381,8 @@ define(['app'], function(app){
 							obj.select     = partial.question[j].select || 'None';
 							obj.answers    = partial.question[j].answers|| [];
 							obj.questionID = partial.question[j]._id    || 'None';
-							
+							obj.correct    = false;
+
 							$scope.QuestionListCtrl.questionList.push(obj);
 						}	
 					}
@@ -415,7 +416,58 @@ define(['app'], function(app){
 				})
 			}
 
+			function processQuestionList(){
+				
+				var dataSendBack = [];
+				
+				angular.forEach($scope.QuestionListCtrl.questionList, function(question){
+
+					if(question.correct && question.correct == true){
+
+						var obj        = {};
+						obj.id         = question._id || '';
+						obj.questionID = question.questionID || '';
+						dataSendBack.push(obj); 
+					}	
+				})
+				
+				return dataSendBack;
+			}
+
+			function saveQuestionListSuccessHandle(data){
+
+				data      	  = data || {};
+				data.code 	  = data.code || Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER;
+				
+				var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name
+				broadCastService.broadCastEvent(eventName, data.code);
+			}
+
+			function saveQuestionListErrorHandle(){
+
+				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name;
+				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.code);
+				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.QUESTION_LIST_CTRL);
+			}
+
 			this.questionList = [];
+			
+			this.save = function(){
+				
+				var data = processQuestionList();
+				if(data){
+					var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name;
+					broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.code);
+					uploadService.uploadQuestionList(data).then(function(data){
+						saveQuestionListSuccessHandle(data);
+					}, function(error){
+						saveQuestionListErrorHandle();
+					})
+				}
+				else{
+					return false;
+				}
+			}
 
 			retrieveQuestionList();
 			
@@ -426,5 +478,5 @@ define(['app'], function(app){
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
-	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', Controller.QuestionListCtrl]);
+	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', 'UploadService', Controller.QuestionListCtrl]);
 }) 

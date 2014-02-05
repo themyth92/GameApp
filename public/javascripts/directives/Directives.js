@@ -47,7 +47,8 @@ define(['app'], function(app){
 						if(code == Constant.NOTIFICATION.ACTION.USER_REGISTER.code ||
 						   code == Constant.NOTIFICATION.ACTION.USER_LOGIN.code    || 
 						   code == Constant.NOTIFICATION.ACTION.FILE_UPLOAD.code   ||
-						   code == Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.code){
+						   code == Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.code ||
+						   code == Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.code){
 						   	
 							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							changeStateToLoading(element);
@@ -117,6 +118,14 @@ define(['app'], function(app){
 							$scope.AjaxLoadingDirective.status.message = '';							
 							$scope.AjaxLoadingDirective.changeStateToNormal(element);
 							return false;
+						}
+
+						if(code == Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.SUCCESS.code){
+
+							changeStateToSuccess(element);
+							$scope.AjaxLoadingDirective.status.message = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.SUCCESS.message;
+							hideMessageTimeout(element);	
+							return false;							
 						}
 
 						changeStateToError(element);
@@ -194,6 +203,14 @@ define(['app'], function(app){
 					if(args.code){
 
 						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);
+					}
+				})
+
+				scope.$on(Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name, function(event, args){
+
+					if(args.code){
+
+						scope.AjaxLoadingDirective.updateNotificationStatus(element, args.code);	
 					}
 				})
 
@@ -424,17 +441,4 @@ define(['app'], function(app){
 			}
 		}
 	}])
-
-	app.directive('QuestionList', function(){
-		
-		return {
-			restrict    : 'C',
-			templateUrl : 'questionList.html',
-
-			link: function(scope, element, attrs) {
-				
-				var parent = scope.$parent.QuestionListCtrl;
-			}
-		};
-	});	
 }) 

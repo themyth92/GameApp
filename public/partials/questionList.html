@@ -14,8 +14,26 @@
 
 				<!-- body of table -->
 				<tbody>
-					<tr ng-repeat = 'question in QuestionListCtrl.questionList' class = 'QuestionList'>
-						
+					<tr ng-repeat = 'question in QuestionListCtrl.questionList'>
+						<td>{{question.userName}}</td>
+						<td>
+							<div class = 'form-group text-danger'>
+								{{question.title}}	
+							</div>
+							<div class = 'form-group'>
+								<div class = 'radio' ng-repeat = 'ans in question.answers'>
+									<label>
+										<input type ='radio' disabled name = 'questionList{{$parent.$index}}' ng-checked='{{question.select == $index + 1}}'>
+										{{ans.answer}}
+									</label>
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class = 'checkbox'>
+								<label><input type = 'checkbox' ng-model = 'question.correct'>You accept it ?</label>
+							</div>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -23,28 +41,7 @@
 
 		<!-- save change button -->
 		<div>
-			<button class = 'btn btn-success'>Save</button>
+			<button class = 'btn btn-success' ng-click = 'QuestionListCtrl.save()'>Save</button>
 		</div>
 	</div>
 </div>
-<script type = 'text/ng-template' id = 'questionList.html'>
-	<td>{{question.userName}}</td>
-	<td>
-		<div class = 'form-group text-danger'>
-			{{question.title}}	
-		</div>
-		<div class = 'form-group'>
-			<div class = 'radio' ng-repeat = 'ans in question.answers'>
-				<label>
-					<input type ='radio' disabled name = 'questionList{{$parent.$index}}' ng-checked='{{question.select == $index + 1}}'>
-					{{ans.answer}}
-				</label>
-			</div>
-		</div>
-	</td>
-	<td>
-		<div class = 'checkbox'>
-			<label><input type = 'checkbox'>You accept it ?</label>
-		</div>
-	</td>
-</script>
