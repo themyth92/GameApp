@@ -2,7 +2,7 @@ define(['app'], function(app){
 
 	var Controller = {
 
-		UserRegisterCtrl : function($rootScope, $scope, registerService, broadCastService, sessionService){
+		UserRegisterCtrl : function($rootScope, $scope, registerService, broadCastService, sessionService, socketService){
 
 			function UserRegisterSuccessHandle(data){
 				
@@ -34,8 +34,16 @@ define(['app'], function(app){
 						   if(data.data && data.data.userName && data.data._id){
 
 						   		broadCastService.broadCastEvent(eventName, data.code, data.data);
-						   		sessionService.changeLoginState(true, $scope.UserRegisterCtrl.user.userName);
+						   		
+						   		if($scope.UserRegisterCtrl.user.isTeacher){
+						   			sessionService.changeLoginState(true, $scope.UserRegisterCtrl.user.userName, true);
+						   		}
+						   		else{
+						   			sessionService.changeLoginState(true, $scope.UserRegisterCtrl.user.userName, false);
+						   		}
+						   		
 						   		setUserLogin(true);
+						   		socketService.establishConnection();
 						   }
 						   else{
 						   		data.code = Constant.ERROR.FAILED_RECEIVE_CORRECT_FORMAT_DATA_FROM_SERVER.code;
@@ -120,5 +128,5 @@ define(['app'], function(app){
 		},
 	}
 
-	app.controller('UserRegisterCtrl', ['$rootScope', '$scope','UserRegisterService', 'BroadCastService' , 'StoreSessionService', Controller.UserRegisterCtrl]);
+	app.controller('UserRegisterCtrl', ['$rootScope', '$scope','UserRegisterService', 'BroadCastService' , 'StoreSessionService', 'SocketService', Controller.UserRegisterCtrl]);
 }) 

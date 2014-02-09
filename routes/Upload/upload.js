@@ -18,16 +18,16 @@ function Upload(UserModel, UploadModel){
 		}
 
 		return {
-				code : Constant.constant.ERROR.SERVER_ERROR.code, 
-				message : Constant.constant.ERROR.SERVER_ERROR.message
+				code : Constant.constant.STATUS.ERROR.SERVER_ERROR.code, 
+				message : Constant.constant.STATUS.ERROR.SERVER_ERROR.message
 			};
 	}
 
 	function storeImageErrorCallBack(){
 
 		return {
-				code : Constant.constant.ERROR.IMAGE_UPLOAD_ERROR.code, 
-				message : Constant.constant.ERROR.IMAGE_UPLOAD_ERROR.message
+				code : Constant.constant.STATUS.ERROR.IMAGE_UPLOAD_ERROR.code, 
+				message : Constant.constant.STATUS.ERROR.IMAGE_UPLOAD_ERROR.message
 			};
 	}
 
@@ -163,7 +163,7 @@ function Upload(UserModel, UploadModel){
 			
 			title  = data.title;
 			choice = data.select;
-
+			
 			//push the data of image into the database
 			UploadModel.findOneAndUpdate({userName : userName}, {$push : {image : {title : title, choice : choice, ext : ext}}}, {upsert : true}, function(error, doc){
 

@@ -33,7 +33,7 @@ define(['app'], function(app){
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, $location, loginService, broadCastService, sessionService, userLogoutService){
+		NavBarCtrl : function($scope, $location, loginService, broadCastService, sessionService, userLogoutService, socketService){
 
 			function UserLoginSuccessHandle(data){
 				
@@ -65,6 +65,7 @@ define(['app'], function(app){
 						   broadCastService.broadCastEvent(eventName, data.code);
 						   sessionService.changeLoginState(true, $scope.NavBarCtrl.user.userName, data.data.isTeacher);
 						   setUserLogin(true);
+						   socketService.establishConnection();
 						   break;
 					
 					default :
@@ -142,18 +143,19 @@ define(['app'], function(app){
 		    this.logoutSubmit = function(){
 
 		    	var eventName = Constant.NOTIFICATION.ACTION.USER_LOGOUT.name;
-
+		    	
 		    	userLogoutService.logoutUser().then(function(data){
 
 		    		broadCastService.broadCastEvent(eventName);
 		    		sessionService.changeLoginState(false);
 		    		$location.path('/home');
-		    		
+		    		socketService.closeConnection();	
 		    	}, function(err){
 
 		    		broadCastService.broadCastEvent(eventName);
 		    		sessionService.changeLoginState(false);
 		    		$location.path('/home');
+		    		socketService.closeConnection();
 		    		throw(err + ' in ' + Constant.DEBUG.LOCATION.NAV_BAR_CTRL);
 		    	})
 		    }
@@ -229,9 +231,10 @@ define(['app'], function(app){
 								broadCastService.broadCastEvent(eventName, data.code);
 							break;
 
-							case Constant.Constant.NOTIFICATION.ACTION.FILE_UPOAD.ERROR.UPLOAD_IMAGE_ERROR.code :
+							case Constant.NOTIFICATION.ACTION.FILE_UPLOAD.ERROR.UPLOAD_IMAGE_ERROR.code :
 								
 								broadCastService.broadCastEvent(eventName, data.code);
+							break;
 							default:
 
 								broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.COMMON.SERVER_ERROR.code);
@@ -476,7 +479,7 @@ define(['app'], function(app){
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', 'SocketService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
 	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', 'UploadService', Controller.QuestionListCtrl]);
 }) 

@@ -2,7 +2,7 @@ define(['app'], function(app){
 
 	var SocketService = function($rootScope){
 		
-		var socket = io.connect();
+		var socket = null;
 
 		return {
 			on : function(eventName, callBack){
@@ -23,6 +23,18 @@ define(['app'], function(app){
 						}
 					})
 				})
+			},
+
+			establishConnection : function(){
+
+				if(!socket)
+					socket = io.connect();	
+				else
+					socket.socket.connect();
+			},
+
+			closeConnection : function(){
+				socket.disconnect();
 			}
 		}
 	}

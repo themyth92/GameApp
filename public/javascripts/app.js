@@ -22,7 +22,7 @@ define([], function(){
 				})
 	}])
 
-	myApp.run(['StoreSessionService', '$rootScope', '$location','$route', function(sessionService, $rootScope, $location, $route){
+	myApp.run(['StoreSessionService','SocketService' ,'$rootScope', '$location','$route', function(sessionService, socketService,$rootScope, $location, $route){
 		
 		function registerRouteChage(){
 
@@ -57,6 +57,7 @@ define([], function(){
 						var userName  = data.data.userName;
 						var isTeacher = data.data.isTeacher;
 						sessionService.changeLoginState(true, userName, isTeacher);
+						socketService.establishConnection();
 						registerRouteChage();
 						return true;
 					}
