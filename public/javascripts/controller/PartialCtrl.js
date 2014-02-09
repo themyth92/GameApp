@@ -369,6 +369,8 @@ define(['app'], function(app){
 
 			function retrieveListFromData(data){
 
+				$scope.QuestionListCtrl.questionList = [];
+
 				if(data.data){
 
 					for(var i = 0 ; i < data.data.length ; i++){
@@ -444,6 +446,7 @@ define(['app'], function(app){
 				
 				var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name
 				broadCastService.broadCastEvent(eventName, data.code);
+				retrieveQuestionList();
 			}
 
 			function saveQuestionListErrorHandle(){

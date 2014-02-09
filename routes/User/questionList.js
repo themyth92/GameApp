@@ -22,19 +22,21 @@ function QuestionList(UserModel, UploadModel){
 
 	function retrieveList(){
 
-		var query = UploadModel.find({'question.accept' : true}, 'userName question');
+		//var query = UploadModel.find({question : {$elemMatch : {accept : false}}});
+		var query = UploadModel.aggregate({$unwind : '$question'},
+			                              {$match  : {'question.accept' : false}},
+			                              {$group  : {_id : '$_id', userName : {$addToSet : '$userName'}, question : {$addToSet : '$question'}}});
 		return query.exec();
 	}
 
 	function retrieveListSuccessCallBack(doc, res){
-
+		
 		var dataSendBack = {
 			code    : Constant.constant.STATUS.SUCCESS.RETRIEVE_QUESTION_SUCCESS.code,
 			message : Constant.constant.STATUS.SUCCESS.RETRIEVE_QUESTION_SUCCESS.message 
 		}
 		
 		if(doc){
-			console.log(doc);
 			dataSendBack.data = doc;
 		}
 
@@ -49,7 +51,7 @@ function QuestionList(UserModel, UploadModel){
 
 			if(question.id && question.questionID){
 				UploadModel.findOneAndUpdate({_id : question.id , 'question._id' : question.questionID}, 
-											 {$set : {'question.$.accept' : true}});
+											 {'$set' : {'question.$.accept' : true}});
 			}
 		})
 	}
