@@ -71,7 +71,7 @@ var constant = {
 	SOCKET : {
 		sendQuestion                : 'send:question',
 		receiveQuestionUploadResult : 'receive:question',
-		sendLogout                  : 'send:logout'
+		sendNewQuestion             : 'send:newQuestion'
 	},
 
 	DATABASE :{

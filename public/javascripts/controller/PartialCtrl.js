@@ -365,7 +365,7 @@ define(['app'], function(app){
 			return $scope.FileUploadCtrl = this;
 		},
 
-		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService, uploadService){
+		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService, uploadService, socketService){
 
 			function retrieveListFromData(data){
 
@@ -380,7 +380,7 @@ define(['app'], function(app){
 
 							var obj 	   = {};
 							var partial    = data.data[i]               || {};
-							obj.userName   = partial.userName 			|| 'None';
+							obj.userName   = partial.userName[0] 		|| 'None';
 							obj._id        = partial._id      			|| 'None';
 							obj.title      = partial.question[j].title  || 'None';
 							obj.select     = partial.question[j].select || 'None';
@@ -456,6 +456,29 @@ define(['app'], function(app){
 				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.QUESTION_LIST_CTRL);
 			}
 
+			function addQuestionOnReceive(data){
+				
+				if( data && 
+					data.userName && 
+					data.id && 
+					data.title && 
+					data.select && 
+					data.answers && 
+					data.questionID){
+
+					var obj 	   = {};        
+					obj.userName   = data.userName	 		|| 'None';
+					obj._id        = data.id      			|| 'None';
+					obj.title      = data.title  			|| 'None';
+					obj.select     = data.select 			|| 'None';
+					obj.answers    = data.answers			|| [];
+					obj.questionID = data.questionID    	|| 'None';
+					obj.correct    = false;
+
+					$scope.QuestionListCtrl.questionList.push(obj);	
+				}				
+			}
+
 			this.questionList = [];
 			
 			this.save = function(){
@@ -476,6 +499,7 @@ define(['app'], function(app){
 			}
 
 			retrieveQuestionList();
+			socketService.on(Constant.SOCKET.sendNewQuestion, addQuestionOnReceive);
 			
 			return $scope.QuestionListCtrl = this;
 		},
@@ -484,5 +508,5 @@ define(['app'], function(app){
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', 'SocketService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
-	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', 'UploadService', Controller.QuestionListCtrl]);
+	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', 'UploadService', 'SocketService', Controller.QuestionListCtrl]);
 }) 

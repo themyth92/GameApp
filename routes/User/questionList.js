@@ -1,4 +1,5 @@
 var Constant = require('../Constant/constant');
+var ObjectId = require('mongoose').Types.ObjectId; 
 
 function QuestionList(UserModel, UploadModel){
 
@@ -22,7 +23,6 @@ function QuestionList(UserModel, UploadModel){
 
 	function retrieveList(){
 
-		//var query = UploadModel.find({question : {$elemMatch : {accept : false}}});
 		var query = UploadModel.aggregate({$unwind : '$question'},
 			                              {$match  : {'question.accept' : false}},
 			                              {$group  : {_id : '$_id', userName : {$addToSet : '$userName'}, question : {$addToSet : '$question'}}});
@@ -50,8 +50,9 @@ function QuestionList(UserModel, UploadModel){
 			question = question || {};
 
 			if(question.id && question.questionID){
-				UploadModel.findOneAndUpdate({_id : question.id , 'question._id' : question.questionID}, 
-											 {'$set' : {'question.$.accept' : true}});
+				
+				UploadModel.update({_id : ObjectId(question.id) , 'question._id' : ObjectId(question.questionID)},
+								   {$set : {'question.$.accept' : true}}, function(){})
 			}
 		})
 	}

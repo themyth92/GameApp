@@ -8,6 +8,16 @@ function Socket(UserModel, UploadModel, socket, session){
 
 			if(!error && doc){
 				
+				var obj      		= {};
+				var questionLength  = doc.question.length - 1;
+				obj.id       		= doc._id;
+				obj.userName 		= doc.userName;
+				obj.title    		= doc.question[questionLength].title;
+				obj.answers  		= doc.question[questionLength].answers;
+				obj.select   		= doc.question[questionLength].select;
+				obj.questionID 		= doc.question[questionLength]._id; 
+
+				broadcastQuestionSuccessCallBack(obj);	
 			}
 			else{
 				res.json(serverErrorCallBack(error));
@@ -24,9 +34,11 @@ function Socket(UserModel, UploadModel, socket, session){
 		socket.emit(Constant.constant.SOCKET.receiveQuestionUploadResult, dataSendBack);
 	}
 
-	function broadcastQuestionSuccessCallBack(){
+	function broadcastQuestionSuccessCallBack(data){
 
-		socket.broadcast.emit(Constant.constant.SOCKET.receiveQuestionUploadResult)
+		if(data){
+			socket.broadcast.emit(Constant.constant.SOCKET.sendNewQuestion, data);	
+		}
 	}
 
 	function serverErrorCallBack(eventName, err){
@@ -41,7 +53,6 @@ function Socket(UserModel, UploadModel, socket, session){
 						    };
 
 		socket.emit(eventName, dataSendBack);
-		//socket.broadcast.emit(eventName, dataSendBack);
 	}
 
 	this.sendQuestion = function(){
@@ -50,14 +61,22 @@ function Socket(UserModel, UploadModel, socket, session){
 
 			var userName = session.userName;
 			
-			for(var i = 0 ; i < data.length ; i++){
-				if(data[i].title && data[i].answers && data[i].select){
-					
-					insertQuestionInDB(userName, data[i].title, data[i].answers, data[i].select);
-				}
-			}
+			if(userName){
 
-			sendQuestionSuccessCallBack();
+				data.map(function(dataElem){
+					
+					if(dataElem.title && dataElem.answers && dataElem.select){
+					
+						insertQuestionInDB(userName, dataElem.title, dataElem.answers, dataElem.select);
+					}	
+				})
+
+				sendQuestionSuccessCallBack();
+			}
+			else{
+				serverErrorCallBack(Constant.constant.SOCKET.receiveQuestionUploadResult);
+			}
+			
 		})
 	}
 }
