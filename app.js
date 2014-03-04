@@ -25,7 +25,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.bodyParser({keepExtensions: true})) ;
 app.use(express.cookieParser());  
-app.use(express.session({ secret: 'gameApp' , store : sessionStore, cookie : {maxAge: 600*10000}}));
+app.use(express.session({ secret: 'gameApp' , store : sessionStore}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -37,9 +37,10 @@ var QuestionSchema   = new Schema({
 	answers : [AnswerSchema],
 	select  : String,
 	accept  : {
-		type    : Boolean,
-		default : false
-		} 
+		type    : Number,
+		default : 3
+		},
+	comment : String
 })
 
 var UploadSchema     = new Schema({

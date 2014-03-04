@@ -6,7 +6,7 @@ html
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src = '/vendor/jquery/jquery.min.js')
 		script(src = '/vendor/bootstrap/dist/js/bootstrap.min.js')
-		script(src = '/vendor/angular/angular.min.js')
+		script(src = '/vendor/angular/angular.js')
 		script(src = '/vendor/ng-file-upload/angular-file-upload.min.js')
 		script(src = '/vendor/angular-route/angular-route.min.js')
 		script(src = '/vendor/angular-animate/angular-animate.min.js')
@@ -56,6 +56,10 @@ html
 											a(href = '#/upload') 
 												span.glyphicon.glyphicon-cloud-upload
 												|&nbsp; &nbsp; Upload your file
+										li(ng-switch-when = 'false')
+											a(href = '#/checkYourQuestion') 
+												span.glyphicon.glyphicon-arrow-right
+												|&nbsp; &nbsp; Check your questions
 										li(ng-switch-default)
 											a(href = '#/questionList') 
 												span.glyphicon.glyphicon-cloud-upload

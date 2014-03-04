@@ -26,7 +26,7 @@ define(['app'], function(app){
 			},
 
 			establishConnection : function(){
-
+				
 				if(!socket)
 					socket = io.connect();	
 				else
@@ -35,6 +35,15 @@ define(['app'], function(app){
 
 			closeConnection : function(){
 				socket.disconnect();
+			},
+
+			once : function(eventName, callBack){
+				socket.once(eventName, function(){
+					var args = arguments;
+					$rootScope.$apply(function(){
+						callBack.apply(socket, args);
+					})
+				})
 			}
 		}
 	}

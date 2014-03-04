@@ -206,6 +206,8 @@ function Api(){
 	this.socketConnect = function(socket, session){
 		var socketVar = new Socket(UserModel, UploadModel, socket, session);
 		socketVar.sendQuestion();
+		socketVar.retrieveQuestionList();
+		socketVar.teacherUpdateQuestionList();
 	}
 };
 

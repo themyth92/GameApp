@@ -1,10 +1,11 @@
 var Constant = require('../Constant/constant');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 function Socket(UserModel, UploadModel, socket, session){
 
 	function insertQuestionInDB(userName, title ,answers, select){
 
-		UploadModel.findOneAndUpdate({userName : userName}, {$push : {question : {title : title, answers : answers, select : select}}}, {upsert : true}, function(error, doc){
+		UploadModel.findOneAndUpdate({userName : userName}, {$push : {question : {title : title, answers : answers, select : select, comment : ''}}}, {upsert : true}, function(error, doc){
 
 			if(!error && doc){
 				
@@ -48,8 +49,8 @@ function Socket(UserModel, UploadModel, socket, session){
 		}
 
 		var dataSendBack = {
-							code : Constant.constant.ERROR.SERVER_ERROR.code, 
-							message : Constant.constant.ERROR.SERVER_ERROR.message
+							code : Constant.constant.STATUS.ERROR.SERVER_ERROR.code, 
+							message : Constant.constant.STATUS.ERROR.SERVER_ERROR.message
 						    };
 
 		socket.emit(eventName, dataSendBack);
@@ -60,7 +61,7 @@ function Socket(UserModel, UploadModel, socket, session){
 		socket.on(Constant.constant.SOCKET.sendQuestion, function(data){
 
 			var userName = session.userName;
-			
+
 			if(userName){
 
 				data.map(function(dataElem){
@@ -77,6 +78,41 @@ function Socket(UserModel, UploadModel, socket, session){
 				serverErrorCallBack(Constant.constant.SOCKET.receiveQuestionUploadResult);
 			}
 			
+		})
+	}
+
+	this.retrieveQuestionList = function(){
+
+		socket.once('retrieveQuestionList', function(){
+			var userName = session.userName;
+			UploadModel.aggregate({$unwind : '$question'},
+			                      {$match  : {'question.accept' : 3}},
+			                      {$group  : {_id : '$_id', userName : {$addToSet : '$userName'}, question : {$addToSet : '$question'}}}, function(err, doc){
+
+			                      	socket.emit('retrieveQuestionList', {data : doc});
+			                      });
+		})
+	}
+
+	this.teacherUpdateQuestionList = function(){
+
+		socket.on('teacherUpdateQuestionList', function(data){
+			
+			data.map(function(question){
+
+				question = question || {};
+
+				if(question.id && question.questionID){
+					
+					var comment = question.comment;
+					var accept  = question.correct;
+
+					UploadModel.update({_id : ObjectId(question.id) , 'question._id' : ObjectId(question.questionID)},
+									   {$set : {'question.$.accept' : accept, 'question.$.comment' : comment}}, function(){
+									   		socket.emit('teacherUpdateQuestionList');
+									   })
+				}
+			})
 		})
 	}
 }

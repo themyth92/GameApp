@@ -84,6 +84,12 @@ define(['app'], function(app){
 				password  : '',
 				isTeacher : false 
 			};
+
+			$scope.$watch(function(){
+				return sessionService.state.isLogin
+			},function(){
+				$scope.UserRegisterCtrl.user.isLogin = sessionService.state.isLogin;
+			})
 			
 			this.registerSubmit = function(){
 

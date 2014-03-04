@@ -33,7 +33,7 @@ define(['app'], function(app){
 			return $scope.HomePartialCtrl = this;
 		},
 
-		NavBarCtrl : function($scope, $location, loginService, broadCastService, sessionService, userLogoutService, socketService){
+		NavBarCtrl : function($scope, $location, loginService, broadCastService, sessionService, userLogoutService, socketService, DataService){
 
 			function UserLoginSuccessHandle(data){
 				
@@ -164,6 +164,18 @@ define(['app'], function(app){
 				$scope.NavBarCtrl.user.isLogin   = sessionService.state.isLogin; 
 				$scope.NavBarCtrl.user.userName  = sessionService.state.userName;
 				$scope.NavBarCtrl.user.isTeacher = sessionService.state.isTeacher;
+			});
+
+			$scope.$watch(function(){return DataService.firstTimeLoadQuestionListPage},function(){
+				
+				if(DataService.firstTimeLoadQuestionListPage == false){
+					
+					socketService.on('send:newQuestion', function(data){
+						DataService.pushNewQuestion(data);
+						broadCastService.broadCastEvent('newQuestionAdded');
+					})	
+				}
+				
 			});
 
 			return $scope.NavBarCtrl = this;
@@ -365,148 +377,90 @@ define(['app'], function(app){
 			return $scope.FileUploadCtrl = this;
 		},
 
-		QuestionListCtrl : function($scope, questionListRetrieveServive, broadCastService, uploadService, socketService){
+		QuestionListCtrl : function($scope, DataService, $q, SocketService, broadCastService){
 
-			function retrieveListFromData(data){
-
-				$scope.QuestionListCtrl.questionList = [];
-
-				if(data.data){
-
-					for(var i = 0 ; i < data.data.length ; i++){
-
-						data.data[i].question = data.data[i].question || [];
-						for(var j = 0 ; j < data.data[i].question.length; j++){
-
-							var obj 	   = {};
-							var partial    = data.data[i]               || {};
-							obj.userName   = partial.userName[0] 		|| 'None';
-							obj._id        = partial._id      			|| 'None';
-							obj.title      = partial.question[j].title  || 'None';
-							obj.select     = partial.question[j].select || 'None';
-							obj.answers    = partial.question[j].answers|| [];
-							obj.questionID = partial.question[j]._id    || 'None';
-							obj.correct    = false;
-
-							$scope.QuestionListCtrl.questionList.push(obj);
-						}	
-					}
-				}
-			}
-
-			function retrieveQuestionListSuccessHandle(data){
-				
-				data      	  = data || {};
-				data.code 	  = data.code || Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER;
-				
-				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name
-				broadCastService.broadCastEvent(eventName, data.code);
-				retrieveListFromData(data);
-			}
-
-			function retrieveQuestionListErrorHandle(error){
-
-				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name;
-				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER);
-				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.QUESTION_LIST_CTRL);
-			}
-
-			function retrieveQuestionList(){
-
-				broadCastService.broadCastEvent(Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name, Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.code);
-				questionListRetrieveServive.retrieveList().then(function(data){
-					retrieveQuestionListSuccessHandle(data);
-				}, function(error){
-					retrieveQuestionListErrorHandle(error);
-				})
-			}
+			var self = this;
 
 			function processQuestionList(){
-				
-				var dataSendBack = [];
-				
-				angular.forEach($scope.QuestionListCtrl.questionList, function(question){
 
-					if(question.correct && question.correct == true){
+				var dataSendBack = [];
+
+				angular.forEach(self.questionList, function(question){
+
+					if(question.correct == '1' || question.correct == '2'){
 
 						var obj        = {};
 						obj.id         = question._id || '';
 						obj.questionID = question.questionID || '';
+						obj.comment    = question.comment || '';
+						obj.correct    = question.correct;
 						dataSendBack.push(obj); 
 					}	
 				})
-				
+
 				return dataSendBack;
 			}
 
-			function saveQuestionListSuccessHandle(data){
-
-				data      	  = data || {};
-				data.code 	  = data.code || Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER;
+			function removeAnsweredQuestion(){
 				
-				var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name
-				broadCastService.broadCastEvent(eventName, data.code);
-				retrieveQuestionList();
+				var obj = [];
+				
+				angular.forEach(self.questionList, function(question){
+
+					if(question.correct == '3'){
+						obj.push(question);
+					}
+				})
+
+				self.questionList = obj;
 			}
 
-			function saveQuestionListErrorHandle(){
+			function uploadToServer(data){
 
-				var eventName = Constant.NOTIFICATION.ACTION.RETRIEVE_QUESTION_LIST.name;
-				broadCastService.broadCastEvent(eventName, Constant.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.code);
-				throw(Constant.DEBUG.ERROR.FAILED_RECEIVE_DATA_FROM_SERVER.message + ' in ' + Constant.DEBUG.LOCATION.QUESTION_LIST_CTRL);
+				var deffered = $q.defer();
+
+				SocketService.emit('teacherUpdateQuestionList', data);
+				SocketService.once('teacherUpdateQuestionList', function(){
+					deffered.resolve();
+				})
+
+				return deffered.promise;
 			}
 
-			function addQuestionOnReceive(data){
-				
-				if( data && 
-					data.userName && 
-					data.id && 
-					data.title && 
-					data.select && 
-					data.answers && 
-					data.questionID){
+			self.questionList = DataService.questionList;
 
-					var obj 	   = {};        
-					obj.userName   = data.userName	 		|| 'None';
-					obj._id        = data.id      			|| 'None';
-					obj.title      = data.title  			|| 'None';
-					obj.select     = data.select 			|| 'None';
-					obj.answers    = data.answers			|| [];
-					obj.questionID = data.questionID    	|| 'None';
-					obj.correct    = false;
 
-					$scope.QuestionListCtrl.questionList.push(obj);	
-				}				
-			}
+			$scope.$on('newQuestionAdded', function(){
+				self.questionList = DataService.questionList;
+			})
 
-			this.questionList = [];
-			
-			this.save = function(){
-				
+			self.save = function(){
+				console.log(self.questionList);
 				var data = processQuestionList();
-				if(data){
+				
+				if(data.length > 0){
+				
 					var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name;
 					broadCastService.broadCastEvent(eventName, Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.code);
-					uploadService.uploadQuestionList(data).then(function(data){
-						saveQuestionListSuccessHandle(data);
-					}, function(error){
-						saveQuestionListErrorHandle();
+					
+					uploadToServer(data).then(function(){
+						
+						var eventName = Constant.NOTIFICATION.ACTION.UPLOAD_QUESTION_LIST.name;
+						broadCastService.broadCastEvent(eventName, '206');
+						removeAnsweredQuestion();
 					})
 				}
 				else{
 					return false;
 				}
 			}
-
-			retrieveQuestionList();
-			socketService.on(Constant.SOCKET.sendNewQuestion, addQuestionOnReceive);
 			
 			return $scope.QuestionListCtrl = this;
 		},
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
-	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', 'SocketService', Controller.NavBarCtrl]);
+	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', 'SocketService', 'DataService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
-	app.controller('QuestionListCtrl', ['$scope', 'QuestionListRetrieveService' ,'BroadCastService', 'UploadService', 'SocketService', Controller.QuestionListCtrl]);
+	app.controller('QuestionListCtrl', ['$scope','DataService', '$q', 'SocketService', 'BroadCastService',Controller.QuestionListCtrl]);
 }) 

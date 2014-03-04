@@ -9,6 +9,7 @@
 						<th>User Name</th>
 						<th>Questions</th>
 						<th>Accept ?</th>
+						<th>Comment</th>
 					</tr>
 				</thead>
 
@@ -30,9 +31,15 @@
 							</div>
 						</td>
 						<td>
-							<div class = 'checkbox'>
-								<label><input type = 'checkbox' ng-model = 'question.correct'>You accept it ?</label>
+							<div class = 'radio'>
+								<label><input type = 'radio' ng-model = 'question.correct' value = '1'>Accept</label>
 							</div>
+							<div class = 'radio'>
+								<label><input type = 'radio' ng-model = 'question.correct' value = '2'>Reject</label>
+							</div>
+						</td>
+						<td>
+							<textarea rows = '2' cols = '20' style = 'resize:none' ng-model = 'question.comment'></textarea>
 						</td>
 					</tr>
 				</tbody>
