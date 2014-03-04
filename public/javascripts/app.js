@@ -23,6 +23,30 @@ define([], function(){
 						ControllerResolverService.UploadResolver();
 					}]
 				}).
+				when('/checkYourQuestion', {
+					templateUrl : 'partials/yourQuestions.html',
+					controller  : 'StudentQuestionCheckCtrl',
+					resolve     : {
+
+						resolveData2 : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService', 
+
+							function(ControllerResolverService, DataService, $location, SessionService){
+							
+								if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+									$location.path('/home');
+								}
+								else{
+									if(DataService.firstTimeLoadCheckStudentQuestionPage){
+										
+										ControllerResolverService.StudentQuestionCheckResolver().then(function(data){
+											DataService.processEachStudentQuestion(data);
+											DataService.firstTimeLoadCheckStudentQuestionPage = false;
+										})
+									}
+									
+							}
+					}]}
+				}).
 				when('/questionList',{
 					templateUrl : 'partials/questionList.html',
 					controller  : 'QuestionListCtrl',

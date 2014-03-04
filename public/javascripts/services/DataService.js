@@ -4,8 +4,10 @@ define(['app'], function(app){
 		return {
 			firstTimeLoadApp : true,
 			firstTimeLoadQuestionListPage : true,
+			firstTimeLoadCheckStudentQuestionPage : true,
 
 			questionList : [],
+			eachStudentQuestionList : [],
 
 			processQuestionListData : function(data){
 				var self = this;
@@ -57,6 +59,33 @@ define(['app'], function(app){
 
 					self.questionList.push(obj);	
 				}			
+			},
+
+			processEachStudentQuestion : function(data){
+
+				var self = this;
+
+				if(data.data){
+
+					for(var i = 0 ; i < data.data.length ; i++){
+
+						data.data[i].question = data.data[i].question || [];
+						for(var j = 0 ; j < data.data[i].question.length; j++){
+
+							var obj 	   = {};
+							var partial    = data.data[i]               || {};
+							obj._id        = partial._id      			|| 'None';
+							obj.title      = partial.question[j].title  || 'None';
+							obj.select     = partial.question[j].select || 'None';
+							obj.answers    = partial.question[j].answers|| [];
+							obj.questionID = partial.question[j]._id    || 'None';
+							obj.correct    = partial.question[j].accept;
+							obj.comment    = '';
+
+							self.eachStudentQuestionList.push(obj);
+						}	
+					}
+				}
 			}
 		}
 	})

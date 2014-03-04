@@ -413,6 +413,7 @@ define(['app'], function(app){
 				})
 
 				self.questionList = obj;
+				DataService.questionList = obj;
 			}
 
 			function uploadToServer(data){
@@ -457,10 +458,18 @@ define(['app'], function(app){
 			
 			return $scope.QuestionListCtrl = this;
 		},
+
+		StudentQuestionCheckCtrl : function($scope, DataService){
+
+			var self = this;
+			self.QuestionList = DataService.eachStudentQuestionList;
+			return $scope.StudentQuestionCheckCtrl = this;
+		}
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
 	app.controller('NavBarCtrl', ['$scope', '$location','UserLoginService', 'BroadCastService', 'StoreSessionService', 'UserLogoutService', 'SocketService', 'DataService', Controller.NavBarCtrl]);
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
 	app.controller('QuestionListCtrl', ['$scope','DataService', '$q', 'SocketService', 'BroadCastService',Controller.QuestionListCtrl]);
+	app.controller('StudentQuestionCheckCtrl', ['$scope', 'DataService', Controller.StudentQuestionCheckCtrl]);
 }) 

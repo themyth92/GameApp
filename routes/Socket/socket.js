@@ -109,9 +109,23 @@ function Socket(UserModel, UploadModel, socket, session){
 
 					UploadModel.update({_id : ObjectId(question.id) , 'question._id' : ObjectId(question.questionID)},
 									   {$set : {'question.$.accept' : accept, 'question.$.comment' : comment}}, function(){
-									   		socket.emit('teacherUpdateQuestionList');
+									   		
 									   })
 				}
+			})
+
+			socket.emit('teacherUpdateQuestionList');
+		})
+	}
+
+	this.retrieveStudentQuestionList = function(){
+
+		socket.once('retrieveStudentQuestionList', function(){
+			
+			var userName = session.userName;
+			console.log(userName);
+			UploadModel.find({userName : userName}, 'question', function(err, docs){
+				socket.emit('retrieveStudentQuestionList', {data : docs});
 			})
 		})
 	}

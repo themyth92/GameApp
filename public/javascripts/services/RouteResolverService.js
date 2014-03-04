@@ -56,6 +56,20 @@ define(['app'], function(app){
 				}
 				else
 					return;
+			},
+
+			StudentQuestionCheckResolver : function(){
+
+				var deffered = $q.defer();
+				SocketService.emit('retrieveStudentQuestionList');
+				SocketService.once('retrieveStudentQuestionList', function(data){
+					if(data)
+						deffered.resolve(data);
+					else
+						deffered.reject();	
+				})
+
+				return deffered.promise;
 			}
 		}
 	}])

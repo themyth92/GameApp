@@ -208,6 +208,7 @@ function Api(){
 		socketVar.sendQuestion();
 		socketVar.retrieveQuestionList();
 		socketVar.teacherUpdateQuestionList();
+		socketVar.retrieveStudentQuestionList();
 	}
 };
 

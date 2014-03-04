@@ -1,0 +1,44 @@
+<div class = 'page-wrapper page-question-list'>
+	<div class = 'container'>
+		<!-- list of questions -->
+		<div class = ''>
+			<table class = 'table table-hover'>
+				<!-- header -->
+				<thead>
+					<tr>
+						<th>Questions</th>
+						<th>Accept ?</th>
+						<th>Comment</th>
+					</tr>
+				</thead>
+
+				<!-- body of table -->
+				<tbody>
+					<tr ng-repeat = 'question in StudentQuestionCheckCtrl.QuestionList'>
+						<td>
+							<div class = 'form-group text-danger'>
+								{{question.title}}	
+							</div>
+							<div class = 'form-group'>
+								<div class = 'radio' ng-repeat = 'ans in question.answers'>
+									<label>
+										<input type ='radio' disabled name = 'questionList{{$parent.$index}}' ng-checked='{{question.select == $index + 1}}'>
+										{{ans.answer}}
+									</label>
+								</div>
+							</div>
+						</td>
+						<td ng-switch on = 'question.correct'>
+							<div ng-switch-when = '1'>Accepted</div>
+							<div ng-switch-when = '2'>Rejected</div>
+							<div ng-switch-default>Pending...</div>
+						</td>
+						<td>
+							<p>{{question.comment}}</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
