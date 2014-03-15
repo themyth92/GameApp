@@ -5,7 +5,7 @@
 		<div class = 'row'>
 			<div class = 'col-xs-1 visible-xs'></div>
 			<div class = 'col-xs-10 col-lg-8 col-md-8 col-sm-8 highlight'>
-				<p class = 'text-primary'>I) Instructions : you can upload image that you want to have in you game creation part. It includes both image for creating obstacle and image to create your own rewards. Please select your choice when uploading your image. <strong class = 'text-danger'>Warning: The maximum dimesion of the image is 160x160 pixel.</strong> </p>
+				<p class = 'text-primary'>I) Instructions : you can upload image that you want to have in you game creation part. It includes both image for creating obstacle and image to create your own rewards. Please select your choice when uploading your image.</p>
 			</div>
 			<div class = 'col-xs-1 visible-xs'></div>
 		</div>
@@ -78,6 +78,9 @@
 				</label>
 				<label class="radio-inline">	
 					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.select' value="Rewards"> Rewards
+				</label>
+				<label class="radio-inline">	
+					<input type="radio" name = 'radio{{$index}}' ng-model = 'image.select' value="Screen"> Screen
 				</label>
 			</div>
 		

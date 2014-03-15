@@ -72,6 +72,24 @@ define([], function(){
 							}
 					}]}
 				}).
+				when('/createYourGame', {
+					templateUrl : 'partials/createYourGame.html',
+					controller  : 'CreateFlashGameCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService',
+
+						function(ControllerResolverService, DataService, $location, SessionService){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.CreateGameResolver().then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
+				}).
 				otherwise({
 					redirectTo : '/home'
 				})

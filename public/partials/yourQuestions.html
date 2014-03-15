@@ -29,9 +29,9 @@
 							</div>
 						</td>
 						<td ng-switch on = 'question.correct'>
-							<div ng-switch-when = '1'>Accepted</div>
-							<div ng-switch-when = '2'>Rejected</div>
-							<div ng-switch-default>Pending...</div>
+							<div ng-switch-when = '1' class = 'text-success'>Accepted</div>
+							<div ng-switch-when = '2' class = 'text-danger'>Rejected</div>
+							<div ng-switch-default class = 'text-muted'>Pending...</div>
 						</td>
 						<td>
 							<p>{{question.comment}}</p>

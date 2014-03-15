@@ -28,7 +28,7 @@ define(['app'], function(app){
 		}
 
 		UploadService.uploadQuestion = function(questions){
-
+			console.log(questions);
 			var promises = [];
 
 			angular.forEach(questions, function(question){

@@ -235,24 +235,18 @@ define(['app'], function(app){
 				var helper = {
 					noTitle : 'Please insert your image title',
 					noImage : 'Please insert your image',
-					both    : 'Please insert your image and image title',
-					wrongDimension : 'Your image is not in correct dimension'
+					both    : 'Please insert your image and image title'
 				} 
 
 				function checkImageArray(ctrl){
 
 					if(ctrl){
-						if(ctrl.wrongDimension){
-							ctrl.helper = helper.wrongDimension;
-							ctrl.isError = false;
+						
+						if(ctrl.title.trim() == '' && JSON.stringify(ctrl.file) == '{}'){
+							ctrl.helper = helper.both;
+							ctrl.isError = true;
 							return false;
 						}
-						else
-							if(ctrl.title.trim() == '' && JSON.stringify(ctrl.file) == '{}'){
-								ctrl.helper = helper.both;
-								ctrl.isError = true;
-								return false;
-							}
 						else
 							if(ctrl.title.trim() == ''){
 								ctrl.helper = helper.noTitle;
@@ -299,7 +293,7 @@ define(['app'], function(app){
 					var index = attrs.index;
 
 					if(parent.images[index]){
-
+						console.log(parent.images[index]);
 						removeHelperClass(element);
 
 						if(!checkImageArray(parent.images[index])){

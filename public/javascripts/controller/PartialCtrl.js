@@ -149,7 +149,8 @@ define(['app'], function(app){
 		    		broadCastService.broadCastEvent(eventName);
 		    		sessionService.changeLoginState(false);
 		    		$location.path('/home');
-		    		socketService.closeConnection();	
+		    		socketService.closeConnection();
+		    			
 		    	}, function(err){
 
 		    		broadCastService.broadCastEvent(eventName);
@@ -177,6 +178,22 @@ define(['app'], function(app){
 				}
 				
 			});
+
+			$scope.$watch(function(){return DataService.firstTimeLoadCheckStudentQuestionPage}, function(){
+
+				if(DataService.firstTimeLoadCheckStudentQuestionPage == false){
+
+					socketService.on('addedYourNewQuestion', function(data){
+						DataService.pushEachStudentQuestion(data);
+						broadCastService.broadCastEvent('yourQuestionAdded');
+					})
+
+					socketService.on('teachHasCheckedOneQuestion', function(data){
+						DataService.checkedTeacherQuestionFitMyQuestion(data);
+						broadCastService.broadCastEvent('teacherHasCheckedQuestion');
+					})
+				}
+			})
 
 			return $scope.NavBarCtrl = this;
 		},
@@ -357,7 +374,6 @@ define(['app'], function(app){
 									uploadService.uploadImage($scope.FileUploadCtrl.images[index], uploadImageSuccessHandle, uploadErrorHandle, index);			
 								}
 								else{
-
 									socketService.emit(Constant.SOCKET.sendQuestion, $scope.FileUploadCtrl.questions, uploadQuestionSuccessHandle);	
 								}
 								
@@ -463,7 +479,23 @@ define(['app'], function(app){
 
 			var self = this;
 			self.QuestionList = DataService.eachStudentQuestionList;
+
+			$scope.$on('yourQuestionAdded', function(){
+				self.QuestionList = DataService.eachStudentQuestionList;
+			})
+
+			$scope.$on('teacherHasCheckedQuestion', function(){
+				self.QuestionList = DataService.eachStudentQuestionList;	
+			})
 			return $scope.StudentQuestionCheckCtrl = this;
+		},
+
+		CreateFlashGameCtrl : function($scope, resolveData, DataService, $window, FlashComService){
+
+			$window.returnUserQuestionListAndImage = function(){
+
+				return FlashComService.listQuestionAndImageToFlash(resolveData);
+			}
 		}
 	}
 
@@ -472,4 +504,5 @@ define(['app'], function(app){
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
 	app.controller('QuestionListCtrl', ['$scope','DataService', '$q', 'SocketService', 'BroadCastService',Controller.QuestionListCtrl]);
 	app.controller('StudentQuestionCheckCtrl', ['$scope', 'DataService', Controller.StudentQuestionCheckCtrl]);
+	app.controller('CreateFlashGameCtrl', ['$scope', 'resolveData', 'DataService', '$window', 'FlashComService', Controller.CreateFlashGameCtrl]);
 }) 

@@ -1,5 +1,6 @@
 var Constant = require('../Constant/constant');
 var fs       = require('fs');
+var im       = require('imagemagick');
 
 function Upload(UserModel, UploadModel){
 
@@ -34,15 +35,41 @@ function Upload(UserModel, UploadModel){
 	/*
 		write image file into server
 	*/
-	function writeImage(newPath, fileName, ext, res, data){
+	function writeImage(newPath, fileName, ext, res, data, choice){
 
-		fs.writeFile(newPath + '/' + fileName + '.' + ext, data, function(err){
+		var path = newPath + '/' + fileName;
+
+		fs.writeFile(path + '.' + ext, data, function(err){
 					
 			if(err){
 				throw(err);
 				res.json(storeImageErrorCallBack());
 			}
 			else{
+				
+				if(choice == 'Screen'){
+					im.resize({
+						srcPath : path + '.' + ext,
+						dstPath : path + '_resize.' + ext,
+						height  : 600,
+						width   : 800
+					}, function(err){
+						if(err)
+							throw(err);
+					})
+				}
+				else{
+					im.resize({
+						srcPath : path + '.' + ext,
+						dstPath : path + '_resize.' + ext,
+						height  : 40,
+						width   : 40
+					}, function(err){
+						if(err)
+							throw(err);
+					})
+				}
+
 				res.json({
 							code    : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.code,
 						  	message : Constant.constant.STATUS.SUCCESS.UPLOAD_SUCCESS.message 
@@ -51,12 +78,12 @@ function Upload(UserModel, UploadModel){
 		})
 	}
 
-	function storeImageInFD(res, userName, path, fileName, ext){
+	function storeImageInFD(res, userName, path, fileName, ext, choice){
 
 		fs.readFile(path, function(err, data){
 			
-			var newPath    = __dirname + "/../../uploads/" + userName + '/';
-			var uploadPath = __dirname + "/../../uploads/"; 
+			var newPath    = __dirname + "/../../public/uploads/" + userName + '/';
+			var uploadPath = __dirname + "/../../public/uploads/"; 
 
 			if(!err){
 
@@ -95,7 +122,7 @@ function Upload(UserModel, UploadModel){
 											else{
 
 												//create file
-												writeImage(newPath, fileName, ext, res, data);
+												writeImage(newPath, fileName, ext, res, data, choice);
 											}
 										})
 									}
@@ -103,7 +130,7 @@ function Upload(UserModel, UploadModel){
 
 										//folder user exist
 										//create file
-										writeImage(newPath, fileName, ext, res, data);
+										writeImage(newPath, fileName, ext, res, data, choice);
 									}			
 								})
 							}
@@ -131,7 +158,7 @@ function Upload(UserModel, UploadModel){
 									else{
 
 										//create file
-										writeImage(newPath, fileName, ext, res, data);
+										writeImage(newPath, fileName, ext, res, data, choice);
 									}
 								})
 							}
@@ -139,7 +166,7 @@ function Upload(UserModel, UploadModel){
 
 								//folder user exist
 								//create file
-								writeImage(newPath, fileName, ext, res, data);
+								writeImage(newPath, fileName, ext, res, data, choice);
 							}			
 						})
 					}
@@ -175,7 +202,7 @@ function Upload(UserModel, UploadModel){
 					var path     = files.file.path || '';
 					
 					//store that image in server 
-					storeImageInFD(res, userName, path, fileName, ext);
+					storeImageInFD(res, userName, path, fileName, ext, choice);
 				}
 				else{
 					res.json(storeImageErrorCallBack(error));

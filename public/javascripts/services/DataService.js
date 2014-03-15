@@ -9,6 +9,10 @@ define(['app'], function(app){
 			questionList : [],
 			eachStudentQuestionList : [],
 
+			//use to retrieve data from flash
+			yourQuestion : [],
+			yourImage    : [],
+
 			processQuestionListData : function(data){
 				var self = this;
 
@@ -86,6 +90,42 @@ define(['app'], function(app){
 						}	
 					}
 				}
+			},
+
+			pushEachStudentQuestion : function(data){
+				var self = this;
+
+				if( data && 
+					data.userName && 
+					data.id && 
+					data.title && 
+					data.select && 
+					data.answers && 
+					data.questionID){
+
+					var obj 	   = {};        
+					obj._id        = data.id      			|| 'None';
+					obj.title      = data.title  			|| 'None';
+					obj.select     = data.select 			|| 'None';
+					obj.answers    = data.answers			|| [];
+					obj.questionID = data.questionID    	|| 'None';
+					obj.correct    = data.accept;
+					obj.comment    = '';
+
+					self.eachStudentQuestionList.push(obj);	
+				}	
+			},
+
+			checkedTeacherQuestionFitMyQuestion : function(data){
+
+				var self = this;
+				angular.forEach(self.eachStudentQuestionList, function(question){
+
+					if(question.questionID == data.data.questionID){
+						question.comment = data.data.comment;
+						question.correct = data.data.correct;
+					}
+				})
 			}
 		}
 	})

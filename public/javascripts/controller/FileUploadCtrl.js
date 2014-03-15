@@ -12,8 +12,9 @@ define(['app'], function(app){
 
 			function checkFileSize(file){
 
-				if(file.size)
-					return ((file.size < fileSize) ? true : false);
+			//	if(file.size)
+			//		return ((file.size < fileSize) ? true : false);
+				return true;
 			}
 
 			var parent = $scope.$parent.FileUploadCtrl;

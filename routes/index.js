@@ -209,6 +209,7 @@ function Api(){
 		socketVar.retrieveQuestionList();
 		socketVar.teacherUpdateQuestionList();
 		socketVar.retrieveStudentQuestionList();
+		socketVar.retrieveStudentQuestionAndImage();
 	}
 };
 

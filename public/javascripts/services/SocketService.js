@@ -15,7 +15,9 @@ define(['app'], function(app){
 			},
 
 			emit : function(eventName, data, callBack){
+
 				socket.emit(eventName, data, function(){
+
 					var args = arguments;
 					$rootScope.$apply(function(){
 						if(callBack){
@@ -28,9 +30,9 @@ define(['app'], function(app){
 			establishConnection : function(){
 				
 				if(!socket)
-					socket = io.connect();	
+					socket = io.connect('http://ec2-54-254-145-192.ap-southeast-1.compute.amazonaws.com', {'sync disconnect on unload' : true});	
 				else
-					socket.socket.connect();
+					socket.socket.connect('http://ec2-54-254-145-192.ap-southeast-1.compute.amazonaws.com', {'sync disconnect on unload' : true});
 			},
 
 			closeConnection : function(){

@@ -38,7 +38,8 @@ function Socket(UserModel, UploadModel, socket, session){
 	function broadcastQuestionSuccessCallBack(data){
 
 		if(data){
-			socket.broadcast.emit(Constant.constant.SOCKET.sendNewQuestion, data);	
+			socket.broadcast.emit(Constant.constant.SOCKET.sendNewQuestion, data);
+			socket.emit('addedYourNewQuestion', data);	
 		}
 	}
 
@@ -109,7 +110,7 @@ function Socket(UserModel, UploadModel, socket, session){
 
 					UploadModel.update({_id : ObjectId(question.id) , 'question._id' : ObjectId(question.questionID)},
 									   {$set : {'question.$.accept' : accept, 'question.$.comment' : comment}}, function(){
-									   		
+									   		socket.broadcast.emit('teachHasCheckedOneQuestion' ,{data : question});
 									   })
 				}
 			})
@@ -123,9 +124,23 @@ function Socket(UserModel, UploadModel, socket, session){
 		socket.once('retrieveStudentQuestionList', function(){
 			
 			var userName = session.userName;
-			console.log(userName);
+			
 			UploadModel.find({userName : userName}, 'question', function(err, docs){
 				socket.emit('retrieveStudentQuestionList', {data : docs});
+			})
+		})
+	}
+
+	this.retrieveStudentQuestionAndImage = function(){
+
+		socket.once('retrieveYourQuestionAndImage', function(){
+
+			var userName = session.userName;
+
+			UploadModel.find({userName : userName}, null, 
+
+			    function(err, docs){
+					socket.emit('retrieveYourQuestionAndImage', {data : docs});
 			})
 		})
 	}

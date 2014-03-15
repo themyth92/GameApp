@@ -70,6 +70,21 @@ define(['app'], function(app){
 				})
 
 				return deffered.promise;
+			},
+
+			CreateGameResolver : function(){
+				
+				var deffered = $q.defer();
+				
+				SocketService.emit('retrieveYourQuestionAndImage');
+				SocketService.once('retrieveYourQuestionAndImage', function(data){
+					if(data)
+						deffered.resolve(data);
+					else
+						deffered.reject();	
+				})
+
+				return deffered.promise;
 			}
 		}
 	}])
