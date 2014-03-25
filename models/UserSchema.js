@@ -34,6 +34,7 @@ var AnswerSchema     = new Schema({
 
 var QuestionSchema   = new Schema({
 	title   : String,
+	hint	: String,
 	answers : [AnswerSchema],
 	select  : String,
 	accept  : {

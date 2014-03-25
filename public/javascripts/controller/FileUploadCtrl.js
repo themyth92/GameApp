@@ -71,7 +71,7 @@ define(['app'], function(app){
 			}
 
 			this.addQuestion = function(){
-				parent.questions.push({title : '',answers : [{answer : ''}], select : '', helper : '', isError : false});
+				parent.questions.push({title : '',hint : '', answers : [{answer : ''}], select : '', helper : '', isError : false});
 			}
 
 			return $scope.QuestionUploadCtrl = this;

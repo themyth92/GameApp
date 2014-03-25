@@ -30,9 +30,9 @@ define(['app'], function(app){
 			establishConnection : function(){
 				
 				if(!socket)
-					socket = io.connect('http://ec2-54-254-145-192.ap-southeast-1.compute.amazonaws.com', {'sync disconnect on unload' : true});	
+					socket = io.connect('themyth92.com', {'sync disconnect on unload' : true});	
 				else
-					socket.socket.connect('http://ec2-54-254-145-192.ap-southeast-1.compute.amazonaws.com', {'sync disconnect on unload' : true});
+					socket.socket.connect('themyth92.com', {'sync disconnect on unload' : true});
 			},
 
 			closeConnection : function(){

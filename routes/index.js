@@ -210,6 +210,7 @@ function Api(){
 		socketVar.teacherUpdateQuestionList();
 		socketVar.retrieveStudentQuestionList();
 		socketVar.retrieveStudentQuestionAndImage();
+		socketVar.sendChat();
 	}
 };
 

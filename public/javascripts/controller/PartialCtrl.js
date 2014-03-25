@@ -452,7 +452,7 @@ define(['app'], function(app){
 			})
 
 			self.save = function(){
-				console.log(self.questionList);
+
 				var data = processQuestionList();
 				
 				if(data.length > 0){
@@ -496,7 +496,135 @@ define(['app'], function(app){
 
 				return FlashComService.listQuestionAndImageToFlash(resolveData);
 			}
-		}
+		},
+
+		GameGalleryCtrl : function($scope){
+
+		},
+
+		QuestionPollCtrl : function($scope){
+
+		},
+
+		StudentChatCtrl : function($scope, sessionService, socketService){
+
+
+			var self 			= 	this;	
+			var onSocket		= 	false;
+
+			function processChatData(data){
+
+				if(data && data.data.isTeacher && data.data.message && data.data.userName && data.data.toStudent){
+					if(data.data.isTeacher == true && data.data.toStudent == self.user.userName){
+						self.chats.push({userName : data.data.userName, message:data.data.message});
+					}
+				}
+			}
+
+			self.user 			= 	{}
+			self.chats 		 	= 	[];
+			self.isCollapsed 	= 	true;
+			self.userMessage	= 	'';
+			self.user.isLogin	=	sessionService.state.isLogin;
+			self.user.userName  = 	sessionService.state.userName;
+			self.user.isTeacher =   sessionService.state.isTeacher;
+			
+			$scope.$watch(function(){return sessionService.state.isLogin}, function(){
+				self.user.isLogin	=	sessionService.state.isLogin;
+				self.user.isTeacher = 	sessionService.state.isTeacher;
+				self.user.userName 	= 	sessionService.state.userName;
+
+				if(self.user.isLogin == true && onSocket == false){
+					socketService.on('sendChat', function(data){
+						processChatData(data);
+					})
+
+					onSocket = true;
+				}
+			});
+
+			self.toggleChatBox = function(){
+				self.isCollapsed = !self.isCollapsed;
+			}
+
+			self.submitChat = function(){
+				self.chats.push({userName : self.user.userName, message : self.userMessage});
+				socketService.emit('sendChat', {userName : self.user.userName, message : self.userMessage, isStudent : true});
+				self.userMessage	=	'';
+			}
+
+			return $scope.StudentChatCtrl = this;
+		},
+
+		TeacherChatCtrl : function($scope, sessionService, socketService){
+
+			var self 			= 	this;
+			
+			function processChatData(data){
+
+				if(data && data.data.userName && data.data.message && data.data.isStudent){
+					
+
+					for(var i = 0 ; i < self.chatWindows.length; i++){
+						
+						//restore chat session
+						if(self.chatWindows[i].studentName == data.data.userName){
+							self.chatWindows[i].userMessage.push({message : data.data.message, userName : data.data.userName});
+							return true;
+						}
+					}
+
+					//create new session
+					self.chatWindows.push({studentName : data.data.userName, userMessage : [], curChatMsg : '', isCollapsed : false});
+					self.chatWindows[self.chatWindows.length - 1].userMessage.push({message : data.data.message, userName : data.data.userName});
+
+					return true;					
+				}
+			}
+
+	
+			var onSocket		= 	false;
+
+			self.user 			= 	{}
+			self.chatWindows 	= 	[];
+			self.userMessage	= 	'';
+			self.user.isLogin	=	sessionService.state.isLogin;
+			self.user.userName  = 	sessionService.state.userName;
+			self.user.isTeacher =   sessionService.state.isTeacher;
+			
+			$scope.$watch(function(){return sessionService.state.isLogin}, function(){
+				self.user.isLogin	=	sessionService.state.isLogin;
+				self.user.isTeacher = 	sessionService.state.isTeacher;
+				self.user.userName 	= 	sessionService.state.userName;
+
+				if(self.user.isLogin == true && onSocket == false){
+					
+					socketService.on('sendChat', function(data){
+						processChatData(data);
+					});
+
+					onSocket = true;
+				}
+			});
+
+			self.submitChat = function($index){
+
+				self.chatWindows[$index].userMessage.push({message : self.chatWindows[$index].curChatMsg, userName : self.user.userName});
+				socketService.emit('sendChat', {isTeacher : true, message : self.chatWindows[$index].curChatMsg, userName : self.user.userName, toStudent : self.chatWindows[$index].studentName});
+				self.chatWindows[$index].curChatMsg = '';
+				$('#teacher-box-' + $index).scrollTop = $('#teacher-box-' + $index).scrollHeight;
+			}
+
+			self.toggleChatBox = function($index){
+				self.chatWindows[$index].isCollapsed = !self.chatWindows[$index].isCollapsed;
+			}
+
+			self.closeChatBox = function($index){
+				self.chatWindows.splice($index, 1);
+			}
+
+			return $scope.TeacherChatCtrl = this;
+		}	
 	}
 
 	app.controller('HomePartialCtrl', ['$scope', 'StoreSessionService', Controller.HomePartialCtrl]);
@@ -505,4 +633,8 @@ define(['app'], function(app){
 	app.controller('QuestionListCtrl', ['$scope','DataService', '$q', 'SocketService', 'BroadCastService',Controller.QuestionListCtrl]);
 	app.controller('StudentQuestionCheckCtrl', ['$scope', 'DataService', Controller.StudentQuestionCheckCtrl]);
 	app.controller('CreateFlashGameCtrl', ['$scope', 'resolveData', 'DataService', '$window', 'FlashComService', Controller.CreateFlashGameCtrl]);
+	app.controller('GameGalleryCtrl' ,['$scope', Controller.GameGalleryCtrl]);
+	app.controller('QuestionPollCtrl' ,['$scope', Controller.QuestionPollCtrl]);
+	app.controller('StudentChatCtrl', ['$scope', 'StoreSessionService', 'SocketService',Controller.StudentChatCtrl]);
+	app.controller('TeacherChatCtrl' , ['$scope', 'StoreSessionService', 'SocketService', 'DataService', Controller.TeacherChatCtrl]);
 }) 

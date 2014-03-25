@@ -1,12 +1,24 @@
 doctype html
-html
+html(lang = 'en-US')
 	head
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable = no">
 		title= title
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		<link rel="icon" type="image/png" href="http://themyth92.com:3000/assets/image/favicon.ico">
+
 		link(rel='stylesheet', href='/vendor/bootstrap/dist/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src = '/vendor/jquery/jquery.min.js')
 		script(src = '/vendor/bootstrap/dist/js/bootstrap.min.js')
 		script(src = '/vendor/angular/angular.js')
+		script(src = '/vendor/angular-scroll-glue/scrollglue.js')
 		script(src = '/vendor/ng-file-upload/angular-file-upload.min.js')
 		script(src = '/vendor/angular-route/angular-route.min.js')
 		script(src = '/vendor/angular-animate/angular-animate.min.js')
@@ -16,7 +28,7 @@ html
 		script(src = 'http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js')
 	body(ng-cloak)
 		div.loading.AjaxLoading
-		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation, ng-controller =' NavBarCtrl')
+		nav.navbar-custom.navbar.navbar-inverse.navbar-fixed-top(role = navigation, ng-controller ='NavBarCtrl')
 			div.container
 				div.navbar-header
 					button.navbar-toggle(data-toggle = 'collapse', data-target = '#top-nav', type = 'button')
@@ -24,13 +36,13 @@ html
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
-					a.navbar-brand Our brand
+					a.navbar-brand.logo
 				div.collapse.navbar-collapse#top-nav
 					ul.nav.navbar-nav
 						li
 							a(href='#/Home') Home
 						li
-							a(href='#') Gallery
+							a(href='#gallery') Gallery
 					ul.nav.navbar-nav.navbar-right(ng-switch on = 'NavBarCtrl.user.isLogin')
 						li.dropdown(ng-switch-when = 'false')
 							a.dropdown-toggle(data-toggle = 'dropdown') Login
@@ -68,12 +80,40 @@ html
 										li(ng-switch-default)
 											a(href = '#/questionList') 
 												span.glyphicon.glyphicon-cloud-upload
-												|&nbsp; &nbsp; List student questions	
+												|&nbsp; &nbsp; List student questions
+										li
+											a(href = '#/questionPoll')
+												span.glyphicon.glyphicon-globe
+												|&nbsp; &nbsp; Question poll	
 										li(ng-click = 'NavBarCtrl.logoutSubmit()')
 											a
 												span.glyphicon.glyphicon-off
 												|&nbsp; &nbsp; Logout
 		main.main-content.view-animate(ng-view)
+		
+		div.shout_box(ng-controller = 'StudentChatCtrl', ng-show = 'StudentChatCtrl.user.isLogin && !StudentChatCtrl.user.isTeacher')
+			form(ng-submit = 'StudentChatCtrl.submitChat()')
+				div.header(ng-click = 'StudentChatCtrl.toggleChatBox()') Need help ?
+				div.toggle_chat(ng-class = "{'collapsed' : StudentChatCtrl.isCollapsed, '' : !StudentChatCtrl.isCollapsed}")
+					div.message_box(scroll-glue)
+						div.shout_msg(ng-repeat = 'chat in StudentChatCtrl.chats')
+							span.username {{chat.userName}}
+							span.message {{chat.message}}
+					div.user_info
+						input(name = 'shout_message' ng-model = 'StudentChatCtrl.userMessage' id = 'shout_message' type = 'text' placeholder = 'Type Message And Hit Enter' maxlength = '100')
+		
+		div.shout_box.teacher(ng-controller = 'TeacherChatCtrl', ng-show = 'TeacherChatCtrl.user.isLogin && TeacherChatCtrl.user.isTeacher')
+			form.teacher-form-chat(ng-repeat = 'window in TeacherChatCtrl.chatWindows' ng-submit = 'TeacherChatCtrl.submitChat($index)')
+				div.header(ng-click = 'TeacherChatCtrl.toggleChatBox($index)') {{window.studentName}}
+					div.close_btn
+						span.glyphicon.glyphicon-remove(ng-click = 'TeacherChatCtrl.closeChatBox($index)')
+				div.toggle_chat(ng-class = "{'collapsed' : window.isCollapsed, '' : !window.isCollapsed}")
+					div.message_box(scroll-glue)
+						div.shout_msg(ng-repeat = 'chat in window.userMessage')
+							span.username {{chat.userName}}
+							span.message {{chat.message}}
+					div.user_info
+						input(name = 'shout_message' id = 'shout_message' type = 'text' placeholder = 'Type Message And Hit Enter' maxlength = '100' ng-model = 'window.curChatMsg')
 		script(type = 'text/ng-template', id = 'ajaxLoading.html')
 			div
 				span.reloader

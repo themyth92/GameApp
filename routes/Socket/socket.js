@@ -3,9 +3,9 @@ var ObjectId = require('mongoose').Types.ObjectId;
 
 function Socket(UserModel, UploadModel, socket, session){
 
-	function insertQuestionInDB(userName, title ,answers, select){
+	function insertQuestionInDB(userName, title ,answers, select, hint){
 
-		UploadModel.findOneAndUpdate({userName : userName}, {$push : {question : {title : title, answers : answers, select : select, comment : ''}}}, {upsert : true}, function(error, doc){
+		UploadModel.findOneAndUpdate({userName : userName}, {$push : {question : {title : title, hint : hint, answers : answers, select : select, comment : ''}}}, {upsert : true}, function(error, doc){
 
 			if(!error && doc){
 				
@@ -67,9 +67,9 @@ function Socket(UserModel, UploadModel, socket, session){
 
 				data.map(function(dataElem){
 					
-					if(dataElem.title && dataElem.answers && dataElem.select){
+					if(dataElem.title && dataElem.answers && dataElem.select && dataElem.hint){
 					
-						insertQuestionInDB(userName, dataElem.title, dataElem.answers, dataElem.select);
+						insertQuestionInDB(userName, dataElem.title, dataElem.answers, dataElem.select, dataElem.hint);
 					}	
 				})
 
@@ -142,6 +142,12 @@ function Socket(UserModel, UploadModel, socket, session){
 			    function(err, docs){
 					socket.emit('retrieveYourQuestionAndImage', {data : docs});
 			})
+		})
+	}
+
+	this.sendChat = function(){
+		socket.on('sendChat', function(data){
+			socket.broadcast.emit('sendChat', {data : data});
 		})
 	}
 }

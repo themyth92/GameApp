@@ -1,5 +1,5 @@
 define([], function(){
-	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ngResource', 'angularFileUpload']);
+	var myApp = angular.module('myApp', ['ngRoute', 'ngAnimate', 'ngResource', 'angularFileUpload', 'luegg.directives']);
 
 	myApp.config(['$routeProvider', '$controllerProvider', '$provide', 
 		function($routeProvider, $controllerProvider, $provide){
@@ -89,6 +89,14 @@ define([], function(){
 							}
 						}]
 					}
+				}).
+				when('/gallery', {
+					templateUrl : 'partials/gallery.html',
+					controller  : 'GameGalleryCtrl',
+				}).
+				when('/questionPoll', {
+					templateUrl : 'partials/questionPoll.html',
+					controller  : 'QuestionPollCtrl',
 				}).
 				otherwise({
 					redirectTo : '/home'
