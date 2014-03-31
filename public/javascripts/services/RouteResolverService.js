@@ -1,5 +1,5 @@
 define(['app'], function(app){
-	app.factory('ControllerResolverService', ['StoreSessionService', 'DataService', 'SocketService','$q', '$location', function(SessionService, DataService, SocketService, $q, $location){
+	app.factory('ControllerResolverService', ['StoreSessionService', 'DataService', 'SocketService','$q', '$location', '$http', function(SessionService, DataService, SocketService, $q, $location, $http){
 		
 		function checkDataFromAuthentication(data){
 		
@@ -75,14 +75,17 @@ define(['app'], function(app){
 			CreateGameResolver : function(){
 				
 				var deffered = $q.defer();
-				
-				SocketService.emit('retrieveYourQuestionAndImage');
-				SocketService.once('retrieveYourQuestionAndImage', function(data){
-					if(data)
-						deffered.resolve(data);
-					else
-						deffered.reject();	
-				})
+				$http({
+
+					url   : 'retrieveYourQuestionAndImage',
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
 
 				return deffered.promise;
 			}

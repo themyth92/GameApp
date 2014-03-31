@@ -11,24 +11,25 @@ define(['app'], function(app){
 
 		UploadService.uploadImage = function(file, successCallBack, errorCallBack, index){
 
-			$upload.upload({
+			if(file.file){
+				$upload.upload({
 			
-				url   : 'upload/image',
-				method: 'POST',
-				file  : file.file,
-				data  : {title : file.title, select : file.select}	
-			}).
-			success(function(data){
-				successCallBack(data, index);
-			}).
-			error(function(error){
-				errorCallBack(error);
-			});
-		
+					url   : 'upload/image',
+					method: 'POST',
+					file  : file.file,
+					data  : {title : file.title, select : file.select}	
+				}).
+				success(function(data){
+					successCallBack(data, index);
+				}).
+				error(function(error){
+					errorCallBack(error);
+				});	
+			}
 		}
 
 		UploadService.uploadQuestion = function(questions){
-			console.log(questions);
+
 			var promises = [];
 
 			angular.forEach(questions, function(question){

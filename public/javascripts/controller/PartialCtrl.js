@@ -224,7 +224,7 @@ define(['app'], function(app){
 			}
 
 			function uploadImageSuccessHandle(data, index){
-
+				console.log('go here');
 				if(index == $scope.FileUploadCtrl.images.length - 1){
 					
 					if($scope.FileUploadCtrl.questions.length > 0){
@@ -493,7 +493,7 @@ define(['app'], function(app){
 		CreateFlashGameCtrl : function($scope, resolveData, DataService, $window, FlashComService){
 
 			$window.returnUserQuestionListAndImage = function(){
-
+				
 				return FlashComService.listQuestionAndImageToFlash(resolveData);
 			}
 		},
@@ -624,6 +624,52 @@ define(['app'], function(app){
 			}
 
 			return $scope.TeacherChatCtrl = this;
+		},
+
+		AllChatCtrl : function($scope, socketService, sessionService){
+
+			var self = this;
+			
+			var self 			= 	this;	
+			var onSocket		= 	false;
+
+			function processChatData(data){
+				console.log('go hre');
+				if(data && data.data.message && data.data.userName){
+					self.chats.push({userName : data.data.userName, message:data.data.message});
+				}
+			}
+
+			self.user 			= 	{}
+			self.chats 		 	= 	[];
+			self.isCollapsed 	= 	true;
+			self.userMessage	= 	'';
+			self.user.isLogin	=	sessionService.state.isLogin;
+			self.user.userName  = 	sessionService.state.userName;
+			
+			$scope.$watch(function(){return sessionService.state.isLogin}, function(){
+				self.user.isLogin	=	sessionService.state.isLogin;
+				self.user.userName 	= 	sessionService.state.userName;
+
+				if(self.user.isLogin == true && onSocket == false){
+					socketService.on('sendGlobalChat', function(data){
+						processChatData(data);
+					})
+					onSocket = true;
+				}
+			});
+
+			self.toggleGlobalChatWindow = function(){
+				self.isCollapsed = !self.isCollapsed;
+			}
+
+			self.submitChat = function(){
+				self.chats.push({userName : self.user.userName, message : self.userMessage});
+				socketService.emit('sendGlobalChat', {userName : self.user.userName, message : self.userMessage});
+				self.userMessage	=	'';
+			}
+
+			return $scope.AllChatCtrl = this;
 		}	
 	}
 
@@ -637,4 +683,5 @@ define(['app'], function(app){
 	app.controller('QuestionPollCtrl' ,['$scope', Controller.QuestionPollCtrl]);
 	app.controller('StudentChatCtrl', ['$scope', 'StoreSessionService', 'SocketService',Controller.StudentChatCtrl]);
 	app.controller('TeacherChatCtrl' , ['$scope', 'StoreSessionService', 'SocketService', 'DataService', Controller.TeacherChatCtrl]);
+	app.controller('AllChatCtrl', ['$scope', 'SocketService', 'StoreSessionService', Controller.AllChatCtrl]);
 }) 

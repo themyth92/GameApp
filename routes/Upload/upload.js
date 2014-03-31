@@ -51,7 +51,6 @@ function Upload(UserModel, UploadModel){
 					im.resize({
 						srcPath : path + '.' + ext,
 						dstPath : path + '_resize.' + ext,
-						height  : 600,
 						width   : 800
 					}, function(err){
 						if(err)

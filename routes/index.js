@@ -209,8 +209,19 @@ function Api(){
 		socketVar.retrieveQuestionList();
 		socketVar.teacherUpdateQuestionList();
 		socketVar.retrieveStudentQuestionList();
-		socketVar.retrieveStudentQuestionAndImage();
 		socketVar.sendChat();
+		socketVar.sendGlobalChat();
+	}
+
+	this.retrieveYourQuestionAndImage = function(req, res){
+
+		var userName = req.session.userName;
+
+		UploadModel.find({userName : userName}, null, 
+
+		    function(err, docs){
+				res.json({data : docs});
+		})
 	}
 };
 
@@ -227,4 +238,5 @@ exports.logoutUser       	 = Api.logoutUser;
 exports.uploadImage      	 = Api.uploadImage;
 exports.socketConnect    	 = Api.socketConnect;
 exports.retrieveQuestionList = Api.retrieveQuestionList;
+exports.retrieveYourQuestionAndImage = Api.retrieveYourQuestionAndImage;
 exports.uploadQuestionList   = Api.uploadQuestionList;

@@ -1,3 +1,7 @@
+body{
+	overflow: hidden;
+}
+
 *:focus {
     outline: 0 !important;
 }
@@ -176,8 +180,6 @@ a{
 
 }
 
-@media (max-width: 768px){
-}
 
 /* tweak bootstrap */
 .navbar-nav {
@@ -271,4 +273,137 @@ font-weight: bold; display: block;
 .teacher-form-chat{
 	float:right;
 	width:260px;
+}
+
+/* chat all box */
+.chatall-box{
+	position: fixed;
+	height:100%;
+	padding-top:50px;
+	z-index: 100;
+	right:-260px;
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	-ms-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+}
+
+.chatall-box.active{
+	right:0;
+}
+
+.chatall-box>div{
+	float:left;
+
+}
+
+.chatall-click-icon{
+	width:100px;
+	height:50px;
+	margin-top: 100px;
+	background-color: #111111;
+	-webkit-box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	-moz-box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	position: relative;
+}
+
+.chatall-click-icon ul{
+	border-left:2px solid #2494f2;
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+.chatall-click-icon ul li{
+	height: 50px;
+	line-height: 50px;
+	list-style: none;
+	margin: 0 0 5px 0;
+	text-indent: 0;
+	position: relative;
+
+}
+
+.chatall-click-icon a{
+	color:#999999;
+	font-size:16px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	transition : all 0.4s ease;
+	padding:11px;
+}
+
+.chatall-click-icon a:hover{
+	color: #EEEEEE;
+}
+
+.chatall-main-panel{
+	width:260px;
+	height: 100%;
+	background-color: #111111;
+	z-index: 999;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+	overflow: hidden;
+	-webkit-box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	-moz-box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	box-shadow: -2px 0 2px rgba(0,0,0,.2);
+}
+
+.chatall-window-chat{
+	height:100%;
+	padding:10px 10px 50px 10px;
+	overflow: auto;
+	color:#999999;
+}
+
+.chatall-window-chat .chatall-username{
+	font-size:16px;
+	color:white;
+}
+
+.chatall-window-chat .chatall-message{
+	float:right;
+}
+
+.chatall-window-chat hr{
+	margin-top: 30px;
+	border-top: 1px solid #999999;
+}
+
+.chatall-input{
+	position: fixed;
+	bottom:0;
+	width:250px;
+	padding-left:10px;
+}
+
+.chatall-animate{
+	 -webkit-transition:all linear 1s;
+    -moz-transition:all linear 1s;
+    -ms-transition:all linear 1s;
+    -o-transition:all linear 1s;
+    transition:all linear 1s;
+}
+
+.chatall-animate.ng-enter {
+    opacity:0;
+}
+.chatall-animate.ng-enter.ng-enter-active {
+    opacity:1;
+}
+
+
+@media (max-width: 768px){
+	.chatall-main-panel{
+		width:180px;
+	}
+	.chatall-input{
+		width:170px;
+	}	
 }

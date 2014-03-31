@@ -19,6 +19,11 @@ var UserSchema       = new Schema({
 	isTeacher : {
 		type     : Boolean,
 		required : true
+	},
+
+	storyState : {
+		type 	: Number,
+		default : 0
 	}	
 }) ;
 
@@ -56,5 +61,64 @@ var UploadSchema     = new Schema({
 	question : [QuestionSchema]
 })
 
-exports.UserSchema   = UserSchema;
-exports.UploadSchema = UploadSchema;
+var EnemySchema = new Schema({
+	pos			: Number,
+	textureIndex: Number,
+	type 		: Number,
+	speed 		: Number
+})
+
+var ObstacleSchema = new Schema({
+	pos 		: Number,
+	textureIndex: Number,
+	isUserDef 	: {
+		type 	:Boolean,
+		default :false
+	},
+	type		:Number,
+	questionIndex : Number
+})
+
+var SavedGameSchema = new Schema({
+	
+	userName : {
+		type     : String,
+		required : true,
+		unique   : true
+	},
+	title : String,
+	hero : {
+		pos 	: Number,
+		gender 	: Number
+	},
+	enemy : [EnemySchema],
+	obstacle : [ObstacleSchema],
+	screen : {
+		textureIndex : Number
+	}
+})
+
+
+var PublishedGameSchema = new Schema({
+	
+	userName : {
+		type     : String,
+		required : true,
+		unique   : true
+	},
+	title : String,
+	hero : {
+		pos 	: Number,
+		gender 	: Number
+	},
+	enemy : [EnemySchema],
+	obstacle : [ObstacleSchema],
+	screen : {
+		textureIndex : Number
+	}
+})
+
+exports.UserSchema   		= UserSchema;
+exports.UploadSchema 		= UploadSchema;
+exports.SavedGameSchema 	= SavedGameSchema;
+exports.PublishedGameSchema = PublishedGameSchema;

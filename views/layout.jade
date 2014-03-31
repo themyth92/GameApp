@@ -76,7 +76,7 @@ html(lang = 'en-US')
 										li(ng-switch-when = 'false')
 											a(href = '#/createYourGame')
 												span.glyphicon.glyphicon-pencil
-												|&nbsp; &nbsp;createYourGame
+												|&nbsp; &nbsp;CreateYourGame
 										li(ng-switch-default)
 											a(href = '#/questionList') 
 												span.glyphicon.glyphicon-cloud-upload
@@ -114,6 +114,24 @@ html(lang = 'en-US')
 							span.message {{chat.message}}
 					div.user_info
 						input(name = 'shout_message' id = 'shout_message' type = 'text' placeholder = 'Type Message And Hit Enter' maxlength = '100' ng-model = 'window.curChatMsg')
+		div.chatall-box(ng-controller = 'AllChatCtrl' ng-class = "{'' : AllChatCtrl.isCollapsed, 'active' : !AllChatCtrl.isCollapsed}", ng-show = 'AllChatCtrl.user.isLogin')
+			div.chatall-click-icon
+				ul
+					li
+						a(ng-click = 'AllChatCtrl.toggleGlobalChatWindow()')
+							span.glyphicon.glyphicon-send 
+							|&nbsp;&nbsp;Chat all
+			div.chatall-main-panel
+				div.chatall-window-chat(scroll-glue)
+					div.clearfix.animate.chatall-animate(ng-repeat = 'chat in AllChatCtrl.chats')
+						div.chatall-username
+							strong {{chat.userName}}
+						div.chatall-message {{chat.message}}
+						hr.clearfix
+				div.chatall-input
+					form(role = 'form'  ng-submit = 'AllChatCtrl.submitChat()')
+						div.form-group
+							input.form-control(type = 'text' placeholder = 'Hit enter to send message' ng-model = 'AllChatCtrl.userMessage')
 		script(type = 'text/ng-template', id = 'ajaxLoading.html')
 			div
 				span.reloader

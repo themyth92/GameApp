@@ -42,6 +42,7 @@ app.post('/user/logout', routes.logoutUser);
 app.post('/upload/image', routes.uploadImage);
 app.get('/retrieve/questions', routes.retrieveQuestionList);
 app.post('/upload/questionList', routes.uploadQuestionList); 
+app.get('/retrieveYourQuestionAndImage', routes.retrieveYourQuestionAndImage);
 
 var server = http.createServer(app);
 var io     = require('socket.io').listen(server);

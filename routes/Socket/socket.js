@@ -133,7 +133,7 @@ function Socket(UserModel, UploadModel, socket, session){
 
 	this.retrieveStudentQuestionAndImage = function(){
 
-		socket.once('retrieveYourQuestionAndImage', function(){
+		socket.on('retrieveYourQuestionAndImage', function(){
 
 			var userName = session.userName;
 
@@ -148,6 +148,12 @@ function Socket(UserModel, UploadModel, socket, session){
 	this.sendChat = function(){
 		socket.on('sendChat', function(data){
 			socket.broadcast.emit('sendChat', {data : data});
+		})
+	}
+
+	this.sendGlobalChat = function(){
+		socket.on('sendGlobalChat', function(data){
+			socket.broadcast.emit('sendGlobalChat', {data : data});
 		})
 	}
 }

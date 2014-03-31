@@ -293,7 +293,6 @@ define(['app'], function(app){
 					var index = attrs.index;
 
 					if(parent.images[index]){
-						console.log(parent.images[index]);
 						removeHelperClass(element);
 
 						if(!checkImageArray(parent.images[index])){

@@ -15,10 +15,10 @@ define(['app'], function(app){
 				
 				for(var i = 0 ; i < data.image.length ; i++){
 					
-					address  = userName + '/' + data.image[i]._id + '.' + data.image[i].ext;
+					address  = userName + '/' + data.image[i]._id + '_resize.' + data.image[i].ext;
 					choice   = data.image[i].choice;
 					title    = data.image[i].title;
-					dataReturn.image.push([{address : address, type : choice, title : title}]);
+					dataReturn.image.push({address : address, type : choice, title : title});
 				}
 			}
 
@@ -26,15 +26,16 @@ define(['app'], function(app){
 
 				for(var i = 0  ; i < data.question.length ; i++){
 					
-					if(data.question[i].accept == '2'){
+					if(data.question[i].accept == '1'){
 						title   = data.question[i].title;
 						answers = data.question[i].answers;
 						select  = data.question[i].select; 
-						dataReturn.question.push([{title : title, answers : answers, select : select}]);
+						hint	= data.question[i].hint;
+						dataReturn.question.push({title : title, answers : answers, select : select, hint : hint});
 					}
 				}
 			}
-
+			console.log(dataReturn);
 			return dataReturn;
 		}
 
