@@ -72,9 +72,9 @@ define([], function(){
 							}
 					}]}
 				}).
-				when('/createYourGame', {
+				when('/startPlaying', {
 					templateUrl : 'partials/createYourGame.html',
-					controller  : 'CreateFlashGameCtrl',
+					controller  : 'StoryFlashGameCtrl',
 					resolve : {
 						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService',
 
@@ -83,7 +83,43 @@ define([], function(){
 								$location.path('/home');
 							}
 							else{
-								return ControllerResolverService.CreateGameResolver().then(function(data){
+								return ControllerResolverService.StoryGameResolver().then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
+				}).
+				when('/yourGameList', {
+					templateUrl : 'partials/yourGameList.html',
+					controller  : 'YourGameListCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService',
+
+						function(ControllerResolverService, DataService, $location, SessionService){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.YourGameListResolver().then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
+				}).
+				when('/repairGame/:id', {
+					templateUrl : 'partials/createYourGame.html',
+					controller  : 'RepairYourGameCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService','$route',
+
+						function(ControllerResolverService, DataService, $location, SessionService, $route){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.RepairYourGameResolver($route.current.params.id).then(function(data){
 									return data;
 								});
 							}
@@ -93,6 +129,38 @@ define([], function(){
 				when('/gallery', {
 					templateUrl : 'partials/gallery.html',
 					controller  : 'GameGalleryCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService','$route',
+
+						function(ControllerResolverService, DataService, $location, SessionService, $route){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.GalleryResolver().then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
+				}).
+				when('/published/:id', {
+					templateUrl : 'partials/createYourGame.html',
+					controller  : 'GameGalleryCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService','$route',
+
+						function(ControllerResolverService, DataService, $location, SessionService, $route){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.PublishedGameResolver($route.current.params.id).then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
 				}).
 				when('/questionPoll', {
 					templateUrl : 'partials/questionPoll.html',

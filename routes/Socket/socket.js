@@ -1,7 +1,7 @@
 var Constant = require('../Constant/constant');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-function Socket(UserModel, UploadModel, socket, session){
+function Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel){
 
 	function insertQuestionInDB(userName, title ,answers, select, hint){
 
@@ -154,6 +154,112 @@ function Socket(UserModel, UploadModel, socket, session){
 	this.sendGlobalChat = function(){
 		socket.on('sendGlobalChat', function(data){
 			socket.broadcast.emit('sendGlobalChat', {data : data});
+		})
+	}
+
+
+	function saveGame(data, userName){
+
+		if(data){
+			
+			data.userName = userName;
+
+			//newly save game
+			if(data.id == null){
+
+				var savedGameModel = new SavedGameModel({userName : data.userName, screenShot : data.screenShot,
+					title : data.title, player : data.player, enemy:data.enemy, obstacles : data.obstacles, screen : data.screen,
+					scoreboard : data.scoreboard});
+
+				savedGameModel.save(function(err, doc){
+
+					if(!err && doc){
+						socket.emit('gameSaved', {
+							id : doc._id,
+							userName :  userName
+						})
+
+						socket.broadcast.emit('youHaveNewSavedGame', {id : doc._id, screenShot : doc.screenShot, userName : userName, title : doc.title});
+						socket.emit('youHaveNewSavedGame', {id : doc._id, screenshot : doc.screenShot, userName : userName, title : doc.title});
+					}
+				})
+			}
+			else{
+				var id = data.id;
+
+				SavedGameModel.findByIdAndUpdate(ObjectId(id), {$set : {screenShot : data.screenShot, 
+					title : data.title, player : data.player , enemy: data.enemy, obstacles : data.obstacles,
+					screen : data.screen, scoreboard : data.scoreboard}}, function(err, doc){
+
+					if(!err && doc){
+
+						socket.emit('gameSaved', {
+							id : doc._id
+						})
+					}
+				})
+			}
+		}
+	}
+
+	this.saveUserGame = function(){
+		socket.on('saveUserGame', function(data){
+			var userName = session.userName;
+			saveGame(data, userName);
+		})
+	}
+
+	this.saveUserStoryStage = function(){
+		socket.on('saveUserStage', function(data){
+
+			var userName = session.userName;
+			UserModel.update({userName : userName}, {storyStage : data}, function(){
+
+			})
+		})
+	}
+
+	this.publishGame = function(){
+		socket.on('publishGame', function(data){
+			var userName = session.userName;
+			//newly published game, no need to remove in saved game
+			if(data.id == null){
+				var publishedGameModel = new PublishedGameModel({userName : userName, screenShot : data.screenShot,
+					title : data.title, player : data.player, enemy:data.enemy, obstacles : data.obstacles, screen : data.screen,
+					scoreboard : data.scoreboard});
+
+				publishedGameModel.save(function(err, doc){
+					console.log(err);
+					if(!err && doc){
+						socket.emit('gamePublished', {
+							id : doc._id,
+							userName :  userName,
+							screenShot : doc.screenshot,
+							title : doc.title
+						})
+					}
+				})
+			}
+			else{
+				var id = data.id;
+				SavedGameModel.findByIdAndRemove(ObjectId(id), function(){
+					var publishedGameModel = new PublishedGameModel({userName : data.userName, screenShot : data.screenShot,
+						title : data.title, player : data.player, enemy:data.enemy, obstacles : data.obstacles, screen : data.screen,
+						scoreboard : data.scoreboard});
+
+					publishGameModel.save(function(err, doc){
+
+						if(!err && doc){
+							socket.emit('gamePublished', {
+								id : doc._id,
+								userName :  userName,
+								screenShot : doc.screenShot,
+								title : doc.title
+							})
+						}
+					})
+				})
+			}
 		})
 	}
 }

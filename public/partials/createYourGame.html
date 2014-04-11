@@ -15,14 +15,15 @@
         attributes.name = "GameDev";
         attributes.align = "middle";
         swfobject.embedSWF(
-            "/assets/flash/test.swf", "flashContent", 
+            "/swf/GameDev.swf", "flashContent", 
             "800", "600", 
             swfVersionStr, xiSwfUrlStr, 
             flashvars, params, attributes);
         // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
-        swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+        swfobject.createCSS("#flashContent", "position:relative; z-index: 0");
 </script>
-<div>
+<div style = 'position:absolute;width:100%; height:100%'>
+<div class = 'container' style = 'padding-top: 50px; width : 900px; min-width : 800px; min-height : 600px'>
         <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
          JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
          when JavaScript is disabled.
@@ -44,14 +45,17 @@
                 <param name="movie" value="GameDev.swf" />
                 <param name="quality" value="high" />
                 <param name="bgcolor" value="#333333" />
-                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowScriptAccess" value="always" />
                 <param name="allowFullScreen" value="true" />
+                <param name="wmode" value="opaque">
                 <!--[if !IE]>-->
                 <object type="application/x-shockwave-flash" data="GameDev.swf" width="800" height="600">
                     <param name="quality" value="high" />
                     <param name="bgcolor" value="#333333" />
                     <param name="allowScriptAccess" value="sameDomain" />
                     <param name="allowFullScreen" value="true" />
+
+                    <param name="wmode" value="opaque">
                 <!--<![endif]-->
                 <!--[if gte IE 6]>-->
                     <p> 
@@ -67,4 +71,5 @@
                 <!--<![endif]-->
             </object>
         </noscript> 
+</div>
 </div>

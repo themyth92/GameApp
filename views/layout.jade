@@ -74,9 +74,9 @@ html(lang = 'en-US')
 												span.glyphicon.glyphicon-arrow-right
 												|&nbsp; &nbsp; Check your questions
 										li(ng-switch-when = 'false')
-											a(href = '#/createYourGame')
+											a(href = '#/startPlaying')
 												span.glyphicon.glyphicon-pencil
-												|&nbsp; &nbsp;CreateYourGame
+												|&nbsp; &nbsp;Start Playing
 										li(ng-switch-default)
 											a(href = '#/questionList') 
 												span.glyphicon.glyphicon-cloud-upload
@@ -84,7 +84,11 @@ html(lang = 'en-US')
 										li
 											a(href = '#/questionPoll')
 												span.glyphicon.glyphicon-globe
-												|&nbsp; &nbsp; Question poll	
+												|&nbsp; &nbsp; Question poll
+										li
+											a(href = '#/yourGameList')
+												span.glyphicon.glyphicon-heart
+												|&nbsp; &nbsp; Your game list	
 										li(ng-click = 'NavBarCtrl.logoutSubmit()')
 											a
 												span.glyphicon.glyphicon-off
@@ -114,8 +118,8 @@ html(lang = 'en-US')
 							span.message {{chat.message}}
 					div.user_info
 						input(name = 'shout_message' id = 'shout_message' type = 'text' placeholder = 'Type Message And Hit Enter' maxlength = '100' ng-model = 'window.curChatMsg')
-		div.chatall-box(ng-controller = 'AllChatCtrl' ng-class = "{'' : AllChatCtrl.isCollapsed, 'active' : !AllChatCtrl.isCollapsed}", ng-show = 'AllChatCtrl.user.isLogin')
-			div.chatall-click-icon
+		div.chatall-box(ng-controller = 'AllChatCtrl' ng-class = "{active : !AllChatCtrl.isCollapsed}" ng-show = 'AllChatCtrl.user.isLogin')
+			div.chatall-click-icon(ng-class = "{active : AllChatCtrl.isHover}" ng-mouseenter = 'AllChatCtrl.isHover = true' ng-mouseleave = 'AllChatCtrl.isHover = false')
 				ul
 					li
 						a(ng-click = 'AllChatCtrl.toggleGlobalChatWindow()')
@@ -123,12 +127,12 @@ html(lang = 'en-US')
 							|&nbsp;&nbsp;Chat all
 			div.chatall-main-panel
 				div.chatall-window-chat(scroll-glue)
-					div.clearfix.animate.chatall-animate(ng-repeat = 'chat in AllChatCtrl.chats')
+					div.clearfix.animate.chatall-animate(ng-repeat = 'chat in AllChatCtrl.chats' )
 						div.chatall-username
 							strong {{chat.userName}}
 						div.chatall-message {{chat.message}}
 						hr.clearfix
-				div.chatall-input
+				div.chatall-input(ng-class = "{active : !AllChatCtrl.isCollapsed}")
 					form(role = 'form'  ng-submit = 'AllChatCtrl.submitChat()')
 						div.form-group
 							input.form-control(type = 'text' placeholder = 'Hit enter to send message' ng-model = 'AllChatCtrl.userMessage')

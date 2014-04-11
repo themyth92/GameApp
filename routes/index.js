@@ -6,15 +6,19 @@ var mongoose      = require('mongoose');
 var db            = mongoose.createConnection('localhost', Constant.constant.DATABASE.name);
 var UserSchema    = require('../models/UserSchema').UserSchema;
 var UploadSchema  = require('../models/UserSchema').UploadSchema;
+var SavedGameSchema		= require('../models/UserSchema').SavedGameSchema;
+var PublishedGameSchema	= require('../models/UserSchema').PublishedGameSchema;
 
 var UploadModel   = db.model(Constant.constant.DATABASE.COLLECTION.upload, UploadSchema);
 var UserModel     = db.model(Constant.constant.DATABASE.COLLECTION.user, UserSchema); 
+var SavedGameModel		= db.model('SavedGame', SavedGameSchema);
+var PublishedGameModel	= db.model('PublishedGame', PublishedGameSchema); 
 var bCrypt        = require('bcrypt');
 var User          = require('./User/user').user;
 var Upload        = require('./Upload/upload').upload;
 var Socket        = require('./Socket/socket').socket;
 var QuestionList  = require('./User/questionList').questionList;
-
+var ObjectId 	  = require('mongoose').Types.ObjectId;
 function Api(){
 	
 	//declare private attributes
@@ -204,13 +208,16 @@ function Api(){
 	}
 
 	this.socketConnect = function(socket, session){
-		var socketVar = new Socket(UserModel, UploadModel, socket, session);
+		var socketVar = new Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel);
 		socketVar.sendQuestion();
 		socketVar.retrieveQuestionList();
 		socketVar.teacherUpdateQuestionList();
 		socketVar.retrieveStudentQuestionList();
 		socketVar.sendChat();
 		socketVar.sendGlobalChat();
+		socketVar.saveUserGame();
+		socketVar.saveUserStoryStage();
+		socketVar.publishGame();
 	}
 
 	this.retrieveYourQuestionAndImage = function(req, res){
@@ -220,7 +227,68 @@ function Api(){
 		UploadModel.find({userName : userName}, null, 
 
 		    function(err, docs){
-				res.json({data : docs});
+
+		    	UserModel.find({userName : userName}, 'storyStage', function(err, data){
+
+		    		res.json({data : docs, storyStage : data[0].storyStage});
+		    	})
+		})
+	}
+
+	this.retrieveYourGameList = function(req, res){
+
+		var userName = req.session.userName;
+		SavedGameModel.find({userName : userName}, 'screenShot _id title', function(err, doc){
+			if(!err && doc){
+				res.json({data : doc});
+			}
+		})
+	}
+
+	this.repairYourGame = function(req, res){
+
+		var userName 	= req.session.userName;
+		var id 			= req.params.id;
+
+		SavedGameModel.findById(ObjectId(id), null, function(err, doc){
+			if(!err && doc){
+				
+				UploadModel.find({userName : userName}, null, 
+
+				    function(err, docs){
+
+				   		var dataReturn = {data1 : doc, data : docs};
+				   		res.json(dataReturn);
+				})
+			}
+		})
+	}
+
+	this.gameGallery = function(req, res){
+
+		PublishedGameModel.find({}, 'screenShot _id userName title', function(err, doc){
+
+			if(!err && doc){
+				res.json({data : doc});
+			}
+		})
+	}
+
+	this.retrievePublishedGame = function(req, res){
+		var id 		 = req.params.id;
+		var userName = req.session.userName;
+
+		PublishedGameModel.findById(ObjectId(id), null, function(err, doc){
+			if(!err && doc){
+				
+				UploadModel.find({userName : userName}, null, 
+
+				    function(err, docs){
+
+				   		var dataReturn = {data1 : doc, data : docs};
+				   		res.json(dataReturn);
+				})
+			}
 		})
 	}
 };
@@ -240,3 +308,7 @@ exports.socketConnect    	 = Api.socketConnect;
 exports.retrieveQuestionList = Api.retrieveQuestionList;
 exports.retrieveYourQuestionAndImage = Api.retrieveYourQuestionAndImage;
 exports.uploadQuestionList   = Api.uploadQuestionList;
+exports.retrieveYourGameList = Api.retrieveYourGameList;
+exports.repairYourGame       = Api.repairYourGame;
+exports.gameGallery			 = Api.gameGallery;
+exports.retrievePublishedGame= Api.retrievePublishedGame;

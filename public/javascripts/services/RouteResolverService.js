@@ -72,12 +72,84 @@ define(['app'], function(app){
 				return deffered.promise;
 			},
 
-			CreateGameResolver : function(){
+			StoryGameResolver : function(){
 				
 				var deffered = $q.defer();
 				$http({
 
 					url   : 'retrieveYourQuestionAndImage',
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
+
+				return deffered.promise;
+			},
+
+			YourGameListResolver : function(){
+
+				var deffered = $q.defer();
+				$http({
+
+					url   : 'retrieveYourGameList',
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
+
+				return deffered.promise;
+			},
+
+			RepairYourGameResolver : function(id){
+
+				var deffered = $q.defer();
+				$http({
+
+					url   : 'repairYourGame/' + id,
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
+
+				return deffered.promise;	
+			},
+
+			GalleryResolver : function(){
+
+				var deffered = $q.defer();
+				$http({
+
+					url   : 'gallery',
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
+
+				return deffered.promise;
+			},
+
+			PublishedGameResolver : function(id){
+
+				var deffered = $q.defer();
+				$http({
+
+					url   : 'published/' + id,
 					method: 'GET'
 				}).
 				success(function(data){

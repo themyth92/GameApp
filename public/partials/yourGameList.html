@@ -1,0 +1,13 @@
+<div style = 'position:absolute;width:100%; height:100%;padding-top : 100px'>
+	<div class = 'container'>
+		<div style = 'float:left; width:200px; margin: 0 10px' ng-repeat = 'game in YourGameListCtrl.gameList'>
+			<div>
+				<a href = '#/repairGame/{{game._id}}'><img ng-attr-src = 'data:image/png;base64,{{game.screenShot}}' width = '200' height = '200' class = 'img-thumbnail img-responsive'></img>
+				</a>
+			</div>
+			<div>
+				<h3 class = 'text-success text-center'><strong>Title : {{game.title || 'Star wars' + $index}}</strong></h3>
+			</div>
+		</div>	
+	</div>
+</div>

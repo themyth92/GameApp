@@ -2,8 +2,9 @@ define(['app'], function(app){
 	
 	app.factory('FlashComService', function(){
 		
-		function reformatQuestionAndImageList(data){
-			
+		function reformatQuestionAndImageList(data, pageID){
+			var storyStage = data.storyStage;
+
 			data = data.data[0];
 			var dataReturn = {image : [], question :[]};
 
@@ -35,7 +36,11 @@ define(['app'], function(app){
 					}
 				}
 			}
-			console.log(dataReturn);
+			
+
+			dataReturn.pageID = pageID;
+			dataReturn.storyStage = storyStage;
+
 			return dataReturn;
 		}
 
@@ -46,8 +51,8 @@ define(['app'], function(app){
 
 			//return the question list and image
 			//when user go to the game creation page
-			listQuestionAndImageToFlash : function(data){
-				return reformatQuestionAndImageList(data);
+			listQuestionAndImageToFlash : function(data, pageID){
+				return reformatQuestionAndImageList(data, pageID);
 			}
 		}
 	})

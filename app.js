@@ -43,6 +43,10 @@ app.post('/upload/image', routes.uploadImage);
 app.get('/retrieve/questions', routes.retrieveQuestionList);
 app.post('/upload/questionList', routes.uploadQuestionList); 
 app.get('/retrieveYourQuestionAndImage', routes.retrieveYourQuestionAndImage);
+app.get('/retrieveYourGameList', routes.retrieveYourGameList);
+app.get('/repairYourGame/:id', routes.repairYourGame);
+app.get('/gallery', routes.gameGallery);
+app.get('/published/:id', routes.retrievePublishedGame);
 
 var server = http.createServer(app);
 var io     = require('socket.io').listen(server);

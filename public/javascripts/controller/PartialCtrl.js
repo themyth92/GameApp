@@ -165,6 +165,30 @@ define(['app'], function(app){
 				$scope.NavBarCtrl.user.isLogin   = sessionService.state.isLogin; 
 				$scope.NavBarCtrl.user.userName  = sessionService.state.userName;
 				$scope.NavBarCtrl.user.isTeacher = sessionService.state.isTeacher;
+
+				//register event when user login
+				if($scope.NavBarCtrl.user.isLogin == true){
+
+					socketService.on('gameSaved', function(data){
+
+						if(data.userName == $scope.NavBarCtrl.user.userName){
+
+							broadCastService.broadCastEvent('YourGameHasBeenSaved', data);	
+						}
+					})
+
+					socketService.on('youHaveNewSavedGame', function(data){
+
+						if(data.userName == $scope.NavBarCtrl.user.userName){
+
+							broadCastService.broadCastEvent('youHaveNewSavedGame', data);	
+						}
+					})
+
+					socketService.on('gamePublished', function(data){
+						broadCastService.broadCastEvent('newGameHasBeenPublished');
+					})
+				}
 			});
 
 			$scope.$watch(function(){return DataService.firstTimeLoadQuestionListPage},function(){
@@ -224,7 +248,7 @@ define(['app'], function(app){
 			}
 
 			function uploadImageSuccessHandle(data, index){
-				console.log('go here');
+
 				if(index == $scope.FileUploadCtrl.images.length - 1){
 					
 					if($scope.FileUploadCtrl.questions.length > 0){
@@ -490,20 +514,134 @@ define(['app'], function(app){
 			return $scope.StudentQuestionCheckCtrl = this;
 		},
 
-		CreateFlashGameCtrl : function($scope, resolveData, DataService, $window, FlashComService){
+		StoryFlashGameCtrl : function($scope, resolveData, DataService, $window, FlashComService, socketService, $rootScope){
 
-			$window.returnUserQuestionListAndImage = function(){
+			$window.initCallServer = function(){
 				
-				return FlashComService.listQuestionAndImageToFlash(resolveData);
+				//story page
+				return FlashComService.listQuestionAndImageToFlash(resolveData, 1);
+			}
+
+			$window.saveGameCreation = function(data){
+				socketService.emit('saveUserGame', data);
+			}
+
+			$window.saveUserIngameState = function(data){
+				socketService.emit('saveUserStage', data);
+			}
+
+			$scope.$on('YourGameHasBeenSaved', function(event, data){
+					
+				var target = document.getElementById('GameDev');
+				target.waitForServerRespondSavedGame(data.code.id);
+			})
+
+			$window.publishGame = function(data){
+
+				socketService.emit('publishGame', data);
 			}
 		},
 
-		GameGalleryCtrl : function($scope){
+		YourGameListCtrl : function($scope, resolveData, $window){
+			
+			var self = this;
+			self.gameList  = [];
 
+			if(resolveData.data){
+
+				self.gameList = resolveData.data;
+			}
+
+			$scope.$on('youHaveNewSavedGame', function(event, args){
+
+				self.gameList.push({_id : args.code.id, screenShot : args.code.screenShot, title : args.code.title});
+			})
+
+			return $scope.YourGameListCtrl = self;
+		},
+
+		GameGalleryCtrl : function($scope, resolveData){
+
+			var self = this;
+			self.gameList = [];
+
+			if(resolveData.data){
+				self.gameList = resolveData.data;
+			}
+
+			$scope.$on('publishGame', function(event, args){
+				self.gameList.push({_id : args.code.id, screenShot : args.code.screenShot, title : args.code.title});
+			})
+
+			return $scope.GameGalleryCtrl = self;
 		},
 
 		QuestionPollCtrl : function($scope){
 
+		},
+
+		RepairYourGameCtrl : function($scope, resolveData, $location, $window, FlashComService){
+			
+			if(resolveData && resolveData.data1.length == 0){
+				$location.path('#/home');
+			}			
+			else{
+				var dataReturn = {};
+				dataReturn = FlashComService.listQuestionAndImageToFlash(resolveData, 2);
+				dataReturn.userName = resolveData.data1.userName;
+				dataReturn.title    = resolveData.data1.title;
+				dataReturn.screen   = resolveData.data1.screen;
+				dataReturn.id       = resolveData.data1.id;
+				dataReturn.enemy    = resolveData.data1.enemy;
+				dataReturn.obstacles= resolveData.data1.obstacles;
+				dataReturn.scoreBoard = resolveData.data1.scoreBoard;
+				dataReturn.player   = resolveData.data1.player;
+
+				$window.initCallServer = function(){
+				
+					//repair page
+					return dataReturn;
+				}
+
+				$window.saveGameCreation = function(data){
+					socketService.emit('saveUserGame', data);
+				}
+
+				$window.saveUserIngameState = function(data){
+					socketService.emit('saveUserStage', data);
+				}
+
+				$scope.$on('YourGameHasBeenSaved', function(event, data){
+						
+					var target = document.getElementById('GameDev');
+					target.waitForServerRespondSavedGame(data.code.id);
+				})
+			}
+		},
+
+		PublishedGameCtrl : function($scope, resolveData, $location, $window, FlashComService){
+
+			if(resolveData && resolveData.data1.length == 0){
+				$location.path('#/home');
+			}			
+			else{
+				var dataReturn = {};
+				dataReturn = FlashComService.listQuestionAndImageToFlash(resolveData, 3);
+				dataReturn.userName = resolveData.data1.userName;
+				dataReturn.title    = resolveData.data1.title;
+				dataReturn.screen   = resolveData.data1.screen;
+				dataReturn.id       = resolveData.data1.id;
+				dataReturn.enemy    = resolveData.data1.enemy;
+				dataReturn.obstacles= resolveData.data1.obstacles;
+				dataReturn.scoreBoard = resolveData.data1.scoreBoard;
+				dataReturn.player   = resolveData.data1.player;
+
+				$window.initCallServer = function(){
+				
+					//repair page
+					return dataReturn;
+				}
+			}
 		},
 
 		StudentChatCtrl : function($scope, sessionService, socketService){
@@ -634,7 +772,6 @@ define(['app'], function(app){
 			var onSocket		= 	false;
 
 			function processChatData(data){
-				console.log('go hre');
 				if(data && data.data.message && data.data.userName){
 					self.chats.push({userName : data.data.userName, message:data.data.message});
 				}
@@ -643,6 +780,7 @@ define(['app'], function(app){
 			self.user 			= 	{}
 			self.chats 		 	= 	[];
 			self.isCollapsed 	= 	true;
+			self.isHover        = 	false;
 			self.userMessage	= 	'';
 			self.user.isLogin	=	sessionService.state.isLogin;
 			self.user.userName  = 	sessionService.state.userName;
@@ -678,10 +816,13 @@ define(['app'], function(app){
 	app.controller('FileUploadCtrl', ['$scope', 'BroadCastService', 'UploadService', 'SocketService', Controller.FileUploadCtrl]);
 	app.controller('QuestionListCtrl', ['$scope','DataService', '$q', 'SocketService', 'BroadCastService',Controller.QuestionListCtrl]);
 	app.controller('StudentQuestionCheckCtrl', ['$scope', 'DataService', Controller.StudentQuestionCheckCtrl]);
-	app.controller('CreateFlashGameCtrl', ['$scope', 'resolveData', 'DataService', '$window', 'FlashComService', Controller.CreateFlashGameCtrl]);
-	app.controller('GameGalleryCtrl' ,['$scope', Controller.GameGalleryCtrl]);
+	app.controller('StoryFlashGameCtrl', ['$scope', 'resolveData', 'DataService', '$window', 'FlashComService', 'SocketService', '$rootScope', Controller.StoryFlashGameCtrl]);
+	app.controller('GameGalleryCtrl' ,['$scope', 'resolveData', Controller.GameGalleryCtrl]);
 	app.controller('QuestionPollCtrl' ,['$scope', Controller.QuestionPollCtrl]);
 	app.controller('StudentChatCtrl', ['$scope', 'StoreSessionService', 'SocketService',Controller.StudentChatCtrl]);
 	app.controller('TeacherChatCtrl' , ['$scope', 'StoreSessionService', 'SocketService', 'DataService', Controller.TeacherChatCtrl]);
 	app.controller('AllChatCtrl', ['$scope', 'SocketService', 'StoreSessionService', Controller.AllChatCtrl]);
+	app.controller('YourGameListCtrl', ['$scope', 'resolveData', Controller.YourGameListCtrl]);
+	app.controller('RepairYourGameCtrl', ['$scope', 'resolveData', '$location','$window', 'FlashComService', Controller.RepairYourGameCtrl]);
+	app.controller('PublishedGameCtrl', ['$scope', 'resolveData', '$location','$window', 'FlashComService', Controller.PublishedGameCtrl]);
 }) 

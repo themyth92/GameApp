@@ -21,9 +21,9 @@ var UserSchema       = new Schema({
 		required : true
 	},
 
-	storyState : {
+	storyStage : {
 		type 	: Number,
-		default : 0
+		default : 1
 	}	
 }) ;
 
@@ -64,7 +64,7 @@ var UploadSchema     = new Schema({
 var EnemySchema = new Schema({
 	pos			: Number,
 	textureIndex: Number,
-	type 		: Number,
+	type 		: String,
 	speed 		: Number
 })
 
@@ -76,26 +76,30 @@ var ObstacleSchema = new Schema({
 		default :false
 	},
 	type		:Number,
-	questionIndex : Number
+	qnsIndex : Number
 })
 
 var SavedGameSchema = new Schema({
 	
 	userName : {
 		type     : String,
-		required : true,
-		unique   : true
+		required : true
 	},
 	title : String,
-	hero : {
+	player : {
 		pos 	: Number,
-		gender 	: Number
+		gender 	: String
 	},
 	enemy : [EnemySchema],
-	obstacle : [ObstacleSchema],
-	screen : {
-		textureIndex : Number
-	}
+	obstacles : [ObstacleSchema],
+	screen : Number,
+	scoreboard :{
+		maxCoin : Number,
+		maxLife : Number,
+		minStart: Number,
+		secStart: Number
+	},
+	screenShot : String
 })
 
 
@@ -103,19 +107,23 @@ var PublishedGameSchema = new Schema({
 	
 	userName : {
 		type     : String,
-		required : true,
-		unique   : true
+		required : true
 	},
 	title : String,
-	hero : {
+	player : {
 		pos 	: Number,
-		gender 	: Number
+		gender 	: String
 	},
 	enemy : [EnemySchema],
-	obstacle : [ObstacleSchema],
-	screen : {
-		textureIndex : Number
-	}
+	obstacles : [ObstacleSchema],
+	screen : Number,
+	scoreboard :{
+		maxCoin : Number,
+		maxLife : Number,
+		minStart: Number,
+		secStart: Number
+	},
+	screenShot : String
 })
 
 exports.UserSchema   		= UserSchema;

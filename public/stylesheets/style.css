@@ -219,7 +219,7 @@ a{
 /*chat*/
 .shout_box {
 	background:#627BAE; width:260px; overflow:hidden;
-	position:fixed; bottom:0; right:0%; z-index:9;
+	position:fixed; bottom:0; left:0%; z-index:9;
 }
 .shout_box .header .close_btn {
 	float:right; width:15px;
@@ -294,7 +294,6 @@ font-weight: bold; display: block;
 }
 
 .chatall-box>div{
-	float:left;
 
 }
 
@@ -306,7 +305,17 @@ font-weight: bold; display: block;
 	-webkit-box-shadow: -2px 0 2px rgba(0,0,0,.2);
 	-moz-box-shadow: -2px 0 2px rgba(0,0,0,.2);
 	box-shadow: -2px 0 2px rgba(0,0,0,.2);
-	position: relative;
+	position: absolute;
+	right:196px;
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	-ms-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+}
+
+.chatall-click-icon.active{
+	right:260px;
 }
 
 .chatall-click-icon ul{
@@ -353,6 +362,7 @@ font-weight: bold; display: block;
 	-webkit-box-shadow: -2px 0 2px rgba(0,0,0,.2);
 	-moz-box-shadow: -2px 0 2px rgba(0,0,0,.2);
 	box-shadow: -2px 0 2px rgba(0,0,0,.2);
+	position: relative;
 }
 
 .chatall-window-chat{
@@ -381,6 +391,16 @@ font-weight: bold; display: block;
 	bottom:0;
 	width:250px;
 	padding-left:10px;
+	-webkit-transition: all .3s ease;
+	-moz-transition: all .3s ease;
+	-ms-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+	right:-260px;
+}
+
+.chatall-input.active{
+	right:10px;
 }
 
 .chatall-animate{
@@ -400,10 +420,23 @@ font-weight: bold; display: block;
 
 
 @media (max-width: 768px){
+
+	.chatall-box{
+		right:-180px;
+	}
+
 	.chatall-main-panel{
 		width:180px;
 	}
 	.chatall-input{
 		width:170px;
+	}
+
+	.chatall-click-icon{
+		right:115px;
 	}	
+
+	.chatall-click-icon.active{
+		right:179px;
+	}
 }
