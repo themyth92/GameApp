@@ -65,7 +65,8 @@ var EnemySchema = new Schema({
 	pos			: Number,
 	textureIndex: Number,
 	type 		: String,
-	speed 		: Number
+	speed 		: Number,
+	endPts		: []
 })
 
 var ObstacleSchema = new Schema({
@@ -92,7 +93,10 @@ var SavedGameSchema = new Schema({
 	},
 	enemy : [EnemySchema],
 	obstacles : [ObstacleSchema],
-	screen : Number,
+	screen : {
+		isUserDef : Boolean,
+		textureIndex : Number
+	},
 	scoreboard :{
 		maxCoin : Number,
 		maxLife : Number,
@@ -116,7 +120,10 @@ var PublishedGameSchema = new Schema({
 	},
 	enemy : [EnemySchema],
 	obstacles : [ObstacleSchema],
-	screen : Number,
+	screen : {
+		isUserDef : Boolean,
+		textureIndex : Number
+	},
 	scoreboard :{
 		maxCoin : Number,
 		maxLife : Number,
@@ -126,7 +133,24 @@ var PublishedGameSchema = new Schema({
 	screenShot : String
 })
 
+var QuestionPollSchema = new Schema({
+	userName		: String,
+	gameID 			: String,
+	questionIndex	: Number,
+	gameTitle       : String,
+	questionTitle   : String,
+	wrongAnswer 	: {
+		type : Number,
+		default : 0
+	},
+	rightAnswer 	: {
+		type : Number,
+		default : 0
+	}
+})
+
 exports.UserSchema   		= UserSchema;
 exports.UploadSchema 		= UploadSchema;
 exports.SavedGameSchema 	= SavedGameSchema;
 exports.PublishedGameSchema = PublishedGameSchema;
+exports.QuestionPollSchema  = QuestionPollSchema;

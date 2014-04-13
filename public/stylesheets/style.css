@@ -219,7 +219,7 @@ a{
 /*chat*/
 .shout_box {
 	background:#627BAE; width:260px; overflow:hidden;
-	position:fixed; bottom:0; left:0%; z-index:9;
+	position:fixed; bottom:0; right:0%; z-index:9;
 }
 .shout_box .header .close_btn {
 	float:right; width:15px;

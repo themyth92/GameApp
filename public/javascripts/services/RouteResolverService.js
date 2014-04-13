@@ -63,6 +63,7 @@ define(['app'], function(app){
 				var deffered = $q.defer();
 				SocketService.emit('retrieveStudentQuestionList');
 				SocketService.once('retrieveStudentQuestionList', function(data){
+					
 					if(data)
 						deffered.resolve(data);
 					else
@@ -150,6 +151,24 @@ define(['app'], function(app){
 				$http({
 
 					url   : 'published/' + id,
+					method: 'GET'
+				}).
+				success(function(data){
+					deffered.resolve(data);
+				}).
+				error(function(error){
+					deffered.reject(error);
+				});
+
+				return deffered.promise;
+			},
+
+			QuestionPollResolver : function(){
+
+				var deffered = $q.defer();
+				$http({
+
+					url   : 'questionPoll',
 					method: 'GET'
 				}).
 				success(function(data){

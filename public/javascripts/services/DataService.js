@@ -15,7 +15,6 @@ define(['app'], function(app){
 
 			processQuestionListData : function(data){
 				var self = this;
-
 				if(data.data){
 
 					for(var i = 0 ; i < data.data.length ; i++){
@@ -32,7 +31,7 @@ define(['app'], function(app){
 							obj.answers    = partial.question[j].answers|| [];
 							obj.questionID = partial.question[j]._id    || 'None';
 							obj.correct    = partial.question[j].accept;
-							obj.comment    = '';
+							obj.comment    = partial.question[j].comment || '';
 
 							self.questionList.push(obj);
 						}	
@@ -58,7 +57,7 @@ define(['app'], function(app){
 					obj.select     = data.select 			|| 'None';
 					obj.answers    = data.answers			|| [];
 					obj.questionID = data.questionID    	|| 'None';
-					obj.correct    = data.accept;
+					obj.correct    = 3;
 					obj.comment    = '';
 
 					self.questionList.push(obj);	
@@ -84,7 +83,7 @@ define(['app'], function(app){
 							obj.answers    = partial.question[j].answers|| [];
 							obj.questionID = partial.question[j]._id    || 'None';
 							obj.correct    = partial.question[j].accept;
-							obj.comment    = '';
+							obj.comment    = partial.question[j].comment || '';
 
 							self.eachStudentQuestionList.push(obj);
 						}	

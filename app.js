@@ -47,6 +47,7 @@ app.get('/retrieveYourGameList', routes.retrieveYourGameList);
 app.get('/repairYourGame/:id', routes.repairYourGame);
 app.get('/gallery', routes.gameGallery);
 app.get('/published/:id', routes.retrievePublishedGame);
+app.get('/questionPoll', routes.questionPoll);
 
 var server = http.createServer(app);
 var io     = require('socket.io').listen(server);

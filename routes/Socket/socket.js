@@ -1,7 +1,7 @@
 var Constant = require('../Constant/constant');
 var ObjectId = require('mongoose').Types.ObjectId;
 
-function Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel){
+function Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel, QuestionPollModel){
 
 	function insertQuestionInDB(userName, title ,answers, select, hint){
 
@@ -161,8 +161,24 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 	function saveGame(data, userName){
 
 		if(data){
-			
+					
 			data.userName = userName;
+			
+			//convert to array
+			if(data.enemy){
+
+				data.enemy.map(function(enemy){
+					if(enemy.endPts){
+						var convert = [];
+						
+						for(var i in enemy.endPts[0]){
+							convert[i] = enemy.endPts[0][i];
+						}
+
+						enemy.endPts = convert;
+					}
+				})
+			}	
 
 			//newly save game
 			if(data.id == null){
@@ -222,6 +238,23 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 	this.publishGame = function(){
 		socket.on('publishGame', function(data){
 			var userName = session.userName;
+
+			//convert to array
+			if(data.enemy){
+
+				data.enemy.map(function(enemy){
+					if(enemy.endPts){
+						var convert = [];
+						
+						for(var i in enemy.endPts[0]){
+							convert[i] = enemy.endPts[0][i];
+						}
+
+						enemy.endPts = convert;
+					}
+				})
+			}	
+			
 			//newly published game, no need to remove in saved game
 			if(data.id == null){
 				var publishedGameModel = new PublishedGameModel({userName : userName, screenShot : data.screenShot,
@@ -260,6 +293,53 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 					})
 				})
 			}
+		})
+	}
+
+	this.updateQuestionPoll = function(){
+		
+		socket.on('updateQuestionPoll', function(data){
+
+			var gameID 	 		= data.gameID;
+			var questionIndex 	= data.questionIndex;
+			var correct			= data.correct;
+			PublishedGameModel.findById(ObjectId(gameID), 'userName title' , function(err, docs){
+
+				if(!err && docs){
+					var gameTitle = docs.title;
+					var userName  = docs.userName;
+
+
+					UploadModel.aggregate({$unwind : '$question'},
+			                      		  {$match  : {'question.accept' : 1}},
+			                              {$group  : {_id : '$_id', userName : {$addToSet : '$userName'}, question : {$addToSet : '$question'}}}, function(err, docs){
+						
+						if(!err && docs){
+
+							var questionTitle = docs[0].question[questionIndex].title;
+
+							var dataReturn    = {gameID : gameID, userName : userName, gameTitle : gameTitle, 
+												 questionTitle: questionTitle, isCorrect : correct, questionIndex : questionIndex,
+												 gameID: gameID};
+
+							if(correct){
+								QuestionPollModel.update({userName : userName, gameID : gameID, questionIndex : questionIndex,gameTitle : gameTitle, questionTitle : questionTitle
+														}, {$inc : {rightAnswer : 1}}, {upsert : true}, function(){
+															socket.emit('updateQuestionPoll', dataReturn);
+														})	
+							}
+							else{
+
+								QuestionPollModel.update({userName : userName, gameID : gameID, questionIndex : questionIndex,gameTitle : gameTitle, questionTitle : questionTitle
+														}, {$inc : {wrongAnswer : 1}}, {upsert : true}, function(){
+
+															socket.emit('updateQuestionPoll', dataReturn);
+														})		
+							}
+						}
+					})
+				}
+			});
 		})
 	}
 }

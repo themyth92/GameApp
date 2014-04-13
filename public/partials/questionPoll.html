@@ -11,22 +11,22 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td class = 'text-danger question'>What is the name of U.S president ?</td>
+					<tr ng-repeat = 'question in QuestionPollCtrl.questionPollList'>
+						<td class = 'text-danger question'>{{question.questionTitle}}</td>
 						<td>
 							<div class = 'text-primary'>
-								Star wars
+								<a href = '#/published/{{question.gameID}}'>{{question.gameTitle}}</a>
 							</div>
 						</td>
-						<td class = 'text-success'>student</td>
+						<td class = 'text-success'>{{question.userName}}</td>
 						<td>
 							<div>
 								<div class="progress">
-									<div class="progress-bar progress-bar-success" style="width: 65%">
-								  		65% Correct
+									<div class="progress-bar progress-bar-success" ng-style = "{width : question.percentRight + '%'}">
+								  		{{question.percentRight}}% Correct
 								  	</div>
-								  	<div class="progress-bar progress-bar-warning" style="width: 35%">
-										35% Wrong
+								  	<div class="progress-bar progress-bar-warning" ng-style = "{width : (100-question.percentRight) + '%'}">
+										{{100-question.percentRight}}% Wrong
 									</div>
 								</div>
 							</div>

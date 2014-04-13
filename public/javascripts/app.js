@@ -146,7 +146,7 @@ define([], function(){
 				}).
 				when('/published/:id', {
 					templateUrl : 'partials/createYourGame.html',
-					controller  : 'GameGalleryCtrl',
+					controller  : 'PublishedGameCtrl',
 					resolve : {
 						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService','$route',
 
@@ -165,6 +165,20 @@ define([], function(){
 				when('/questionPoll', {
 					templateUrl : 'partials/questionPoll.html',
 					controller  : 'QuestionPollCtrl',
+					resolve : {
+						resolveData : ['ControllerResolverService', 'DataService', '$location', 'StoreSessionService','$route',
+
+						function(ControllerResolverService, DataService, $location, SessionService, $route){
+							if(DataService.firstTimeLoadApp == true || SessionService.isLogin == false){
+								$location.path('/home');
+							}
+							else{
+								return ControllerResolverService.QuestionPollResolver().then(function(data){
+									return data;
+								});
+							}
+						}]
+					}
 				}).
 				otherwise({
 					redirectTo : '/home'

@@ -8,11 +8,13 @@ var UserSchema    = require('../models/UserSchema').UserSchema;
 var UploadSchema  = require('../models/UserSchema').UploadSchema;
 var SavedGameSchema		= require('../models/UserSchema').SavedGameSchema;
 var PublishedGameSchema	= require('../models/UserSchema').PublishedGameSchema;
+var QuestionPollSchema  = require('../models/UserSchema').QuestionPollSchema;
 
 var UploadModel   = db.model(Constant.constant.DATABASE.COLLECTION.upload, UploadSchema);
 var UserModel     = db.model(Constant.constant.DATABASE.COLLECTION.user, UserSchema); 
 var SavedGameModel		= db.model('SavedGame', SavedGameSchema);
-var PublishedGameModel	= db.model('PublishedGame', PublishedGameSchema); 
+var PublishedGameModel	= db.model('PublishedGame', PublishedGameSchema);
+var QuestionPollModel	= db.model('QuestionPoll', QuestionPollSchema); 
 var bCrypt        = require('bcrypt');
 var User          = require('./User/user').user;
 var Upload        = require('./Upload/upload').upload;
@@ -208,7 +210,7 @@ function Api(){
 	}
 
 	this.socketConnect = function(socket, session){
-		var socketVar = new Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel);
+		var socketVar = new Socket(UserModel, UploadModel, socket, session, SavedGameModel, PublishedGameModel, QuestionPollModel);
 		socketVar.sendQuestion();
 		socketVar.retrieveQuestionList();
 		socketVar.teacherUpdateQuestionList();
@@ -218,6 +220,7 @@ function Api(){
 		socketVar.saveUserGame();
 		socketVar.saveUserStoryStage();
 		socketVar.publishGame();
+		socketVar.updateQuestionPoll();
 	}
 
 	this.retrieveYourQuestionAndImage = function(req, res){
@@ -291,6 +294,18 @@ function Api(){
 			}
 		})
 	}
+
+	this.questionPoll = function(req, res){
+		
+		QuestionPollModel.find({}, function(err, doc){
+			if(!err && doc){
+				res.json({data : doc});
+			}
+			else{
+				res.json({err : err});
+			}
+		})
+	}
 };
 
 exports.index = function(req, res){
@@ -312,3 +327,4 @@ exports.retrieveYourGameList = Api.retrieveYourGameList;
 exports.repairYourGame       = Api.repairYourGame;
 exports.gameGallery			 = Api.gameGallery;
 exports.retrievePublishedGame= Api.retrievePublishedGame;
+exports.questionPoll 		 = Api.questionPoll;

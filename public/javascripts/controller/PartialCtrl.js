@@ -188,6 +188,10 @@ define(['app'], function(app){
 					socketService.on('gamePublished', function(data){
 						broadCastService.broadCastEvent('newGameHasBeenPublished');
 					})
+
+					socketService.on('updateQuestionPoll', function(data){
+						broadCastService.broadCastEvent('updateQuestionPoll', data);	
+					})
 				}
 			});
 
@@ -442,7 +446,6 @@ define(['app'], function(app){
 			}
 
 			function removeAnsweredQuestion(){
-				
 				var obj = [];
 				
 				angular.forEach(self.questionList, function(question){
@@ -523,6 +526,7 @@ define(['app'], function(app){
 			}
 
 			$window.saveGameCreation = function(data){
+
 				socketService.emit('saveUserGame', data);
 			}
 
@@ -576,11 +580,95 @@ define(['app'], function(app){
 			return $scope.GameGalleryCtrl = self;
 		},
 
-		QuestionPollCtrl : function($scope){
+		QuestionPollCtrl : function($scope, resolveData){
 
+			var self = this;
+
+			self.questionPollList = [];
+
+			function calculatePercentage(right, wrong){
+
+				return Math.round(right/(right + wrong));
+			}
+
+			function processQuestionPollData(){
+
+				if(resolveData && resolveData.data){
+					resolveData.data.map(function(data){
+						
+						var obj 			= {};
+						obj.gameID  		= data.gameID || 'None';
+						obj.userName 		= data.userName || 'None';
+						obj.gameTitle 		= data.gameTitle || 'No title';
+						obj.questionTitle 	= data.questionTitle||'None';
+						obj.questionIndex   = data.questionIndex || 'None';
+						obj.wrongAnswer     = data.wrongAnswer || 0;
+						obj.rightAnswer     = data.rightAnswer || 0;
+						obj.percentRight	= calculatePercentage(obj.rightAnswer, obj.wrongAnswer);
+
+						self.questionPollList.push(obj);
+					})
+				}
+			}    
+
+			function updateQuestionPoll(data){
+				if(data && data.gameID && data.questionIndex ){
+					
+					self.questionPollList.map(function(question){
+						
+						if(question.gameID == data.gameID && question.questionIndex == data.questionIndex){
+							
+							if(data.isCorrect){
+
+								question.rightAnswer++;
+								question.percentRight = calculatePercentage(question.rightAnswer, question.wrongAnswer);
+							}
+							else{
+
+								question.wrongAnswer++;
+								question.percentRight = calculatePercentage(question.rightAnswer, question.wrongAnswer);
+							}
+						}
+						else{
+
+							var obj 			= {};
+							obj.gameID  		= data.gameID || 'None';
+							obj.userName 		= data.userName || 'None';
+							obj.gameTitle 		= data.gameTitle || 'No title';
+							obj.questionTitle 	= data.questionTitle||'None';
+							obj.questionIndex   = data.questionIndex || 'None';
+
+							if(data.isCorrect){
+
+								obj.wrongAnswer     = 0;
+								obj.rightAnswer     = 1;
+							}
+							else{
+
+
+								obj.wrongAnswer     = 1;
+								obj.rightAnswer     = 0;
+							}
+							
+							obj.percentRight	= calculatePercentage(obj.rightAnswer, obj.wrongAnswer);
+
+							self.questionPollList.push(obj);
+						}
+					})	
+				}
+				
+			}
+
+			processQuestionPollData(); 
+
+			$scope.$on('updateQuestionPoll',function(data){
+				updateQuestionPoll(data);
+			})                                                                                                                                                 
+
+			return $scope.QuestionPollCtrl = this;
 		},
 
-		RepairYourGameCtrl : function($scope, resolveData, $location, $window, FlashComService){
+		RepairYourGameCtrl : function($scope, socketService,resolveData, $location, $window, FlashComService){
 			
 			if(resolveData && resolveData.data1.length == 0){
 				$location.path('#/home');
@@ -591,14 +679,15 @@ define(['app'], function(app){
 				dataReturn.userName = resolveData.data1.userName;
 				dataReturn.title    = resolveData.data1.title;
 				dataReturn.screen   = resolveData.data1.screen;
-				dataReturn.id       = resolveData.data1.id;
+				dataReturn.id       = resolveData.data1._id;
 				dataReturn.enemy    = resolveData.data1.enemy;
 				dataReturn.obstacles= resolveData.data1.obstacles;
-				dataReturn.scoreBoard = resolveData.data1.scoreBoard;
+				dataReturn.scoreBoard = resolveData.data1.scoreboard;
 				dataReturn.player   = resolveData.data1.player;
 
 				$window.initCallServer = function(){
-				
+					
+					console.log(JSON.stringify(dataReturn));
 					//repair page
 					return dataReturn;
 				}
@@ -619,7 +708,7 @@ define(['app'], function(app){
 			}
 		},
 
-		PublishedGameCtrl : function($scope, resolveData, $location, $window, FlashComService){
+		PublishedGameCtrl : function($scope, socketService,resolveData, $location, $window, FlashComService){
 
 			if(resolveData && resolveData.data1.length == 0){
 				$location.path('#/home');
@@ -630,16 +719,21 @@ define(['app'], function(app){
 				dataReturn.userName = resolveData.data1.userName;
 				dataReturn.title    = resolveData.data1.title;
 				dataReturn.screen   = resolveData.data1.screen;
-				dataReturn.id       = resolveData.data1.id;
+				dataReturn.id       = resolveData.data1._id;
 				dataReturn.enemy    = resolveData.data1.enemy;
 				dataReturn.obstacles= resolveData.data1.obstacles;
-				dataReturn.scoreBoard = resolveData.data1.scoreBoard;
+				dataReturn.scoreBoard = resolveData.data1.scoreboard;
 				dataReturn.player   = resolveData.data1.player;
+				dataReturn.screen   = resolveData.data1.screen;
 
 				$window.initCallServer = function(){
-				
 					//repair page
 					return dataReturn;
+				}
+
+				$window.updateQuestionPoll = function(data){
+					
+					socketService.emit('updateQuestionPoll', data);
 				}
 			}
 		},
@@ -818,11 +912,11 @@ define(['app'], function(app){
 	app.controller('StudentQuestionCheckCtrl', ['$scope', 'DataService', Controller.StudentQuestionCheckCtrl]);
 	app.controller('StoryFlashGameCtrl', ['$scope', 'resolveData', 'DataService', '$window', 'FlashComService', 'SocketService', '$rootScope', Controller.StoryFlashGameCtrl]);
 	app.controller('GameGalleryCtrl' ,['$scope', 'resolveData', Controller.GameGalleryCtrl]);
-	app.controller('QuestionPollCtrl' ,['$scope', Controller.QuestionPollCtrl]);
+	app.controller('QuestionPollCtrl' ,['$scope' ,'resolveData', Controller.QuestionPollCtrl]);
 	app.controller('StudentChatCtrl', ['$scope', 'StoreSessionService', 'SocketService',Controller.StudentChatCtrl]);
 	app.controller('TeacherChatCtrl' , ['$scope', 'StoreSessionService', 'SocketService', 'DataService', Controller.TeacherChatCtrl]);
 	app.controller('AllChatCtrl', ['$scope', 'SocketService', 'StoreSessionService', Controller.AllChatCtrl]);
 	app.controller('YourGameListCtrl', ['$scope', 'resolveData', Controller.YourGameListCtrl]);
-	app.controller('RepairYourGameCtrl', ['$scope', 'resolveData', '$location','$window', 'FlashComService', Controller.RepairYourGameCtrl]);
-	app.controller('PublishedGameCtrl', ['$scope', 'resolveData', '$location','$window', 'FlashComService', Controller.PublishedGameCtrl]);
+	app.controller('RepairYourGameCtrl', ['$scope', 'SocketService','resolveData', '$location','$window', 'FlashComService', Controller.RepairYourGameCtrl]);
+	app.controller('PublishedGameCtrl', ['$scope', 'SocketService','resolveData', '$location','$window', 'FlashComService', Controller.PublishedGameCtrl]);
 }) 
