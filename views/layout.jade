@@ -41,7 +41,7 @@ html(lang = 'en-US')
 					ul.nav.navbar-nav
 						li
 							a(href='#/Home') Home
-						li
+						li(ng-show = 'NavBarCtrl.user.isLogin')
 							a(href='#gallery') Gallery
 					ul.nav.navbar-nav.navbar-right(ng-switch on = 'NavBarCtrl.user.isLogin')
 						li.dropdown(ng-switch-when = 'false')
@@ -65,7 +65,7 @@ html(lang = 'en-US')
 									a.dropdown-toggle(href = '#', data-toggle = 'dropdown') User Preference
 										b.caret
 									ul.dropdown-menu(ng-switch on = 'NavBarCtrl.user.isTeacher')
-										li(ng-switch-when = 'false')
+										li
 											a(href = '#/upload') 
 												span.glyphicon.glyphicon-cloud-upload
 												|&nbsp; &nbsp; Upload your file
@@ -73,7 +73,7 @@ html(lang = 'en-US')
 											a(href = '#/checkYourQuestion') 
 												span.glyphicon.glyphicon-arrow-right
 												|&nbsp; &nbsp; Check your questions
-										li(ng-switch-when = 'false')
+										li
 											a(href = '#/startPlaying')
 												span.glyphicon.glyphicon-pencil
 												|&nbsp; &nbsp;Start Playing

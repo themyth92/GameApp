@@ -54,7 +54,7 @@ var io     = require('socket.io').listen(server);
 var cookie = require('cookie');
 
 io.configure('development', function(){
-  io.set('transports', ['xhr-polling', 'websocket']);
+  io.set('transports', ['xhr-polling','websocket']);
 });
 
 io.sockets.on('connection', function(socket){

@@ -1,4 +1,4 @@
-<div style = 'padding-top:70px'>
+<div style = 'padding-top:70px; position:absolute'>
 	<div class = 'container'>
 		<div class="table-responsive">
 			<table class="table">
@@ -8,6 +8,7 @@
 						<th>Game List</th>
 						<th>Author</th>
 						<th>Percentage</th>
+						<th>Number of answer</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -31,6 +32,7 @@
 								</div>
 							</div>
 						</td>
+						<td class = 'text-primary'>{{question.rightAnswer + question.wrongAnswer}}</td>
 					</tr>
 				</tbody>
 			</table>

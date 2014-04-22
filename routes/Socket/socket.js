@@ -6,7 +6,7 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 	function insertQuestionInDB(userName, title ,answers, select, hint){
 
 		UploadModel.findOneAndUpdate({userName : userName}, {$push : {question : {title : title, hint : hint, answers : answers, select : select, comment : ''}}}, {upsert : true}, function(error, doc){
-
+			
 			if(!error && doc){
 				
 				var obj      		= {};
@@ -58,7 +58,7 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 	}
 
 	this.sendQuestion = function(){
-		
+
 		socket.on(Constant.constant.SOCKET.sendQuestion, function(data){
 
 			var userName = session.userName;
@@ -254,7 +254,7 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 					}
 				})
 			}	
-			
+
 			//newly published game, no need to remove in saved game
 			if(data.id == null){
 				var publishedGameModel = new PublishedGameModel({userName : userName, screenShot : data.screenShot,
@@ -262,12 +262,18 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 					scoreboard : data.scoreboard});
 
 				publishedGameModel.save(function(err, doc){
-					console.log(err);
+					
 					if(!err && doc){
 						socket.emit('gamePublished', {
 							id : doc._id,
 							userName :  userName,
-							screenShot : doc.screenshot,
+							screenShot : doc.screenShot,
+							title : doc.title
+						})
+						socket.broadcast.emit('gamePublished', {
+							id : doc._id,
+							userName :  userName,
+							screenShot : doc.screenShot,
 							title : doc.title
 						})
 					}
@@ -276,14 +282,21 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 			else{
 				var id = data.id;
 				SavedGameModel.findByIdAndRemove(ObjectId(id), function(){
-					var publishedGameModel = new PublishedGameModel({userName : data.userName, screenShot : data.screenShot,
+
+					var publishedGameModel = new PublishedGameModel({userName : userName, screenShot : data.screenShot,
 						title : data.title, player : data.player, enemy:data.enemy, obstacles : data.obstacles, screen : data.screen,
 						scoreboard : data.scoreboard});
 
-					publishGameModel.save(function(err, doc){
+					publishedGameModel.save(function(err, doc){
 
 						if(!err && doc){
 							socket.emit('gamePublished', {
+								id : doc._id,
+								userName :  userName,
+								screenShot : doc.screenShot,
+								title : doc.title
+							})
+							socket.broadcast.emit('gamePublished', {
 								id : doc._id,
 								userName :  userName,
 								screenShot : doc.screenShot,
@@ -309,7 +322,7 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 					var gameTitle = docs.title;
 					var userName  = docs.userName;
 
-
+					console.log(gameTitle);
 					UploadModel.aggregate({$unwind : '$question'},
 			                      		  {$match  : {'question.accept' : 1}},
 			                              {$group  : {_id : '$_id', userName : {$addToSet : '$userName'}, question : {$addToSet : '$question'}}}, function(err, docs){
@@ -325,7 +338,8 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 							if(correct){
 								QuestionPollModel.update({userName : userName, gameID : gameID, questionIndex : questionIndex,gameTitle : gameTitle, questionTitle : questionTitle
 														}, {$inc : {rightAnswer : 1}}, {upsert : true}, function(){
-															socket.emit('updateQuestionPoll', dataReturn);
+															socket.broadcast.emit('updateQuestionPoll', dataReturn);
+															socket.emit('updateQuestionPoll',dataReturn);
 														})	
 							}
 							else{
@@ -333,6 +347,7 @@ function Socket(UserModel, UploadModel, socket, session, SavedGameModel, Publish
 								QuestionPollModel.update({userName : userName, gameID : gameID, questionIndex : questionIndex,gameTitle : gameTitle, questionTitle : questionTitle
 														}, {$inc : {wrongAnswer : 1}}, {upsert : true}, function(){
 
+															socket.broadcast.emit('updateQuestionPoll', dataReturn);
 															socket.emit('updateQuestionPoll', dataReturn);
 														})		
 							}

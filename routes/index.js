@@ -226,26 +226,31 @@ function Api(){
 	this.retrieveYourQuestionAndImage = function(req, res){
 
 		var userName = req.session.userName;
+		
+		if(userName){
+			UploadModel.find({userName : userName}, null, 
 
-		UploadModel.find({userName : userName}, null, 
+			    function(err, docs){
 
-		    function(err, docs){
+			    	UserModel.find({userName : userName}, 'storyStage', function(err, data){
 
-		    	UserModel.find({userName : userName}, 'storyStage', function(err, data){
-
-		    		res.json({data : docs, storyStage : data[0].storyStage});
-		    	})
-		})
+			    		res.json({data : docs, storyStage : data[0].storyStage});
+			    	})
+			})
+		}
 	}
 
 	this.retrieveYourGameList = function(req, res){
 
 		var userName = req.session.userName;
-		SavedGameModel.find({userName : userName}, 'screenShot _id title', function(err, doc){
-			if(!err && doc){
-				res.json({data : doc});
-			}
-		})
+		if(userName){
+			
+			SavedGameModel.find({userName : userName}, 'screenShot _id title', function(err, doc){
+				if(!err && doc){
+					res.json({data : doc});
+				}
+			})	
+		}
 	}
 
 	this.repairYourGame = function(req, res){
@@ -279,18 +284,20 @@ function Api(){
 
 	this.retrievePublishedGame = function(req, res){
 		var id 		 = req.params.id;
-		var userName = req.session.userName;
 
 		PublishedGameModel.findById(ObjectId(id), null, function(err, doc){
 			if(!err && doc){
-				
-				UploadModel.find({userName : userName}, null, 
 
-				    function(err, docs){
+				if(doc && doc.userName){
+					var userName = doc.userName;
+					UploadModel.find({userName : userName}, null, 
 
-				   		var dataReturn = {data1 : doc, data : docs};
-				   		res.json(dataReturn);
-				})
+					    function(err, docs){
+
+					   		var dataReturn = {data1 : doc, data : docs};
+					   		res.json(dataReturn);
+					})
+				}	
 			}
 		})
 	}

@@ -1,7 +1,7 @@
-<div style = 'position:absolute;width:100%; height:100%;padding-top : 100px'>
+<div style = 'position:absolute;width:100%; height:100%;padding-top : 100px; overflow:auto;'>
 	<div class = 'container'>
 
-		<div style = 'float:left; width:200px; margin: 0 10px' ng-repeat = 'game in GameGalleryCtrl.gameList'>
+		<div style = 'float:left; width:200px;height:249px; margin: 0 10px; ' ng-repeat = 'game in GameGalleryCtrl.gameList'>
 			<div>
 				<a href = '#/published/{{game._id}}'><img ng-attr-src = 'data:image/png;base64,{{game.screenShot}}' width = '200' height = '200' class = 'img-thumbnail img-responsive'></img>
 				</a>

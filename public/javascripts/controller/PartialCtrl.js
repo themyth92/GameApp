@@ -186,7 +186,7 @@ define(['app'], function(app){
 					})
 
 					socketService.on('gamePublished', function(data){
-						broadCastService.broadCastEvent('newGameHasBeenPublished');
+						broadCastService.broadCastEvent('newGameHasBeenPublished', data);
 					})
 
 					socketService.on('updateQuestionPoll', function(data){
@@ -520,8 +520,8 @@ define(['app'], function(app){
 		StoryFlashGameCtrl : function($scope, resolveData, DataService, $window, FlashComService, socketService, $rootScope){
 
 			$window.initCallServer = function(){
-				
 				//story page
+				console.log(JSON.stringify(FlashComService.listQuestionAndImageToFlash(resolveData, 1)));
 				return FlashComService.listQuestionAndImageToFlash(resolveData, 1);
 			}
 
@@ -541,7 +541,6 @@ define(['app'], function(app){
 			})
 
 			$window.publishGame = function(data){
-
 				socketService.emit('publishGame', data);
 			}
 		},
@@ -573,8 +572,10 @@ define(['app'], function(app){
 				self.gameList = resolveData.data;
 			}
 
-			$scope.$on('publishGame', function(event, args){
+			$scope.$on('newGameHasBeenPublished', function(event, args){
+				console.log(args);
 				self.gameList.push({_id : args.code.id, screenShot : args.code.screenShot, title : args.code.title});
+				console.log(self.gameList);
 			})
 
 			return $scope.GameGalleryCtrl = self;
@@ -588,7 +589,7 @@ define(['app'], function(app){
 
 			function calculatePercentage(right, wrong){
 
-				return Math.round(right/(right + wrong));
+				return Math.round(right/(right + wrong)*100);
 			}
 
 			function processQuestionPollData(){
@@ -612,57 +613,58 @@ define(['app'], function(app){
 			}    
 
 			function updateQuestionPoll(data){
-				if(data && data.gameID && data.questionIndex ){
+
+				if(data && data.gameID && (data.questionIndex||data.questionIndex == 0)){
 					
-					self.questionPollList.map(function(question){
+					for(var i = 0 ; i < self.questionPollList.length; i++){
 						
-						if(question.gameID == data.gameID && question.questionIndex == data.questionIndex){
-							
-							if(data.isCorrect){
-
-								question.rightAnswer++;
-								question.percentRight = calculatePercentage(question.rightAnswer, question.wrongAnswer);
-							}
-							else{
-
-								question.wrongAnswer++;
-								question.percentRight = calculatePercentage(question.rightAnswer, question.wrongAnswer);
-							}
-						}
-						else{
-
-							var obj 			= {};
-							obj.gameID  		= data.gameID || 'None';
-							obj.userName 		= data.userName || 'None';
-							obj.gameTitle 		= data.gameTitle || 'No title';
-							obj.questionTitle 	= data.questionTitle||'None';
-							obj.questionIndex   = data.questionIndex || 'None';
+						if(self.questionPollList[i].gameID == data.gameID && self.questionPollList[i].questionIndex == data.questionIndex){
 
 							if(data.isCorrect){
 
-								obj.wrongAnswer     = 0;
-								obj.rightAnswer     = 1;
+								self.questionPollList[i].rightAnswer++;
+								self.questionPollList[i].percentRight = calculatePercentage(self.questionPollList[i].rightAnswer, self.questionPollList[i].wrongAnswer);
 							}
 							else{
 
-
-								obj.wrongAnswer     = 1;
-								obj.rightAnswer     = 0;
+								self.questionPollList[i].wrongAnswer++;
+								self.questionPollList[i].percentRight = calculatePercentage(self.questionPollList[i].rightAnswer, self.questionPollList[i].wrongAnswer);
 							}
-							
-							obj.percentRight	= calculatePercentage(obj.rightAnswer, obj.wrongAnswer);
 
-							self.questionPollList.push(obj);
+							return true;
 						}
-					})	
+					}
+
+					var obj 			= {};
+					obj.gameID  		= data.gameID || 'None';
+					obj.userName 		= data.userName || 'None';
+					obj.gameTitle 		= data.gameTitle || 'No title';
+					obj.questionTitle 	= data.questionTitle||'None';
+					obj.questionIndex   = data.questionIndex;
+
+					if(data.isCorrect){
+
+						obj.wrongAnswer     = 0;
+						obj.rightAnswer     = 1;
+					}
+					else{
+
+
+						obj.wrongAnswer     = 1;
+						obj.rightAnswer     = 0;
+					}
+					
+					obj.percentRight	= calculatePercentage(obj.rightAnswer, obj.wrongAnswer);
+					console.log(obj);
+					$scope.QuestionPollCtrl.questionPollList.push(obj);
 				}
 				
 			}
 
 			processQuestionPollData(); 
 
-			$scope.$on('updateQuestionPoll',function(data){
-				updateQuestionPoll(data);
+			$scope.$on('updateQuestionPoll',function(event, args){
+				updateQuestionPoll(args.code);
 			})                                                                                                                                                 
 
 			return $scope.QuestionPollCtrl = this;
@@ -685,6 +687,9 @@ define(['app'], function(app){
 				dataReturn.scoreBoard = resolveData.data1.scoreboard;
 				dataReturn.player   = resolveData.data1.player;
 
+				if(dataReturn.id == null)
+					$location.path('#/home');
+				
 				$window.initCallServer = function(){
 					
 					console.log(JSON.stringify(dataReturn));
@@ -693,11 +698,12 @@ define(['app'], function(app){
 				}
 
 				$window.saveGameCreation = function(data){
+					console.log(data);
 					socketService.emit('saveUserGame', data);
 				}
 
-				$window.saveUserIngameState = function(data){
-					socketService.emit('saveUserStage', data);
+				$window.publishGame = function(data){
+					socketService.emit('publishGame', data);
 				}
 
 				$scope.$on('YourGameHasBeenSaved', function(event, data){
@@ -732,7 +738,6 @@ define(['app'], function(app){
 				}
 
 				$window.updateQuestionPoll = function(data){
-					
 					socketService.emit('updateQuestionPoll', data);
 				}
 			}
